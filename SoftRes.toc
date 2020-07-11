@@ -10,4 +10,5 @@ SoftResHelpers.lua
 SoftResListHandling.lua
 SoftResPlayerHandling.lua
 SoftResUI.lua
+SoftResUIScripts.lua
 SoftResEvents.lua
