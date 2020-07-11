@@ -11,6 +11,12 @@ function SoftRes.list:createNewSoftResList()
 end
 
 -- ListGetters
-function SoftRes.list:getDate() return self.date end
-function SoftRes.list:getZone() return self.zone end
+function SoftRes.list:getDate() return SoftResList.date end
+function SoftRes.list:getZone() return SoftResList.zone end
 --------------------------------------------------------------------
+
+
+
+function SoftRes.list:doSoftResStuff()
+    print(SoftRes.list:getDate())
+end
