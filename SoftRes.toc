@@ -5,4 +5,4 @@
 ## Title: SoftRes |cFF6EA5DC(Soft-reserve helper)|r
 ## Notes: Create a list of soft-reserved items and helps with rolls.
 
-SoftRes2.lua
+SoftRes.lua
