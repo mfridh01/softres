@@ -225,7 +225,6 @@ SoftRes.ui.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "Basic
       SoftRes.ui.mainFrame:RegisterForDrag("LeftButton")
       SoftRes.ui.mainFrame:SetScript("OnDragStart", SoftRes.ui.mainFrame.StartMoving)
       SoftRes.ui.mainFrame:SetScript("OnDragStop", SoftRes.ui.mainFrame.StopMovingOrSizing)
-      SoftRes.ui.mainFrame:Show()
 
       SoftRes.ui.mainFrame.title = SoftRes.ui.mainFrame:CreateFontString(nil, "Overlay")
             SoftRes.ui.mainFrame.title:SetFontObject("GameFontHighlight")
@@ -276,17 +275,20 @@ SoftRes.ui.mainFrame:RegisterEvent("PLAYER_LOGIN")
 SoftRes.ui.mainFrame:SetScript("OnEvent", function(self,event,...) 
 
       if event == "PLAYER_LOGIN" then
-            if type(SoftResList) ~= "table" then  --  I know it doesn't exist. so set it's default
-                  SoftRes.ui:createNewSoftResList()
+            if (not SoftResList) or type(SoftResList) ~= "table" then  --  I know it doesn't exist. so set it's default
+                  SoftRes.list:createNewSoftResList()
             else
                   SoftRes.debug:print("SoftResList, loaded.")
             end
 
-            if type(SoftResConfig) ~= "table" then
+            if (not SoftResConfig) or type(SoftResConfig) ~= "table" then
                   SoftRes.ui:createDefaultSoftResConfigList()
             else
                   SoftRes.debug:print("SoftResConfig, loaded.")
-                  SoftRes.ui:useSavedConfigValues()
             end
+
+            SoftRes.ui:useSavedConfigValues() -- Use the variables.
       end
-      end)
+
+
+end)
