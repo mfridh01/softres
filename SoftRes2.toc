@@ -1,0 +1,8 @@
+## Interface: 11305
+## Author: Snits
+## Version: 0.0.1
+## SavedVariables: SoftResList, SoftResConfig, SoftResDB
+## Title: SoftRes2 |cFF6EA5DC(Soft-reserve helper)|r
+## Notes: Create a list of soft-reserved items and helps with rolls.
+
+SoftRes2.lua
