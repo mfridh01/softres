@@ -6,3 +6,8 @@
 ## Notes: Create a list of soft-reserved items and helps with rolls.
 
 SoftRes.lua
+SoftResHelpers.lua
+SoftResListHandling.lua
+SoftResPlayerHandling.lua
+SoftResUI.lua
+SoftResEvents.lua
