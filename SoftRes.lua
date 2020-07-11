@@ -133,7 +133,7 @@ end
 
 -- Listhandling.
 ----------------
---  Creates a new list with default values.
+-- Creates a new list with default values.
 function SoftRes.list:createNewSoftResList()
       SoftResList = {
             date = date("%y-%m-%d %H:%M:%S"),
@@ -150,9 +150,10 @@ function SoftRes.list:getZone() return self.zone end
 
 -- Playerhandling.
 ------------------
--- When we first create a player, fill in the layout with blanks/defaults.
+-- (create new player), When we first create a player, fill in the layout with blanks/defaults.
 function SoftRes.player:new()
       local self = {
+            groupPosition = nil, -- The position in group/raid
             softReserve = { -- Softreserved item.
                   time = nil, -- When it was softreserved.
                   itemId = nil, -- Ingame itemId.
@@ -225,23 +226,66 @@ SoftRes.ui.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "Basic
       SoftRes.ui.mainFrame:SetScript("OnDragStop", SoftRes.ui.mainFrame.StopMovingOrSizing)
       SoftRes.ui.mainFrame:Show()
 
-      SoftRes.ui.mainFrame:RegisterEvent("PLAYER_LOGIN")
+      SoftRes.ui.mainFrame.title = SoftRes.ui.mainFrame:CreateFontString(nil, "Overlay")
+            SoftRes.ui.mainFrame.title:SetFontObject("GameFontHighlight")
+            SoftRes.ui.mainFrame.title:SetPoint("TOP", SoftRes.ui.mainFrame.TitleBg, "TOP", 0, -3)
+            SoftRes.ui.mainFrame.title:SetText("SoftRes - A Soft-Reservation- and Loot distribution helper.")
 
-      SoftRes.ui.mainFrame:SetScript("OnEvent", function(self,event,...) 
+      SoftRes.ui.mainFrame.fs = SoftRes.ui.mainFrame:CreateFontString(nil, "Overlay")
+      SoftRes.ui.mainFrame.fs:SetFontObject("GameFontHighlight")
+      SoftRes.ui.mainFrame.fs:SetPoint("TOPLEFT", SoftRes.ui.mainFrame, "TOPLEFT", 15, -32)
+      SoftRes.ui.mainFrame.fs:SetJustifyH("LEFT")
+      SoftRes.ui.mainFrame.fs:SetText("Soft reserve - List")
 
-            if event == "PLAYER_LOGIN" then
-                  if type(SoftResList) ~= "table" then  --  I know it doesn't exist. so set it's default
-                        SoftRes.ui:createNewSoftResList()
-                  else
-                        SoftRes.debug:print("SoftResList, loaded.")
-                  end
 
-                  if type(SoftResConfig) ~= "table" then
-                        SoftRes.ui:createDefaultSoftResConfigList()
-                  else
-                        SoftRes.debug:print("SoftResConfig, loaded.")
-                        SoftRes.ui:useSavedConfigValues()
-                  end
+SoftRes.ui.buttons.testButton = CreateFrame("Button", "testButton", SoftRes.ui.mainFrame, "UIPanelButtonGrayTemplate")
+      SoftRes.ui.buttons.testButton:SetPoint("TOP", SoftRes.ui.mainFrame, "TOP", 0, 0)
+      SoftRes.ui.buttons.testButton:SetWidth(100)
+      SoftRes.ui.buttons.testButton:SetHeight(20)
+      SoftRes.ui.buttons.testButton:SetText("|TInterface\\FriendsFrame\\InformationIcon:10:10:0:0|t")
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-- Eventscanning begins here.
+--------------------------------------------------------------------
+SoftRes.ui.mainFrame:RegisterEvent("PLAYER_LOGIN")
+
+SoftRes.ui.mainFrame:SetScript("OnEvent", function(self,event,...) 
+
+      if event == "PLAYER_LOGIN" then
+            if type(SoftResList) ~= "table" then  --  I know it doesn't exist. so set it's default
+                  SoftRes.ui:createNewSoftResList()
+            else
+                  SoftRes.debug:print("SoftResList, loaded.")
             end
 
+            if type(SoftResConfig) ~= "table" then
+                  SoftRes.ui:createDefaultSoftResConfigList()
+            else
+                  SoftRes.debug:print("SoftResConfig, loaded.")
+                  SoftRes.ui:useSavedConfigValues()
+            end
+      end
       end)
