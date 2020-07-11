@@ -74,7 +74,7 @@ SoftRes.ui.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "Basic
             ui.listFrame.scrollUpButton:SetPoint("TOPRIGHT", ui.listFrame, "TOPRIGHT", 0, 0)
 
             ui.listFrame.scrollDownButton:ClearAllPoints()
-            ui.listFrame.scrollDownButton:SetPoint("BOTTOMRIGHT", ui.ListFrame, "BOTTOMRIGHT", 0, 0)
+            ui.listFrame.scrollDownButton:SetPoint("BOTTOMRIGHT", ui.listFrame, "BOTTOMRIGHT", 0, 0)
 
             ui.listFrame.scrollBar:ClearAllPoints()
             ui.listFrame.scrollBar:SetPoint("TOP", ui.listFrame.scrollUpButton, "BOTTOM", 0, -2)
