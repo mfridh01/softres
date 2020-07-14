@@ -1,4 +1,5 @@
-SoftRes.ui.buttons.testButton:SetScript("OnClick", function()
+BUTTONS.testButton:SetScript("OnClick", function()
     print("Clicked!")
-    
+    UI:createDefaultSoftResConfigList()
+    UI:useSavedConfigValues()
 end)
