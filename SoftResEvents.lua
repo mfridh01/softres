@@ -2,9 +2,9 @@
 -- Eventscanning begins here.
 --------------------------------------------------------------------
 
-SoftRes.ui.mainFrame:RegisterEvent("PLAYER_LOGIN")
+FRAMES.mainFrame:RegisterEvent("PLAYER_LOGIN")
 
-SoftRes.ui.mainFrame:SetScript("OnEvent", function(self,event,...) 
+FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...) 
 
       if event == "PLAYER_LOGIN" then
             if (not SoftResList) or type(SoftResList) ~= "table" then  --  I know it doesn't exist. so set it's default

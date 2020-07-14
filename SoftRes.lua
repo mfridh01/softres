@@ -63,6 +63,7 @@ SoftRes = {}
 
       SoftRes.ui = {}
             SoftRes.ui.__index = SoftRes.ui
+            SoftRes.ui.frames = {}
             SoftRes.ui.buttons = {}
 --------------------------------------------------------------------
 

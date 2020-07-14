@@ -1,106 +1,108 @@
 -- UI-Handling.
 ---------------
+
+-- globals
+FRAMES = SoftRes.ui.frames
+BUTTONS = SoftRes.ui.buttons
+
 -- Create a new config list, with default values.
 function SoftRes.ui:createDefaultSoftResConfigList()
       SoftResConfig = {
             ui = {
-                  mainFrame = {
-                        size = {
-                              full = {
-                                    width = 700,
-                                    height = 550,
-                              }
-                        }
-                  },
-                  listFrame = {
-                        size = {
-                              full = {
-                                    width = 250,
-                                    height = 400,
+                  frames = {
+                        mainFrame = {
+                              size = {
+                                    full = {
+                                          width = 338,
+                                          height = 550,
+                                    }
+                              },
+                              hidden = false,
+                        },
+                        listFrame = {
+                              size = {
+                                    full = {
+                                          width = 250,
+                                          height = 400,
+                                    },
+                              hidden = false,
                               }
                         }
                   }
-
             }
       }
 end
 
 -- Apply values from saved list, to the frames.
 function SoftRes.ui:useSavedConfigValues()
-      SoftRes.ui.mainFrame:SetSize(SoftResConfig.ui.mainFrame.size.full.width, SoftResConfig.ui.mainFrame.size.full.height)
-      SoftRes.ui.listFrame:SetSize(SoftResConfig.ui.listFrame.size.full.width, SoftResConfig.ui.listFrame.size.full.height)
+      FRAMES.mainFrame:SetSize(SoftResConfig.ui.mainFrame.size.full.width, SoftResConfig.ui.mainFrame.size.full.height)
+      FRAMES.listFrame:SetSize(SoftResConfig.ui.listFrame.size.full.width, SoftResConfig.ui.listFrame.size.full.height)
 end
 --------------------------------------------------------------------
-
-
 
 -- UI BEGINS HERE.
 ------------------
 
-local ui = SoftRes.ui
-
 --Frames
+FRAMES.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFrameTemplateWithInset")
+      FRAMES.mainFrame:SetFrameStrata("HIGH")
+      FRAMES.mainFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 10, -10)
+      FRAMES.mainFrame:SetMovable(true)
+      FRAMES.mainFrame:EnableMouse(true)
+      FRAMES.mainFrame:RegisterForDrag("LeftButton")
+      FRAMES.mainFrame:SetScript("OnDragStart", FRAMES.mainFrame.StartMoving)
+      FRAMES.mainFrame:SetScript("OnDragStop", FRAMES.mainFrame.StopMovingOrSizing)
 
+      FRAMES.mainFrame.title = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
+            FRAMES.mainFrame.title:SetFontObject("GameFontHighlight")
+            FRAMES.mainFrame.title:SetPoint("TOP", FRAMES.mainFrame.TitleBg, "TOP", 0, -3)
+            FRAMES.mainFrame.title:SetText("SoftRes - A Soft-Reservation- and Loot distribution helper.")
 
-SoftRes.ui.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFrameTemplateWithInset")
-      SoftRes.ui.mainFrame:SetFrameStrata("HIGH")
-      SoftRes.ui.mainFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 10, -10)
-      SoftRes.ui.mainFrame:SetMovable(true)
-      SoftRes.ui.mainFrame:EnableMouse(true)
-      SoftRes.ui.mainFrame:RegisterForDrag("LeftButton")
-      SoftRes.ui.mainFrame:SetScript("OnDragStart", SoftRes.ui.mainFrame.StartMoving)
-      SoftRes.ui.mainFrame:SetScript("OnDragStop", SoftRes.ui.mainFrame.StopMovingOrSizing)
+      FRAMES.mainFrame.fs = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
+            FRAMES.mainFrame.fs:SetFontObject("GameFontHighlight")
+            FRAMES.mainFrame.fs:SetPoint("TOPLEFT", FRAMES.mainFrame, "TOPLEFT", 15, -32)
+            FRAMES.mainFrame.fs:SetJustifyH("LEFT")
+            FRAMES.mainFrame.fs:SetText("Soft reserve - List")
 
-      SoftRes.ui.mainFrame.title = SoftRes.ui.mainFrame:CreateFontString(nil, "Overlay")
-            SoftRes.ui.mainFrame.title:SetFontObject("GameFontHighlight")
-            SoftRes.ui.mainFrame.title:SetPoint("TOP", SoftRes.ui.mainFrame.TitleBg, "TOP", 0, -3)
-            SoftRes.ui.mainFrame.title:SetText("SoftRes - A Soft-Reservation- and Loot distribution helper.")
+      FRAMES.listFrame = CreateFrame("ScrollFrame", "ListFrame", FRAMES.mainFrame, "UIPanelScrollFrameTemplate")
+            FRAMES.listFrame:SetPoint("TOPLEFT", FRAMES.mainFrame, "TOPLEFT", -12,-30)
+            FRAMES.listFrame:SetSize(250,400)
+                        
+            FRAMES.listFrame.scrollBar = _G["ListFrameScrollBar"]
+                  FRAMES.listFrame.scrollBar:ClearAllPoints()
+                  FRAMES.listFrame.scrollBar:SetPoint("TOP", FRAMES.listFrame.scrollUpButton, "BOTTOM", 0, -2)
+                  FRAMES.listFrame.scrollBar:SetPoint("BOTTOM", FRAMES.listFrame.scrollDownButton, "TOP", 0, 2)
 
-      SoftRes.ui.mainFrame.fs = SoftRes.ui.mainFrame:CreateFontString(nil, "Overlay")
-      SoftRes.ui.mainFrame.fs:SetFontObject("GameFontHighlight")
-      SoftRes.ui.mainFrame.fs:SetPoint("TOPLEFT", SoftRes.ui.mainFrame, "TOPLEFT", 15, -32)
-      SoftRes.ui.mainFrame.fs:SetJustifyH("LEFT")
-      SoftRes.ui.mainFrame.fs:SetText("Soft reserve - List")
-
-      ui.listFrame = CreateFrame("ScrollFrame", "ListFrame", SoftRes.ui.mainFrame, "UIPanelScrollFrameTemplate")
-            ui.listFrame:SetPoint("TOPLEFT", ui.mainFrame, "TOPLEFT", -12,-30)
-            ui.listFrame:SetSize(250,400)
-
-            ui.listFrameChild = CreateFrame("Frame")
-            ui.listFrame.scrollBar = _G["ListFrameScrollBar"]
-            ui.listFrame.scrollUpButton = _G["ListFrameScrollBarScrollUpButton"]
-            ui.listFrame.scrollDownButton = _G["ListFrameScrollBarScrollDownButton"]
-            ui.listFrame.scrollUpButton:ClearAllPoints()
-            ui.listFrame.scrollUpButton:SetPoint("TOPRIGHT", ui.listFrame, "TOPRIGHT", 0, 0)
-
-            ui.listFrame.scrollDownButton:ClearAllPoints()
-            ui.listFrame.scrollDownButton:SetPoint("BOTTOMRIGHT", ui.listFrame, "BOTTOMRIGHT", 0, 0)
-
-            ui.listFrame.scrollBar:ClearAllPoints()
-            ui.listFrame.scrollBar:SetPoint("TOP", ui.listFrame.scrollUpButton, "BOTTOM", 0, -2)
-            ui.listFrame.scrollBar:SetPoint("BOTTOM", ui.listFrame.scrollDownButton, "TOP", 0, 2)
-
-            ui.listFrame:SetScrollChild(ui.listFrameChild)
-            ui.listFrameChild:SetSize(ui.listFrame:GetWidth(), ui.listFrame:GetHeight()) -- denna ändras i förhållande till hur många items man har
-
-            ui.moduleOptions = CreateFrame("Frame", nil, ui.listFrameChild)
-            ui.moduleOptions:SetAllPoints(ui.listFrameChild)
-            ui.moduleOptions:EnableMouse()
-
-            ui.moduleOptions.fs = ui.moduleOptions:CreateFontString(nil, "OVERLAY")
-            ui.moduleOptions.fs:SetFontObject("GameFontHighlight")
-            ui.moduleOptions.fs:SetPoint("TOPLEFT", ui.moduleOptions, "TOPLEFT", 25, 0)
-            ui.moduleOptions.fs:SetText("SoftRes -> By Snits")
-            ui.moduleOptions.fs:SetJustifyH("Left")
+            FRAMES.listFrame.scrollUpButton = _G["ListFrameScrollBarScrollUpButton"]
+                  FRAMES.listFrame.scrollUpButton:ClearAllPoints()
+                  FRAMES.listFrame.scrollUpButton:SetPoint("TOPRIGHT", FRAMES.listFrame, "TOPRIGHT", 0, 0)
             
-            
---Buttons
+            FRAMES.listFrame.scrollDownButton = _G["ListFrameScrollBarScrollDownButton"]
+                  FRAMES.listFrame.scrollDownButton:ClearAllPoints()
+                  FRAMES.listFrame.scrollDownButton:SetPoint("BOTTOMRIGHT", FRAMES.listFrame, "BOTTOMRIGHT", 0, 0)      
 
-SoftRes.ui.buttons.testButton = CreateFrame("Button", "testButton", SoftRes.ui.mainFrame, "UIPanelButtonGrayTemplate")
-      SoftRes.ui.buttons.testButton:SetPoint("TOP", SoftRes.ui.mainFrame, "TOP", 0, 0)
-      SoftRes.ui.buttons.testButton:SetWidth(100)
-      SoftRes.ui.buttons.testButton:SetHeight(20)
-      SoftRes.ui.buttons.testButton:SetText("|TInterface\\FriendsFrame\\InformationIcon:10:10:0:0|t")
+
+            FRAMES.listFrame.child = CreateFrame("Frame")
+            FRAMES.listFrame.child:SetSize(FRAMES.listFrame:GetWidth(), FRAMES.listFrame:GetHeight()) -- This is the size of the scrollable list, Change the height accordingly.
+
+            FRAMES.listFrame:SetScrollChild(FRAMES.listFrameChild)       
+
+      FRAMES.moduleOptions = CreateFrame("Frame", nil, FRAMES.listFrame.child)
+            FRAMES.moduleOptions:SetAllPoints(FRAMES.listFrame.child)
+            FRAMES.moduleOptions:EnableMouse()
+
+            FRAMES.moduleOptions.fs = FRAMES.moduleOptions:CreateFontString(nil, "OVERLAY") -- This is the main list FontString. Populate this one.
+                  FRAMES.moduleOptions.fs:SetFontObject("GameFontHighlight")
+                  FRAMES.moduleOptions.fs:SetPoint("TOPLEFT", FRAMES.moduleOptions, "TOPLEFT", 25, 0)
+                  FRAMES.moduleOptions.fs:SetText("SoftRes -> By Snits")
+                  FRAMES.moduleOptions.fs:SetJustifyH("Left")
+            
+-- Buttons
+BUTTONS.testButton = CreateFrame("Button", "testButton", FRAMES.mainFrame, "UIPanelButtonGrayTemplate")
+      BUTTONS.testButton:SetPoint("TOP", FRAMES.mainFrame, "TOP", 0, 0)
+      BUTTONS.testButton:SetWidth(100)
+      BUTTONS.testButton:SetHeight(20)
+      BUTTONS.testButton:SetText("|TInterface\\FriendsFrame\\InformationIcon:10:10:0:0|t")
 
 
 

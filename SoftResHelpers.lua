@@ -1,5 +1,6 @@
 -- SoftRes Helpers.
 -------------------
+
 -- Takes a string and turns it into a table of words split by defined separator.
 -- If there is no separator passed, then it defaults to "<SPACE>"
 function SoftRes.helpers:stringSplit(string, separator)
@@ -54,4 +55,3 @@ function SoftRes.helpers:getItemRarityFromId(itemId)
 
     return itemRarity
 end
---------------------------------------------------------------------
