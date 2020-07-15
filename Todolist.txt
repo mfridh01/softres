@@ -1,2 +1,6 @@
 -- TODO
 -- Ny lista -> Med datum, ML, Zone osv osv osv.
+
+
+
+-- Anchor to loot window on open?

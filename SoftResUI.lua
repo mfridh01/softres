@@ -33,7 +33,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                         rollFrameContainer = {
                               size = {
                                     full = {
-                                          width = 314,
+                                          width = 314-30,
                                           height = 118,
                                     },
                               },
@@ -44,7 +44,22 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                                           height = 227,
                                     },
                               },
-                        }
+                        },
+                        listFrameContainer = {
+                              size = {
+                                    full = {
+                                          width = 314,
+                                          height = 118+30,
+                                    },
+                              },
+                              hidden = false,
+                              child = {
+                                    size = {
+                                          width = 300,
+                                          height = 227,
+                                    },
+                              },
+                        },
                   }
             }
       }
@@ -57,6 +72,8 @@ function SoftRes.ui:useSavedConfigValues()
       FRAMES.tabContainer:SetSize(CONFIG_UI_FRAMES.tabContainer.size.full.width, CONFIG_UI_FRAMES.tabContainer.size.full.height)
       FRAMES.rollFrameContainer:SetSize(CONFIG_UI_FRAMES.rollFrameContainer.size.full.width, CONFIG_UI_FRAMES.rollFrameContainer.size.full.height)
       FRAMES.rollFrameContainer.child:SetSize(CONFIG_UI_FRAMES.rollFrameContainer.child.size.width, CONFIG_UI_FRAMES.rollFrameContainer.child.size.height)
+      FRAMES.listFrameContainer:SetSize(CONFIG_UI_FRAMES.listFrameContainer.size.full.width, CONFIG_UI_FRAMES.listFrameContainer.size.full.height)
+      FRAMES.listFrameContainer.child:SetSize(CONFIG_UI_FRAMES.listFrameContainer.child.size.width, CONFIG_UI_FRAMES.listFrameContainer.child.size.height)
 end
 --------------------------------------------------------------------
 
@@ -92,7 +109,9 @@ FRAMES.tabContainer = CreateFrame("Frame", "TabContainer", FRAMES.mainFrame, "In
             insets   = { left = 4, right = 4, top = 4, bottom = 4 }
       })
 
-      FRAMES.tabContainer.page1 = CreateFrame("Frame", "TabPagesPage1", FRAMES.mainFrame)
+
+-- PAGE 1
+FRAMES.tabContainer.page1 = CreateFrame("Frame", "TabPagesPage1", FRAMES.mainFrame)
             FRAMES.tabContainer.page1:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
             FRAMES.tabContainer.page1:SetSize(313, 127)
             FRAMES.tabContainer.page1:SetBackdrop({
@@ -103,6 +122,7 @@ FRAMES.tabContainer = CreateFrame("Frame", "TabContainer", FRAMES.mainFrame, "In
                   edgeSize = 10,
                   insets   = { left = 2, right = 2, top = 2, bottom = 2 }
             })
+            FRAMES.tabContainer.page1:Show()
 
 FRAMES.rollFrameContainer = CreateFrame("ScrollFrame", "RollFrameContainer", FRAMES.tabContainer.page1, "UIPanelScrollFrameTemplate")
       FRAMES.rollFrameContainer:SetPoint("TOPLEFT", FRAMES.tabContainer.page1, "TOPLEFT", 5, -5)
@@ -114,10 +134,10 @@ FRAMES.rollFrameContainer = CreateFrame("ScrollFrame", "RollFrameContainer", FRA
       FRAMES.rollFrameContainer.scrollDownButton = _G[scrollbarName .. "ScrollBarScrollDownButton"]
 
             FRAMES.rollFrameContainer.scrollUpButton:ClearAllPoints()
-            FRAMES.rollFrameContainer.scrollUpButton:SetPoint("TOPRIGHT", FRAMES.rollFrameContainer, "TOPRIGHT", -10, 0)
+            FRAMES.rollFrameContainer.scrollUpButton:SetPoint("TOPRIGHT", FRAMES.rollFrameContainer, "TOPRIGHT", -10+30, 0)
       
             FRAMES.rollFrameContainer.scrollDownButton:ClearAllPoints()
-            FRAMES.rollFrameContainer.scrollDownButton:SetPoint("BOTTOMRIGHT", FRAMES.rollFrameContainer, "BOTTOMRIGHT", -10, 0)      
+            FRAMES.rollFrameContainer.scrollDownButton:SetPoint("BOTTOMRIGHT", FRAMES.rollFrameContainer, "BOTTOMRIGHT", -10+30, 0)      
 
             FRAMES.rollFrameContainer.scrollBar:ClearAllPoints()
             FRAMES.rollFrameContainer.scrollBar:SetPoint("TOP", FRAMES.rollFrameContainer.scrollUpButton, "BOTTOM", 0, 0)
@@ -131,10 +151,12 @@ FRAMES.rollFrame = CreateFrame("Frame", nil, FRAMES.rollFrameContainer.child)
       FRAMES.rollFrame:EnableMouse()
 
       FRAMES.rollFrame.fs = FRAMES.rollFrame:CreateFontString(nil, "OVERLAY") -- This is the main list FontString. Populate this one.
-            FRAMES.rollFrame.fs:SetFontObject("GameFontHighlight")
+            FRAMES.rollFrame.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.rollFrame.fs:SetFont(FRAMES.rollFrame.fs:GetFont(), 10)
             FRAMES.rollFrame.fs:SetPoint("TOPLEFT", FRAMES.rollFrame, "TOPLEFT", 0, 0)
-            FRAMES.rollFrame.fs:SetText("Testrad-01\nTestrad-02\nTestrad-03\nTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
+            FRAMES.rollFrame.fs:SetText("|TInterface\\FriendsFrame\\InformationIcon:10:10:0:0|tTestrad-01\n|TInterface\\RaidFrame\\ReadyCheck-Ready:10:10:0:0|tTestrad-02\n|TInterface\\RaidFrame\\ReadyCheck-NotReady:10:10:0:0|tWWWWWWWWWWWW " .. SoftRes.helpers:getItemLinkFromId(19364) .. "\n|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:10:10:0:0|tTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
             FRAMES.rollFrame.fs:SetJustifyH("Left")
+            FRAMES.rollFrame.fs:SetNonSpaceWrap(true)
 
 FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.tabContainer.page1)            
       FRAMES.announcedItemFrame:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", 31, -7)
@@ -148,6 +170,53 @@ FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.ta
             edgeSize = 10,
             insets   = { left = 2, right = 2, top = 2, bottom = 2 }
       })
+
+-- PAGE 2
+FRAMES.tabContainer.page2 = CreateFrame("Frame", "TabPagesPage2", FRAMES.mainFrame)
+      FRAMES.tabContainer.page2:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
+      FRAMES.tabContainer.page2:SetSize(313, 157)
+      FRAMES.tabContainer.page2:SetBackdrop({
+            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile     = true,
+            tileSize = 32,
+            edgeSize = 10,
+            insets   = { left = 2, right = 2, top = 2, bottom = 2 }
+      })
+      FRAMES.tabContainer.page2:Hide()
+
+FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRAMES.tabContainer.page2, "UIPanelScrollFrameTemplate")
+      FRAMES.listFrameContainer:SetPoint("TOPLEFT", FRAMES.tabContainer.page2, "TOPLEFT", 5, -5)
+
+      
+      local  listScrollbarName = FRAMES.listFrameContainer:GetName()
+      FRAMES.listFrameContainer.scrollBar = _G[listScrollbarName .. "ScrollBar"]
+      FRAMES.listFrameContainer.scrollUpButton = _G[listScrollbarName .. "ScrollBarScrollUpButton"]
+      FRAMES.listFrameContainer.scrollDownButton = _G[listScrollbarName .. "ScrollBarScrollDownButton"]
+
+            FRAMES.listFrameContainer.scrollUpButton:ClearAllPoints()
+            FRAMES.listFrameContainer.scrollUpButton:SetPoint("TOPRIGHT", FRAMES.listFrameContainer, "TOPRIGHT", -10, 0)
+      
+            FRAMES.listFrameContainer.scrollDownButton:ClearAllPoints()
+            FRAMES.listFrameContainer.scrollDownButton:SetPoint("BOTTOMRIGHT", FRAMES.listFrameContainer, "BOTTOMRIGHT", -10, 0)      
+
+            FRAMES.listFrameContainer.scrollBar:ClearAllPoints()
+            FRAMES.listFrameContainer.scrollBar:SetPoint("TOP", FRAMES.listFrameContainer.scrollUpButton, "BOTTOM", 0, 0)
+            FRAMES.listFrameContainer.scrollBar:SetPoint("BOTTOM", FRAMES.listFrameContainer.scrollDownButton, "TOP", 0, 0)
+
+      FRAMES.listFrameContainer.child = CreateFrame("Frame")
+      FRAMES.listFrameContainer:SetScrollChild(FRAMES.listFrameContainer.child)
+
+FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child)
+      FRAMES.listFrame:SetAllPoints(FRAMES.listFrameContainer.child)
+      FRAMES.listFrame:EnableMouse()
+
+      FRAMES.listFrame.fs = FRAMES.listFrame:CreateFontString(nil, "OVERLAY") -- This is the main list FontString. Populate this one.
+            FRAMES.listFrame.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.listFrame.fs:SetFont(FRAMES.listFrame.fs:GetFont(), 10)
+            FRAMES.listFrame.fs:SetPoint("TOPLEFT", FRAMES.listFrame, "TOPLEFT", 0, 0)
+            FRAMES.listFrame.fs:SetText("Testrad-01\nTestrad-02\nTestrad-03\nTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
+            FRAMES.listFrame.fs:SetJustifyH("Left")
 
 -- Buttons
 BUTTONS.tabButtonPage = {}
@@ -237,11 +306,45 @@ BUTTONS.ffaRollButton = CreateFrame("Button", "FFARollButton", FRAMES.tabContain
       BUTTONS.ffaRollButton:SetHeight(20)
       BUTTONS.ffaRollButton:SetText("FFA")
 
--- Announce      
 BUTTONS.announceRollsButton = CreateFrame("Button", "RaidRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.announceRollsButton:SetPoint("LEFT", BUTTONS.softResRollButton, "RIGHT", 3, 0)
       BUTTONS.announceRollsButton:SetWidth(102)
       BUTTONS.announceRollsButton:SetHeight(20)
       BUTTONS.announceRollsButton:SetText("Announce Rolls")
 
+BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.newListButton:SetPoint("TOPLEFT", FRAMES.listFrameContainer, "BOTTOMLEFT", -5, -5)
+      BUTTONS.newListButton:SetWidth(102)
+      BUTTONS.newListButton:SetHeight(20)
+      BUTTONS.newListButton:SetText("New List")
 
+BUTTONS.announceRulesButton = CreateFrame("Button", "AnnounceRulesButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.announceRulesButton:SetPoint("TOPLEFT", BUTTONS.newListButton, "BOTTOMLEFT", 0, -5)
+      BUTTONS.announceRulesButton:SetWidth(102)
+      BUTTONS.announceRulesButton:SetHeight(20)
+      BUTTONS.announceRulesButton:SetText("Announce Rules")
+
+BUTTONS.scanForSoftResButton = CreateFrame("Button", "ScanForSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.scanForSoftResButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
+      BUTTONS.scanForSoftResButton:SetWidth(102)
+      BUTTONS.scanForSoftResButton:SetHeight(20)
+      BUTTONS.scanForSoftResButton:SetText("Scan SoftResses")
+
+BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.addPlayerSoftResButton:SetPoint("LEFT", BUTTONS.scanForSoftResButton, "RIGHT", 4, 0)
+      BUTTONS.addPlayerSoftResButton:SetWidth(102)
+      BUTTONS.addPlayerSoftResButton:SetHeight(20)
+      BUTTONS.addPlayerSoftResButton:SetText("Add SoftRes")
+
+BUTTONS.removePlayerDropDown = CreateFrame("Button", "RemovePlayerDropDown", FRAMES.tabContainer.page2, "UIDropDownMenuTemplate")
+      BUTTONS.removePlayerDropDown:SetPoint("LEFT", BUTTONS.announceRulesButton, "RIGHT", -12, -2)
+            
+      UIDropDownMenu_SetWidth(BUTTONS.removePlayerDropDown, 83)
+      UIDropDownMenu_SetButtonWidth(BUTTONS.removePlayerDropDown, 102)
+      UIDropDownMenu_JustifyText(BUTTONS.removePlayerDropDown, "LEFT")  
+
+BUTTONS.removePlayerButton = CreateFrame("Button", "RemovePlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.removePlayerButton:SetPoint("TOP", BUTTONS.addPlayerSoftResButton, "BOTTOM", 0, -5)
+      BUTTONS.removePlayerButton:SetWidth(102)
+      BUTTONS.removePlayerButton:SetHeight(20)
+      BUTTONS.removePlayerButton:SetText("Remove Player")
