@@ -65,6 +65,9 @@ SoftRes = {}
             SoftRes.ui.__index = SoftRes.ui
             SoftRes.ui.frames = {}
             SoftRes.ui.buttons = {}
+      
+      SoftRes.state = {}
+            SoftRes.state.__index = SoftRes.state
 --------------------------------------------------------------------
 
 -- SoftRes Debugging.

@@ -97,6 +97,11 @@ FRAMES.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFram
             FRAMES.mainFrame.title:SetFontObject("GameFontHighlight")
             FRAMES.mainFrame.title:SetPoint("TOPLEFT", FRAMES.mainFrame.TitleBg, "TOPLEFT", 3, -3)
             FRAMES.mainFrame.title:SetText("Ω SoftRes")
+      
+      FRAMES.mainFrame.titleCenter = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
+            FRAMES.mainFrame.titleCenter:SetFontObject("GameFontHighlight")
+            FRAMES.mainFrame.titleCenter:SetPoint("TOP", FRAMES.mainFrame.TitleBg, "TOP", 3, -3)
+            FRAMES.mainFrame.titleCenter:SetText("")
 
       FRAMES.mainFrame.fs = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
             FRAMES.mainFrame.fs:SetFontObject("GameFontHighlight")

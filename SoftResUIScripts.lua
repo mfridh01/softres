@@ -31,7 +31,7 @@ BUTTONS.tabButtonPage[3]:SetScript("OnClick", function(self)
     if not self.active then
         BUTTONS.tabButtonPage[3]:SetFrameLevel(BUTTONS.tabButtonPage[3]:GetFrameLevel() + 1)
         BUTTONS.tabButtonPage[3].active = true
---        FRAMES.tabContainer.page3:Show()
+        --FRAMES.tabContainer.page3:Show()
         BUTTONS.tabButtonPage[1]:SetFrameLevel(BUTTONS.tabButtonPage[3]:GetFrameLevel() - 1)
         BUTTONS.tabButtonPage[1].active = false
         FRAMES.tabContainer.page1:Hide()
@@ -42,6 +42,9 @@ BUTTONS.tabButtonPage[3]:SetScript("OnClick", function(self)
 end)
 
 function BUTTONS.editPlayerDropDown_Initialize(self)
+    -- If there is no list.
+    if #SoftResList.players <= 1 then return end
+
     for i = 1, #SoftResList.players do
         local info = UIDropDownMenu_CreateInfo()
         info.hasArrow = false
@@ -56,6 +59,8 @@ function BUTTONS.editPlayerDropDown_Initialize(self)
 end
 
 function BUTTONS.editPlayerDropDownInit()
+    if #SoftResList.players <= 1 then return end
+
     UIDropDownMenu_Initialize(BUTTONS.editPlayerDropDown, BUTTONS.editPlayerDropDown_Initialize)
     UIDropDownMenu_SetText(BUTTONS.editPlayerDropDown, SoftResList.players[1].name)
 end
@@ -99,37 +104,64 @@ BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
     -- Popup dialog for editing a player.
     StaticPopupDialogs["SOFTRES_EDIT_PLAYER"] = {
         text = "Editing " .. editPlayer.name .. ".\n\nType 'delete' and press the 'delete' button, to remove the softres.",
-        button1 = "Save",
+        button1 = "DELETE",
         button2 = "Cancel",
-        button3 = "!DELETE!",
         timeout = 0,
         whileDead = true,
         hideOnEscape = true,
         hasEditBox = true,
         editBoxWidth = 250,
         OnShow = function(self)
-            self.button3:Disable()
-            self.editBox:SetText(editPlayerItem)
+            self.button1:Disable()
         end,
         OnAccept = function()
-            -- Generate a new list.
+            -- Delete the player
+            SoftRes.list:removeSoftReserve(editPlayer.name)
 
-            SoftRes.debug:print("Generating a new list.")
+            -- ReOrder the list
+            SoftRes.list:reOrderPlayerList()
+
+            -- ReDraw the list.
+            SoftRes.list:showFullSoftResList()
+            SoftRes.debug:print("Deleted player: " .. editPlayer.name)
         end,
         OnCancel = function (_,reason)
             -- Cancel.
-            SoftRes.debug:print("Canceled the list")
+            SoftRes.debug:print("Canceled deleting player")
         end,
         EditBoxOnTextChanged = function (self, data)
             if self:GetText() == "delete" then
-                self:GetParent().button3:Enable()
+                self:GetParent().button1:Enable()
             end
-
         end,
-
     }
 
     if editPlayer ~= "" or editPlayer ~= "Edit" then
         StaticPopup_Show ("SOFTRES_EDIT_PLAYER")
     end
 end)
+
+
+--[[ function ChatEdit_LinkItem(itemID, itemLink)
+	if ( not itemLink ) then
+		itemLink = select(2, GetItemInfo(itemID));
+	end
+	if ( itemLink ) then
+		if ( ChatEdit_GetActiveWindow() ) then
+			ChatEdit_InsertLink(itemLink);
+		else
+			ChatFrame_OpenChat(itemLink);
+		end
+	end
+end
+
+function ChatEdit_InsertLink(text)
+	if ( not text ) then
+		return false;
+	end
+
+	local activeWindow = ChatEdit_GetActiveWindow();
+	if ( activeWindow ) then
+		activeWindow:Insert(text);
+		return true;
+	end ]]

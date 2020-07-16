@@ -1,5 +1,6 @@
 -- TODO
--- Ny lista -> Med datum, ML, Zone osv osv osv.
+-- Fix the "Edit player" function,
+--      Need to create a new window for this, with an editbox that is able to get linked items.
 
 
 

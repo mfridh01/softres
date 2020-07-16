@@ -4,8 +4,10 @@
 function SoftRes.list:createNewSoftResList()
     SoftResList = {
           date = date("%y-%m-%d %H:%M:%S"),
+          time = time(),
           zone = GetRealZoneText(),
           players = {},
+          removedPlayers = {},
           drops = {},
     }
 end
@@ -13,7 +15,6 @@ end
 -- ListGetters
 function SoftRes.list:getDate() return SoftResList.date end
 function SoftRes.list:getZone() return SoftResList.zone end
---------------------------------------------------------------------
 
 -- Populate the list with players from group/raid.
 --------------------------------------------------
@@ -39,6 +40,7 @@ function SoftRes.list:populateListWithPlayers()
         
         -- Populate the newly created palyer
         SoftResList.players[index].name = inputName
+        SoftResList.players[index].groupPosition = index
 
         print("Inserted: " .. inputName .. ", at index: " .. index)
     end
@@ -76,7 +78,11 @@ end
 
 -- Re order the player list, when moving around players in the raid.
 -- Almost identical with the populate function.
---------------------------------------------------------------------
+-- While the populate function fills the list with player from the group, 
+--   the reOder function simply re-orders the group according to the raidPosition in the raid menu.
+--   All players who are on the list but are not in the raid, will be re-ordered to position 0 but still be on the list.
+--   For various resons, like switching char for some encounter or whatever.
+------------------------------------------------------------------------------------------------------------------------
 function SoftRes.list:reOrderPlayerList()
     -- Almost the same as the add-player.
     local numGroupMembers = GetNumGroupMembers()
@@ -93,8 +99,6 @@ function SoftRes.list:reOrderPlayerList()
     local aboveLeader = false
     
     local temp = {}
-    local listCopy = SoftResList.players
-    SoftResList.players = {}
 
     -- Insert a plyer to the list.
     local function insertPlayer(inputName, index)
@@ -133,11 +137,29 @@ function SoftRes.list:reOrderPlayerList()
 
     -- Re-arrange the real list, accordingly.
     for i = 1, #temp do
-        for j = 1, #listCopy do
-            if listCopy[j].name == temp[i][1] then
-                table.insert(SoftResList.players, listCopy[j])
-                print("Inserted: " .. listCopy[j].name .. ", at pos: " .. i)
+        for j = 1, #SoftResList.players do
+            if SoftResList.players[j].name == temp[i][1] then
+                SoftResList.players[j].groupPosition = i
+                SoftRes.debug:print("ReOrdered: " .. SoftResList.players[j].name .. ", to pos: " .. i)
             end
+        end
+    end
+
+    -- For all the players who are not in the raid, but still on the list (second char or whatever.)
+    -- We have to re-order them to 0 so that they are not elegible for raid roll.
+    for i = 1, #SoftResList.players do
+        local isIn = false
+        for j = 1, #temp do
+            -- if We find the player in the group (still the temp table) then we simply break.
+            if temp[j][1] == SoftResList.players[i].name then
+                isIn = true
+                break
+            end
+        end
+
+        -- If we don't find the player in the raid, we re-order him/her to position 0.
+        if not isIn then
+            SoftResList.players[i].groupPosition = 0
         end
     end
 end
@@ -148,21 +170,25 @@ function SoftRes.list:showFullSoftResList()
     local textFrame = FRAMES.listFrame.fs
     local text = ""
 
+    -- Set the list-date to the center of the title.
+    FRAMES.mainFrame.titleCenter:SetText(SoftResList.date)
+
     for i = 1, #SoftResList.players do
         local name = SoftResList.players[i].name
         local itemId = SoftResList.players[i].softReserve.itemId
+        local groupPosition = SoftResList.players[i].groupPosition
         local showItem = ""
         local icon = ""
 
         if not itemId then 
             icon = SoftResConfig.icons.redCross
-            itemId = ""
+            showItem = ""
         else
             showItem = SoftRes.helpers:getItemLinkFromId(itemId)
             print(tostring(showItem))
         end
 
-        text = text .. icon .. name .. " " .. showItem .. "\n"
+        text = text .. icon .. groupPosition .. "-" .. name .. " " .. showItem .. "\n"
     end
 
     -- populate the frame with the new text.
@@ -187,6 +213,31 @@ function SoftRes.list:getSoftReserves(arg1, arg2)
         if itemId and user == name then
             SoftResList.players[i].softReserve.time = time()
             SoftResList.players[i].softReserve.itemId = itemId
+        end
+    end
+end
+
+-- Remove the selected player.
+-- We move the player to the "removedPlayers" table in the list.
+----------------------------------------------------------------
+function SoftRes.list:removeSoftReserve(playerName)
+    if not playerName then return end
+
+    -- Search the list for the correct player, and remove from the list.
+    for i = 1, #SoftResList.players do
+        if SoftResList.players[i].name == playerName then
+
+            -- Log the time of removal.
+            SoftResList.players[i].removedTime = time()
+
+            -- We insert the removed player to the list.
+            table.insert(SoftResList.removedPlayers, SoftResList.players[i])
+
+            -- Remove the player from players list.
+            table.remove(SoftResList.players, i)
+
+            -- we're done.
+            break
         end
     end
 end

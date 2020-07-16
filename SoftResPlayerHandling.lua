@@ -4,6 +4,8 @@
 function SoftRes.player:new()
     local self = {
           name = nil,
+          groupPosition = nil,
+          removedTime = nil, -- If removed, we log the time.
           softReserve = { -- Softreserved item.
                 time = nil, -- When it was softreserved.
                 itemId = nil, -- Ingame itemId.
