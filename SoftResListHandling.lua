@@ -10,6 +10,9 @@ function SoftRes.list:createNewSoftResList()
           removedPlayers = {},
           drops = {},
     }
+
+    -- If we're scanning. We toggle it off.
+    SoftRes.state:toggleScanForSoftRes(false)
 end
 
 -- ListGetters
@@ -168,7 +171,7 @@ end
 ----------------------------------------------
 function SoftRes.list:showFullSoftResList()
     local textFrame = FRAMES.listFrame.fs
-    local text = ""
+    local text = SoftRes.state.scanForSoftRes.text
 
     -- Set the list-date to the center of the title.
     FRAMES.mainFrame.titleCenter:SetText(SoftResList.date)
@@ -176,17 +179,24 @@ function SoftRes.list:showFullSoftResList()
     for i = 1, #SoftResList.players do
         local name = SoftResList.players[i].name
         local itemId = SoftResList.players[i].softReserve.itemId
-        local groupPosition = SoftResList.players[i].groupPosition
+        local groupPosition = SoftResList.players[i].groupPosition or ""
         local showItem = ""
         local icon = ""
 
+        -- Check to se if the player has linked an item.
         if not itemId then 
-            icon = SoftResConfig.icons.redCross
-            showItem = ""
+            icon = SoftResConfig.icons.questionMark
         else
             showItem = SoftRes.helpers:getItemLinkFromId(itemId)
-            print(tostring(showItem))
         end
+
+        -- We change the icon for the players who are not in the raid. to a cross.
+        if groupPosition < 1 then 
+            icon = SoftResConfig.icons.redCross
+        end
+
+        -- if there still is no item, we set it to ""
+        if not showItem then showItem = "" end
 
         text = text .. icon .. groupPosition .. "-" .. name .. " " .. showItem .. "\n"
     end
@@ -240,4 +250,23 @@ function SoftRes.list:removeSoftReserve(playerName)
             break
         end
     end
+end
+
+-- Add a player to the list.
+----------------------------
+function SoftRes.list:addSoftReservePlayer(playerName)
+    -- If we don't get a name, don't add it.
+    if not playerName then return end
+
+    -- If the player is not in the list already.
+    for i = 1, #SoftResList.players do
+        if SoftResList.players[i].name == playerName then
+            SoftRes.debug:print(playerName .. " is already on the list.")
+            return
+        end
+    end
+
+    -- We add the new player to the last spot on the list.
+    local lastIndex = #SoftResList.players + 1
+    table.insert(SoftResList.players, lastIndex, SoftRes.player:new(playerName, 0))
 end

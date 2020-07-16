@@ -64,6 +64,9 @@ function SoftRes.ui:createDefaultSoftResConfigList()
             },
             icons = {
                   redCross = "|TInterface\\RaidFrame\\ReadyCheck-NotReady:10:10:0:0|t",
+                  questionMark = "|TInterface\\RaidFrame\\ReadyCheck-Waiting:10:10:0:0|t",
+                  readyCheck = "|TInterface\\RaidFrame\\ReadyCheck-Ready:10:10:0:0|t",
+                  noLoot = "|TInterface\\COMMON\\icon-noloot:10:10:0:0|t",
             },
       }
 end
@@ -102,6 +105,11 @@ FRAMES.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFram
             FRAMES.mainFrame.titleCenter:SetFontObject("GameFontHighlight")
             FRAMES.mainFrame.titleCenter:SetPoint("TOP", FRAMES.mainFrame.TitleBg, "TOP", 3, -3)
             FRAMES.mainFrame.titleCenter:SetText("")
+      
+      FRAMES.mainFrame.titleRight = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
+            FRAMES.mainFrame.titleRight:SetFontObject("GameFontHighlight")
+            FRAMES.mainFrame.titleRight:SetPoint("TOPLEFT", FRAMES.mainFrame.TitleBg, "TOPRIGHT", -40, -3)
+            FRAMES.mainFrame.titleRight:SetText("")
 
       FRAMES.mainFrame.fs = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
             FRAMES.mainFrame.fs:SetFontObject("GameFontHighlight")
@@ -162,7 +170,7 @@ FRAMES.rollFrame = CreateFrame("Frame", nil, FRAMES.rollFrameContainer.child)
             FRAMES.rollFrame.fs:SetFontObject("GameFontHighlightSmall")
             FRAMES.rollFrame.fs:SetFont(FRAMES.rollFrame.fs:GetFont(), 10)
             FRAMES.rollFrame.fs:SetPoint("TOPLEFT", FRAMES.rollFrame, "TOPLEFT", 0, 0)
-            FRAMES.rollFrame.fs:SetText("|TInterface\\FriendsFrame\\InformationIcon:10:10:0:0|tTestrad-01\n|TInterface\\RaidFrame\\ReadyCheck-Ready:10:10:0:0|tTestrad-02\n|TInterface\\RaidFrame\\ReadyCheck-NotReady:10:10:0:0|tWWWWWWWWWWWW " .. SoftRes.helpers:getItemLinkFromId(19364) .. "\n|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:10:10:0:0|tTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
+            FRAMES.rollFrame.fs:SetText("")
             FRAMES.rollFrame.fs:SetJustifyH("Left")
             FRAMES.rollFrame.fs:SetNonSpaceWrap(true)
 
@@ -255,14 +263,14 @@ BUTTONS.tabButtonPage[3] = CreateFrame("Button", "TabButtonPage3", FRAMES.mainFr
             PanelTemplates_TabResize(BUTTONS.tabButtonPage[i], 0)
       end
 
-BUTTONS.announcedItemButton = CreateFrame("Button", "lootItemIcon", FRAMES.tabContainer.page1)
+BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAMES.tabContainer.page1)
       BUTTONS.announcedItemButton:SetSize(32, 32)
       BUTTONS.announcedItemButton:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", -3, -8)
 
       BUTTONS.announcedItemButton:EnableMouse(true)
       BUTTONS.announcedItemButton:RegisterForClicks("RightButtonUp", "LeftButtonUp")
-      BUTTONS.announcedItemButton:SetScript("OnDragStart", lootItemIcon.StartMoving)
-      BUTTONS.announcedItemButton:SetScript("OnDragStop", lootItemIcon.StopMovingOrSizing)
+      BUTTONS.announcedItemButton:SetScript("OnDragStart", BUTTONS.announcedItemButton.StartMoving)
+      BUTTONS.announcedItemButton:SetScript("OnDragStop", BUTTONS.announcedItemButton.StopMovingOrSizing)
       BUTTONS.announcedItemButton:SetBackdrop({
             bgFile   = "interface\\buttons\\ui-emptyslot-white",
             edgeFile = nil,
@@ -312,7 +320,7 @@ BUTTONS.announceRollsButton = CreateFrame("Button", "RaidRollButton", FRAMES.tab
       BUTTONS.announceRollsButton:SetPoint("LEFT", BUTTONS.softResRollButton, "RIGHT", 3, 0)
       BUTTONS.announceRollsButton:SetWidth(102)
       BUTTONS.announceRollsButton:SetHeight(20)
-      BUTTONS.announceRollsButton:SetText("Announce Rolls")
+      BUTTONS.announceRollsButton:SetText("Announce Result")
 
 BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.newListButton:SetPoint("TOPLEFT", FRAMES.listFrameContainer, "BOTTOMLEFT", -5, -5)
@@ -330,7 +338,9 @@ BUTTONS.scanForSoftResButton = CreateFrame("Button", "ScanForSoftResButton", FRA
       BUTTONS.scanForSoftResButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
       BUTTONS.scanForSoftResButton:SetWidth(102)
       BUTTONS.scanForSoftResButton:SetHeight(20)
-      BUTTONS.scanForSoftResButton:SetText("Scan SoftResses")
+      BUTTONS.scanForSoftResButton.normalText = "Scan SoftRes"
+      BUTTONS.scanForSoftResButton.activeText = "Scanning"
+      BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
 
 BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.addPlayerSoftResButton:SetPoint("LEFT", BUTTONS.scanForSoftResButton, "RIGHT", 4, 0)

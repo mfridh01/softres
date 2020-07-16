@@ -55,3 +55,9 @@ function SoftRes.helpers:getItemRarityFromId(itemId)
 
     return itemRarity
 end
+
+-- Takes a string, ex: Playername, and formats it to first char to upper, rest lower.
+function SoftRes.helpers:formatPlayerName(string)
+      local lower = string.lower(string)
+      return (lower:gsub("^%l", string.upper))
+  end

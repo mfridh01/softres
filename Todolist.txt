@@ -5,3 +5,7 @@
 
 
 -- Anchor to loot window on open?
+
+--DONE [Snits] Add functionality to scan the list for soft-reserves.
+--[Snits] Add dropscanner.
+--[Snits] Add Prep item functionality.

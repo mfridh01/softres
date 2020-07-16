@@ -15,6 +15,11 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             if (not SoftResList) or type(SoftResList) ~= "table" then  --  I know it doesn't exist. so set it's default
                   SoftRes.list:createNewSoftResList()
             else
+                  -- show the list
+                  SoftRes.list:showFullSoftResList()
+
+                  -- set the dropdown menu
+                  BUTTONS.editPlayerDropDownInit()
                   SoftRes.debug:print("SoftResList, loaded. Do stuff!!")
             end
 

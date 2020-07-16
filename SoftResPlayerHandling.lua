@@ -1,26 +1,27 @@
 -- Playerhandling.
 ------------------
 -- (create new player), When we first create a player, fill in the layout with blanks/defaults.
-function SoftRes.player:new()
-    local self = {
-          name = nil,
-          groupPosition = nil,
-          removedTime = nil, -- If removed, we log the time.
-          softReserve = { -- Softreserved item.
-                time = nil, -- When it was softreserved.
-                itemId = nil, -- Ingame itemId.
-                received = false, -- If it has been received or not. Always defaults to false.
-          },
-          receivedItems = { -- Log every received item.
-                time = nil, -- Time, when you received the item.
-                rollType = nil, -- MS, OS, FFA, SoftRes, RaidRoll.
-                itemId = nil, -- ingame itemId.
-                roll = nil, -- Winning roll.
-          },
-    }
-    setmetatable(self, SoftRes.player)
+function SoftRes.player:new(playerName, groupPosition)
+      -- If we get a name, use it.
+      local self = {
+            name = playerName or nil,
+            groupPosition = groupPosition or nil,
+            removedTime = nil, -- If removed, we log the time.
+            softReserve = { -- Softreserved item.
+                  time = nil, -- When it was softreserved.
+                  itemId = nil, -- Ingame itemId.
+                  received = false, -- If it has been received or not. Always defaults to false.
+            },
+            receivedItems = { -- Log every received item.
+                  time = nil, -- Time, when you received the item.
+                  rollType = nil, -- MS, OS, FFA, SoftRes, RaidRoll.
+                  itemId = nil, -- ingame itemId.
+                  roll = nil, -- Winning roll.
+            },
+      }
+      setmetatable(self, SoftRes.player)
 
-    return self
+      return self
 end
 
 -- PlayerGetters
@@ -35,9 +36,4 @@ function SoftRes.player:getPlayerFromPlayerName(name)
                   return SoftResList.players[i]
             end
       end
-end
-
--- PlayerSetters
-function SoftRes.player:setSoftReserveItemId()
-
 end

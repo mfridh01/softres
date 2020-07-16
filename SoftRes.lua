@@ -68,6 +68,10 @@ SoftRes = {}
       
       SoftRes.state = {}
             SoftRes.state.__index = SoftRes.state
+            SoftRes.state.scanForSoftRes = {
+                  text = "",
+                  state = false,
+            }
 --------------------------------------------------------------------
 
 -- SoftRes Debugging.
@@ -77,3 +81,27 @@ function SoftRes.debug:print(text)
       if SoftRes.debug.enabled then print(text) end
 end
 --------------------------------------------------------------------
+
+-- Switch for Chat scanning of SoftReserves.
+-- Takes a state-flag or not, then toggles the state of SoftRes scanning.
+function SoftRes.state:toggleScanForSoftRes(flag)
+      -- If we want to force a state.
+      -- We toggle it to the opposite of what we want, and then the toggle function will trigger back.
+      if flag == true then
+            SoftRes.state.scanForSoftRes.state = false
+      elseif flag == false then
+            SoftRes.state.scanForSoftRes.state = true
+      end
+
+      -- a simple toggle function
+      if SoftRes.state.scanForSoftRes.state then
+            SoftRes.state.scanForSoftRes.state = false
+            SoftRes.state.scanForSoftRes.text = ""
+            BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
+            FRAMES.mainFrame.titleRight:SetText("")
+      else
+            SoftRes.state.scanForSoftRes.state = true
+            SoftRes.state.scanForSoftRes.text = "Scanning chat for SoftReserves.\n\n"
+            BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.activeText)
+      end
+end

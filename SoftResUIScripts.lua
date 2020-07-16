@@ -1,3 +1,33 @@
+-- OnUpdate for mainframe
+FRAMES.mainFrame.updateInterval = 1.0; -- How often the OnUpdate code will run (in seconds)
+FRAMES.mainFrame.timeSinceLastUpdate = 0
+FRAMES.mainFrame.scanDots = 1
+
+FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
+  self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed;
+  
+  if (self.timeSinceLastUpdate > FRAMES.mainFrame.updateInterval) then
+
+    -- If we're scanning for softresses.
+    -- Show an indicator on the top right, so it's shown.
+    if SoftRes.state.scanForSoftRes.state then
+        self.scanDots = self.scanDots + 1
+        if self.scanDots > 3 then self.scanDots = 1 end
+
+        local scanText = ""
+        for i = 1, self.scanDots do
+            scanText = scanText .. "."
+        end
+        
+        FRAMES.mainFrame.titleRight:SetText("|cFF00FF00Scan" .. scanText .. "|r")
+    else
+        FRAMES.mainFrame.titleRight:SetText("")
+    end
+
+    self.timeSinceLastUpdate = 0;
+  end
+end)
+
 -- TabButtons
 BUTTONS.tabButtonPage[1]:SetScript("OnClick", function(self)
     if not self.active then
@@ -42,7 +72,7 @@ BUTTONS.tabButtonPage[3]:SetScript("OnClick", function(self)
 end)
 
 function BUTTONS.editPlayerDropDown_Initialize(self)
-    -- If there is no list.
+    -- If there are no players, don't initialize the list.
     if #SoftResList.players <= 1 then return end
 
     for i = 1, #SoftResList.players do
@@ -94,9 +124,61 @@ BUTTONS.newListButton:SetScript("OnClick", function(self)
     StaticPopup_Show ("SOFTRES_NEW_LIST")
 end)
 
+-- Add player
+-- Edit player
+BUTTONS.addPlayerSoftResButton:SetScript("OnClick", function(self)
+    -- Check to see that there is a list.
+    if not SoftResList then return end
+
+    -- Popup dialog for adding a player.
+    StaticPopupDialogs["SOFTRES_ADD_PLAYER"] = {
+        text = "Addinga new player.\n\nEnter the player name.",
+        name = "",
+        button1 = "Add",
+        button2 = "Cancel",
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        hasEditBox = true,
+        editBoxWidth = 250,
+        OnShow = function(self)
+            self.button1:Disable()
+        end,
+        OnAccept = function(self)
+            -- Format the playername. First char upper, rest lower.
+            local playerName = SoftRes.helpers:formatPlayerName(self.name)
+
+            -- Add the player
+            SoftRes.list:addSoftReservePlayer(playerName)
+
+            -- Refresh the list.
+            SoftRes.list:showFullSoftResList()
+            SoftRes.debug:print("Added player: " .. playerName)
+        end,
+        OnCancel = function (_,reason)
+            -- Cancel.
+            SoftRes.debug:print("Canceled adding player player")
+        end,
+        EditBoxOnTextChanged = function (self, data)
+            if string.len(self:GetText()) >= 3 then
+                self:GetParent().name = self:GetText()
+                self:GetParent().button1:Enable()
+            else
+                self:GetParent().button1:Disable()
+            end
+        end,
+    }
+
+    StaticPopup_Show ("SOFTRES_ADD_PLAYER")
+end)
+
 -- Edit player
 BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
     local editPlayer = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
+
+    -- If there is no player to edit. Then don't.
+    if not editPlayer then return end
+
     local editPlayerItem = SoftRes.helpers:getItemLinkFromId(editPlayer.softReserve.itemId)
     if not editPlayerItem then editPlayerItem = "" end
 
@@ -123,6 +205,9 @@ BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
 
             -- ReDraw the list.
             SoftRes.list:showFullSoftResList()
+
+            -- Re-Initiate the dropdown list.
+            BUTTONS.editPlayerDropDownInit()
             SoftRes.debug:print("Deleted player: " .. editPlayer.name)
         end,
         OnCancel = function (_,reason)
@@ -141,27 +226,14 @@ BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
     end
 end)
 
+-- Scan chat for softreserves.
+BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
+    -- If there are no players, don't start the scanner
+    if #SoftResList.players <= 1 then return end
+    
+    -- call the toggle function without a flag, to really toggle it.
+    SoftRes.state:toggleScanForSoftRes()
 
---[[ function ChatEdit_LinkItem(itemID, itemLink)
-	if ( not itemLink ) then
-		itemLink = select(2, GetItemInfo(itemID));
-	end
-	if ( itemLink ) then
-		if ( ChatEdit_GetActiveWindow() ) then
-			ChatEdit_InsertLink(itemLink);
-		else
-			ChatFrame_OpenChat(itemLink);
-		end
-	end
-end
-
-function ChatEdit_InsertLink(text)
-	if ( not text ) then
-		return false;
-	end
-
-	local activeWindow = ChatEdit_GetActiveWindow();
-	if ( activeWindow ) then
-		activeWindow:Insert(text);
-		return true;
-	end ]]
+    -- redraw the list.
+    SoftRes.list:showFullSoftResList()
+end)
