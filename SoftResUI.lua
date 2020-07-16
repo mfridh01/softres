@@ -187,6 +187,11 @@ FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.ta
             insets   = { left = 2, right = 2, top = 2, bottom = 2 }
       })
 
+      FRAMES.announcedItemFrame.fs = FRAMES.announcedItemFrame:CreateFontString(nil, "OVERLAY")
+            FRAMES.announcedItemFrame.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.announcedItemFrame.fs:SetPoint("CENTER", FRAMES.announcedItemFrame, "CENTER", 0, 0)
+            FRAMES.announcedItemFrame.fs:SetText("")
+
 -- PAGE 2
 FRAMES.tabContainer.page2 = CreateFrame("Frame", "TabPagesPage2", FRAMES.mainFrame)
       FRAMES.tabContainer.page2:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
@@ -279,6 +284,9 @@ BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAME
             edgeSize = 0,
             insets   = { left = -8, right = -8, top = -8, bottom = -8 }
       })
+      BUTTONS.announcedItemButton.texture = BUTTONS.announcedItemButton:CreateTexture("announcedItemButtonTexture", "OVERLAY")
+      BUTTONS.announcedItemButton.texture:SetAllPoints(true)
+      BUTTONS.announcedItemButton.defaultTexture = BUTTONS.announcedItemButton.texture:GetTexture()
 
 BUTTONS.prepareItemButton = CreateFrame("Button", "PrepareItemButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.prepareItemButton:SetPoint("TOPLEFT", BUTTONS.announcedItemButton, "BOTTOMLEFT", -1, -2)

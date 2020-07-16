@@ -112,3 +112,26 @@ function SoftRes.state:toggleScanForSoftRes(flag)
             BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.activeText)
       end
 end
+
+function SoftRes.state.toggleAnnouncedItem(flag, itemId)
+      -- same as the above, but for announcedItem
+      if flag == true then
+            SoftRes.state.announcedItem.state = false
+      elseif flag == false then
+            SoftRes.state.announcedItem.state = true
+      end
+
+      if SoftRes.state.announcedItem.state then
+            SoftRes.state.announcedItem.state = false
+      else
+            SoftRes.state.announcedItem.state = true
+      end
+
+      if itemId then
+            SoftRes.state.announcedItem.itemId = itemId
+            FRAMES.announcedItemFrame.fs:SetText(SoftRes.helpers:getItemLinkFromId(itemId))
+      else
+            SoftRes.state.announcedItem.itemId = nil
+            FRAMES.announcedItemFrame.fs:SetText("")
+      end
+end

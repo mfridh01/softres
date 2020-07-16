@@ -258,3 +258,23 @@ BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
     -- redraw the list.
     SoftRes.list:showFullSoftResList()
 end)
+
+-- Announced item, icon position.
+BUTTONS.announcedItemButton:SetScript("OnReceiveDrag", function()
+    if not SoftRes.state.announcedItem.state and GetCursorInfo() then
+        SoftRes.helpers:getItemInfoFromDragged()
+    end
+end)
+
+BUTTONS.announcedItemButton:SetScript("OnClick", function(_, button)
+
+    if button == "RightButton" then
+        SoftRes.debug:print("RightClicked")
+        SoftRes.state.toggleAnnouncedItem(false)
+        BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
+    elseif not SoftRes.state.announcedItem.state and button == "LeftButton" and GetCursorInfo() then
+        SoftRes.helpers:getItemInfoFromDragged()
+        ClearCursor();
+    end
+
+end)

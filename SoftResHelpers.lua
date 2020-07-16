@@ -60,4 +60,30 @@ end
 function SoftRes.helpers:formatPlayerName(string)
       local lower = string.lower(string)
       return (lower:gsub("^%l", string.upper))
-  end
+end
+
+-- Gets called when an item gets dropped on the button icon.
+function SoftRes.helpers:getItemInfoFromDragged()
+      local type, itemId, itemName  = GetCursorInfo()
+
+      -- Check to see that the type is item.
+      if type == "item" then
+
+            -- Remove the dragged item from the cursor.
+            ClearCursor();
+
+            -- Get the icon.
+            local itemIcon = GetItemIcon(itemId)
+
+            -- Change the texture, to the button.
+            BUTTONS.announcedItemButton.texture:SetTexture(itemIcon)
+
+            -- Set the text to the itemLink.
+
+
+            -- Check so that we haven't announced an item before we drag the new one out.
+            if not SoftRes.state.announcedItem.state then
+                  SoftRes.state.toggleAnnouncedItem(true, itemId)
+            end
+      end
+end
