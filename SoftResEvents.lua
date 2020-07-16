@@ -3,6 +3,11 @@
 --------------------------------------------------------------------
 
 FRAMES.mainFrame:RegisterEvent("PLAYER_LOGIN")
+FRAMES.mainFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
+FRAMES.mainFrame:RegisterEvent("CHAT_MSG_PARTY")
+FRAMES.mainFrame:RegisterEvent("CHAT_MSG_PARTY_LEADER")
+FRAMES.mainFrame:RegisterEvent("CHAT_MSG_RAID")
+FRAMES.mainFrame:RegisterEvent("CHAT_MSG_RAID_LEADER")
 
 FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...) 
 
@@ -21,6 +26,18 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             end
 
             SoftRes.ui:useSavedConfigValues() -- Use the variables.
+      
+      elseif event == "GROUP_ROSTER_UPDATE" then
+            SoftRes.list:reOrderPlayerList()
+            SoftRes.list:showFullSoftResList()
+            print("Re-Ordering")
+      
+      -- listen to softReserves in raid or party
+      elseif event == "CHAT_MSG_PARTY" or event == "CHAT_MSG_PARTY_LEADER" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
+            arg1, arg2 = ...
+            SoftRes.list:getSoftReserves(arg1, arg2)
+            SoftRes.list:showFullSoftResList()
+            print("Listened to raid")
       end
 
 end)

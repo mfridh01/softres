@@ -3,7 +3,7 @@
 -- (create new player), When we first create a player, fill in the layout with blanks/defaults.
 function SoftRes.player:new()
     local self = {
-          groupPosition = nil, -- The position in group/raid
+          name = nil,
           softReserve = { -- Softreserved item.
                 time = nil, -- When it was softreserved.
                 itemId = nil, -- Ingame itemId.
@@ -25,9 +25,17 @@ end
 function SoftRes.player:getSoftReserveTime() return self.softReserve.time end
 function SoftRes.player:getSoftReserveItemId() return self.softReserve.itemId end
 function SoftRes.player:getSoftReserveReceived() return self.softReserve.received end
+function SoftRes.player:getPlayerFromPlayerName(name) 
+      if not name then return end
+
+      for i = 1, #SoftResList.players do
+            if SoftResList.players[i].name == name then
+                  return SoftResList.players[i]
+            end
+      end
+end
 
 -- PlayerSetters
 function SoftRes.player:setSoftReserveItemId()
 
 end
---------------------------------------------------------------------

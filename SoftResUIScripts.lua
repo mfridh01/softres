@@ -1,9 +1,3 @@
-BUTTONS.testButton:SetScript("OnClick", function()
-    print("Clicked!")
-    UI:createDefaultSoftResConfigList()
-    UI:useSavedConfigValues()
-end)
-
 -- TabButtons
 BUTTONS.tabButtonPage[1]:SetScript("OnClick", function(self)
     if not self.active then
@@ -47,25 +41,95 @@ BUTTONS.tabButtonPage[3]:SetScript("OnClick", function(self)
     end
 end)
 
--- Remove player dropdown
--- DropDownData.. dummy data. USE Player for later.
-local removePlayerData = {
-    "Player1",
-    "Player2",
-}
-
-function BUTTONS.removePlayerDropDown_Initialize(self)
-    for k, v in ipairs(removePlayerData) do
-          local info = UIDropDownMenu_CreateInfo()
-          info.hasArrow = false
-          info.notCheckable = true
-          info.text = v
-          info.value = v
-          info.func = function() UIDropDownMenu_SetText(self, v) end
-          UIDropDownMenu_AddButton(info)
+function BUTTONS.editPlayerDropDown_Initialize(self)
+    for i = 1, #SoftResList.players do
+        local info = UIDropDownMenu_CreateInfo()
+        info.hasArrow = false
+        info.notCheckable = true
+        info.text = SoftResList.players[i].name
+        info.value = SoftResList.players[i].name
+        info.func = function()
+            UIDropDownMenu_SetText(self, SoftResList.players[i].name)
+        end
+        UIDropDownMenu_AddButton(info)
     end
 end
 
-UIDropDownMenu_Initialize(BUTTONS.removePlayerDropDown, BUTTONS.removePlayerDropDown_Initialize);
-UIDropDownMenu_SetText(BUTTONS.removePlayerDropDown, "Player")
-ToggleDropDownMenu(1, nil, BUTTONS.removePlayerDropDown, self, 0, 0);
+function BUTTONS.editPlayerDropDownInit()
+    UIDropDownMenu_Initialize(BUTTONS.editPlayerDropDown, BUTTONS.editPlayerDropDown_Initialize)
+    UIDropDownMenu_SetText(BUTTONS.editPlayerDropDown, SoftResList.players[1].name)
+end
+
+-- New List
+BUTTONS.newListButton:SetScript("OnClick", function(self)
+    -- Popup dialog for creating a new list.
+    StaticPopupDialogs["SOFTRES_NEW_LIST"] = {
+        text = "Do you really want to generate a new list?\nThis will remove all the entries.",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            -- Generate a new list.
+            SoftRes.list:createNewSoftResList()
+            SoftRes.list:populateListWithPlayers()
+            SoftRes.list:showFullSoftResList()
+
+            -- Initiate the drop-down list.
+            BUTTONS.editPlayerDropDownInit()
+            SoftRes.debug:print("Generating a new list.")
+        end,
+        OnCancel = function (_,reason)
+            -- Cancel.
+            SoftRes.debug:print("Generating a new list.")
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopup_Show ("SOFTRES_NEW_LIST")
+end)
+
+-- Edit player
+BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
+    local editPlayer = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
+    local editPlayerItem = SoftRes.helpers:getItemLinkFromId(editPlayer.softReserve.itemId)
+    if not editPlayerItem then editPlayerItem = "" end
+
+
+    -- Popup dialog for editing a player.
+    StaticPopupDialogs["SOFTRES_EDIT_PLAYER"] = {
+        text = "Editing " .. editPlayer.name .. ".\n\nType 'delete' and press the 'delete' button, to remove the softres.",
+        button1 = "Save",
+        button2 = "Cancel",
+        button3 = "!DELETE!",
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+        hasEditBox = true,
+        editBoxWidth = 250,
+        OnShow = function(self)
+            self.button3:Disable()
+            self.editBox:SetText(editPlayerItem)
+        end,
+        OnAccept = function()
+            -- Generate a new list.
+
+            SoftRes.debug:print("Generating a new list.")
+        end,
+        OnCancel = function (_,reason)
+            -- Cancel.
+            SoftRes.debug:print("Canceled the list")
+        end,
+        EditBoxOnTextChanged = function (self, data)
+            if self:GetText() == "delete" then
+                self:GetParent().button3:Enable()
+            end
+
+        end,
+
+    }
+
+    if editPlayer ~= "" or editPlayer ~= "Edit" then
+        StaticPopup_Show ("SOFTRES_EDIT_PLAYER")
+    end
+end)

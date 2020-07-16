@@ -61,7 +61,10 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                               },
                         },
                   }
-            }
+            },
+            icons = {
+                  redCross = "|TInterface\\RaidFrame\\ReadyCheck-NotReady:10:10:0:0|t",
+            },
       }
 end
 
@@ -221,12 +224,6 @@ FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child)
 -- Buttons
 BUTTONS.tabButtonPage = {}
 
-BUTTONS.testButton = CreateFrame("Button", "testButton", FRAMES.mainFrame, "UIPanelButtonGrayTemplate")
-      BUTTONS.testButton:SetPoint("TOP", FRAMES.mainFrame, "TOP", 0, 0)
-      BUTTONS.testButton:SetWidth(100)
-      BUTTONS.testButton:SetHeight(20)
-      BUTTONS.testButton:SetText("|TInterface\\FriendsFrame\\InformationIcon:10:10:0:0|t")
-
 BUTTONS.tabButtonPage[1] = CreateFrame("Button", "TabButtonPage1", FRAMES.mainFrame, "TabButtonTemplate")
       BUTTONS.tabButtonPage[1].active = true
       BUTTONS.tabButtonPage[1]:SetFrameLevel(3)
@@ -336,15 +333,15 @@ BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton",
       BUTTONS.addPlayerSoftResButton:SetHeight(20)
       BUTTONS.addPlayerSoftResButton:SetText("Add SoftRes")
 
-BUTTONS.removePlayerDropDown = CreateFrame("Button", "RemovePlayerDropDown", FRAMES.tabContainer.page2, "UIDropDownMenuTemplate")
-      BUTTONS.removePlayerDropDown:SetPoint("LEFT", BUTTONS.announceRulesButton, "RIGHT", -12, -2)
+BUTTONS.editPlayerDropDown = CreateFrame("Button", "EditPlayerDropDown", FRAMES.tabContainer.page2, "UIDropDownMenuTemplate")
+      BUTTONS.editPlayerDropDown:SetPoint("LEFT", BUTTONS.announceRulesButton, "RIGHT", -12, -2)
             
-      UIDropDownMenu_SetWidth(BUTTONS.removePlayerDropDown, 83)
-      UIDropDownMenu_SetButtonWidth(BUTTONS.removePlayerDropDown, 102)
-      UIDropDownMenu_JustifyText(BUTTONS.removePlayerDropDown, "LEFT")  
+      UIDropDownMenu_SetWidth(BUTTONS.editPlayerDropDown, 83)
+      UIDropDownMenu_SetButtonWidth(BUTTONS.editPlayerDropDown, 102)
+      UIDropDownMenu_JustifyText(BUTTONS.editPlayerDropDown, "LEFT")  
 
-BUTTONS.removePlayerButton = CreateFrame("Button", "RemovePlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.removePlayerButton:SetPoint("TOP", BUTTONS.addPlayerSoftResButton, "BOTTOM", 0, -5)
-      BUTTONS.removePlayerButton:SetWidth(102)
-      BUTTONS.removePlayerButton:SetHeight(20)
-      BUTTONS.removePlayerButton:SetText("Remove Player")
+BUTTONS.editPlayerButton = CreateFrame("Button", "EditPlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.editPlayerButton:SetPoint("TOP", BUTTONS.addPlayerSoftResButton, "BOTTOM", 0, -5)
+      BUTTONS.editPlayerButton:SetWidth(102)
+      BUTTONS.editPlayerButton:SetHeight(20)
+      BUTTONS.editPlayerButton:SetText("Edit Player")
