@@ -39,10 +39,12 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
       
       -- listen to softReserves in raid or party
       elseif event == "CHAT_MSG_PARTY" or event == "CHAT_MSG_PARTY_LEADER" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
-            arg1, arg2 = ...
-            SoftRes.list:getSoftReserves(arg1, arg2)
-            SoftRes.list:showFullSoftResList()
-            print("Listened to raid")
+            if SoftRes.state.scanForSoftRes.state then
+                  arg1, arg2 = ...
+                  SoftRes.list:getSoftReserves(arg1, arg2)
+                  SoftRes.list:showFullSoftResList()
+                  print("Listened to raid")
+            end
       end
 
 end)

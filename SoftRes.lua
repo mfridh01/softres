@@ -72,6 +72,13 @@ SoftRes = {}
                   text = "",
                   state = false,
             }
+            SoftRes.state.announcedItem = {
+                  itemId = nil,
+                  state = false,
+            }
+      
+      SoftRes.items = {}
+            SoftRes.items.__index = SoftRes.items
 --------------------------------------------------------------------
 
 -- SoftRes Debugging.

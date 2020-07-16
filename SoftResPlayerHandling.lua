@@ -4,8 +4,8 @@
 function SoftRes.player:new(playerName, groupPosition)
       -- If we get a name, use it.
       local self = {
-            name = playerName or nil,
-            groupPosition = groupPosition or nil,
+            name = playerName,
+            groupPosition = groupPosition,
             removedTime = nil, -- If removed, we log the time.
             softReserve = { -- Softreserved item.
                   time = nil, -- When it was softreserved.
@@ -25,6 +25,7 @@ function SoftRes.player:new(playerName, groupPosition)
 end
 
 -- PlayerGetters
+function SoftRes.player:getName() return self.name end
 function SoftRes.player:getSoftReserveTime() return self.softReserve.time end
 function SoftRes.player:getSoftReserveItemId() return self.softReserve.itemId end
 function SoftRes.player:getSoftReserveReceived() return self.softReserve.received end

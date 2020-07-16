@@ -39,7 +39,7 @@ function SoftRes.list:populateListWithPlayers()
     -- Insert a plyer to the list.
     local function insertPlayer(inputName, index)
         -- Create a new player in the list, at the correct index position.
-        table.insert(SoftResList.players, index, SoftRes.player:new())
+        SoftResList.players[index] = SoftRes.player:new()
         
         -- Populate the newly created palyer
         SoftResList.players[index].name = inputName
@@ -48,6 +48,9 @@ function SoftRes.list:populateListWithPlayers()
         print("Inserted: " .. inputName .. ", at index: " .. index)
     end
 
+
+    -- Clear the list before we create a new one.
+    SoftResList.players = {}
 
     -- Start with the second member of the Group
     -- Populate the list of players.
@@ -106,7 +109,8 @@ function SoftRes.list:reOrderPlayerList()
     -- Insert a plyer to the list.
     local function insertPlayer(inputName, index)
         -- Create a new player in the list at the index-pos.
-        table.insert(temp, index, {inputName, index})
+        --table.insert(temp, index, {inputName, index})
+        temp[index] = {inputName, index}
     end
 
     -- Start with the second member of the Group
@@ -179,7 +183,7 @@ function SoftRes.list:showFullSoftResList()
     for i = 1, #SoftResList.players do
         local name = SoftResList.players[i].name
         local itemId = SoftResList.players[i].softReserve.itemId
-        local groupPosition = SoftResList.players[i].groupPosition or ""
+        local groupPosition = SoftResList.players[i].groupPosition
         local showItem = ""
         local icon = ""
 
@@ -193,8 +197,13 @@ function SoftRes.list:showFullSoftResList()
         -- We change the icon for the players who are not in the raid. to a cross.
         if groupPosition < 1 then 
             icon = SoftResConfig.icons.redCross
+        elseif groupPosition > 0 and itemId and SoftRes.state.scanForSoftRes.state then
+            -- Change the icon to OK if there is a softReserve AND we're scanning.
+            icon = SoftResConfig.icons.readyCheck
         end
 
+        
+        
         -- if there still is no item, we set it to ""
         if not showItem then showItem = "" end
 

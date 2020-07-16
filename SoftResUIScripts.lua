@@ -24,6 +24,9 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
         FRAMES.mainFrame.titleRight:SetText("")
     end
 
+    -- Update the softRes list.
+    SoftRes.list:showFullSoftResList()
+
     self.timeSinceLastUpdate = 0;
   end
 end)
@@ -76,6 +79,8 @@ function BUTTONS.editPlayerDropDown_Initialize(self)
     if #SoftResList.players <= 1 then return end
 
     for i = 1, #SoftResList.players do
+        if not SoftResList.players[i] then break end
+
         local info = UIDropDownMenu_CreateInfo()
         info.hasArrow = false
         info.notCheckable = true
@@ -99,9 +104,13 @@ end
 BUTTONS.newListButton:SetScript("OnClick", function(self)
     -- Popup dialog for creating a new list.
     StaticPopupDialogs["SOFTRES_NEW_LIST"] = {
-        text = "Do you really want to generate a new list?\nThis will remove all the entries.",
+        text = "Do you really want to generate a new list?\nThis will remove all the entries.\n\nWrite 'yes' in the box to continue.",
         button1 = "Yes",
         button2 = "No",
+        hasEditBox = true,
+        OnShow = function(self)
+            self.button1:Disable()
+        end,
         OnAccept = function()
             -- Generate a new list.
             SoftRes.list:createNewSoftResList()
@@ -115,6 +124,13 @@ BUTTONS.newListButton:SetScript("OnClick", function(self)
         OnCancel = function (_,reason)
             -- Cancel.
             SoftRes.debug:print("Generating a new list.")
+        end,
+        EditBoxOnTextChanged = function (self, data)
+            if self:GetText() == "yes" then
+                self:GetParent().button1:Enable()
+            else
+                self:GetParent().button1:Disable()
+            end
         end,
         timeout = 0,
         whileDead = true,
@@ -150,6 +166,9 @@ BUTTONS.addPlayerSoftResButton:SetScript("OnClick", function(self)
 
             -- Add the player
             SoftRes.list:addSoftReservePlayer(playerName)
+
+            -- ReOrder the list.
+            SoftRes.list:reOrderPlayerList()
 
             -- Refresh the list.
             SoftRes.list:showFullSoftResList()
@@ -217,6 +236,8 @@ BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
         EditBoxOnTextChanged = function (self, data)
             if self:GetText() == "delete" then
                 self:GetParent().button1:Enable()
+            else
+                self:GetParent().button1:Disable()
             end
         end,
     }

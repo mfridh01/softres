@@ -9,3 +9,4 @@
 --DONE [Snits] Add functionality to scan the list for soft-reserves.
 --[Snits] Add dropscanner.
 --[Snits] Add Prep item functionality.
+--[Snits] Config, add "sliders" for timers. Softres, MS, OS, FFA
