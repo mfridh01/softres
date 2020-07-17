@@ -57,6 +57,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
       elseif event == "LOOT_OPENED" then
             SoftRes.debug:print("Loot window opened.")
 
+            -- Get the configvalue and autoShow if enabled.
+            if SoftResConfig.state.autoShowOnLoot then FRAMES.mainFrame:Show() end
+
       elseif event == "LOOT_SLOT_CLEARED" then
             SoftRes.debug:print("Looted something")
 

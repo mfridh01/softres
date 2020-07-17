@@ -69,6 +69,10 @@ SoftRes = {}
       SoftRes.state = {}
             SoftRes.state.__index = SoftRes.state
             SoftRes.state.announcedItem = false
+            SoftRes.state.alertPlayer = {
+                  text = "",
+                  state = false,
+            }
             SoftRes.state.scanForSoftRes = {
                   text = "",
                   state = false,
@@ -78,9 +82,14 @@ SoftRes = {}
             SoftRes.items.__index = SoftRes.items
 
       SoftRes.announcedItem = {
+            state = false,
             itemId = nil,
-            softReserves = {},
+            elegible = {},
             rolls = {},
+      }
+      SoftRes.preparedItem = {
+            itemId = nil,
+            elegible = {},
       }
 --------------------------------------------------------------------
 
@@ -91,6 +100,28 @@ function SoftRes.debug:print(text)
       if SoftRes.debug.enabled then print(text) end
 end
 --------------------------------------------------------------------
+
+-- Toggle alert on and off + mode
+function SoftRes.state:toggleAlertPlayer(flag, modeText)
+      -- same as the above, but for announcedItem
+      if flag == true then
+            SoftRes.state.alertPlayer.state = false
+      elseif flag == false then
+            SoftRes.state.alertPlayer.state = true
+      end
+
+      if SoftRes.state.alertPlayer.state then
+            SoftRes.state.alertPlayer.state = false
+      else
+            SoftRes.state.alertPlayer.state = true
+      end
+
+      if SoftRes.state.alertPlayer.state and modeText then
+            SoftRes.state.alertPlayer.text = modeText
+      else
+            SoftRes.state.alertPlayer.text = ""
+      end
+end
 
 -- Switch for Chat scanning of SoftReserves.
 -- Takes a state-flag or not, then toggles the state of SoftRes scanning.
@@ -116,25 +147,17 @@ function SoftRes.state:toggleScanForSoftRes(flag)
       end
 end
 
-function SoftRes.state.toggleAnnouncedItem(flag, itemId)
+function SoftRes.state.toggleAnnouncedItem(flag)
       -- same as the above, but for announcedItem
       if flag == true then
-            SoftRes.state.announcedItem = false
+            SoftRes.state.announcedItem.state = false
       elseif flag == false then
-            SoftRes.state.announcedItem = true
+            SoftRes.state.announcedItem.state = true
       end
 
       if SoftRes.state.announcedItem then
-            SoftRes.state.announcedItem = false
+            SoftRes.state.announcedItem.state = false
       else
-            SoftRes.state.announcedItem = true
-      end
-
-      if itemId then
-            SoftRes.announcedItem.itemId = itemId
-            FRAMES.announcedItemFrame.fs:SetText(SoftRes.helpers:getItemLinkFromId(itemId))
-      else
-            SoftRes.announcedItem.itemId = nil
-            FRAMES.announcedItemFrame.fs:SetText("")
+            SoftRes.state.announcedItem.state = true
       end
 end

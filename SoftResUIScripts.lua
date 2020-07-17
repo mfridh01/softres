@@ -7,19 +7,18 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
   self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed;
   
   if (self.timeSinceLastUpdate > FRAMES.mainFrame.updateInterval) then
-
     -- If we're scanning for softresses.
     -- Show an indicator on the top right, so it's shown.
-    if SoftRes.state.scanForSoftRes.state then
+    if SoftRes.state.alertPlayer.state then
         self.scanDots = self.scanDots + 1
         if self.scanDots > 3 then self.scanDots = 1 end
 
-        local scanText = ""
+        local scanDots = ""
         for i = 1, self.scanDots do
-            scanText = scanText .. "."
+            scanDots = scanDots .. "."
         end
         
-        FRAMES.mainFrame.titleRight:SetText("|cFF00FF00Scan" .. scanText .. "|r")
+        FRAMES.mainFrame.titleRight:SetText("|cFF00FF00" .. SoftRes.state.alertPlayer.text .. scanDots .. "|r")
     else
         FRAMES.mainFrame.titleRight:SetText("")
     end
@@ -32,47 +31,11 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
 end)
 
 -- TabButtons
-BUTTONS.tabButtonPage[1]:SetScript("OnClick", function(self)
-    if not self.active then
-        BUTTONS.tabButtonPage[1]:SetFrameLevel(BUTTONS.tabButtonPage[1]:GetFrameLevel() + 1)
-        BUTTONS.tabButtonPage[1].active = true
-        FRAMES.tabContainer.page1:Show()
-        BUTTONS.tabButtonPage[2]:SetFrameLevel(BUTTONS.tabButtonPage[1]:GetFrameLevel() - 1)
-        BUTTONS.tabButtonPage[2].active = false
-        FRAMES.tabContainer.page2:Hide()
-        BUTTONS.tabButtonPage[3]:SetFrameLevel(BUTTONS.tabButtonPage[1]:GetFrameLevel() - 1)
-        BUTTONS.tabButtonPage[3].active = false
-        FRAMES.tabContainer.page3:Hide()
-    end
-end)
-
-BUTTONS.tabButtonPage[2]:SetScript("OnClick", function(self)
-    if not self.active then
-        BUTTONS.tabButtonPage[2]:SetFrameLevel(BUTTONS.tabButtonPage[2]:GetFrameLevel() + 1)
-        BUTTONS.tabButtonPage[2].active = true
-        FRAMES.tabContainer.page2:Show()
-        BUTTONS.tabButtonPage[3]:SetFrameLevel(BUTTONS.tabButtonPage[2]:GetFrameLevel() - 1)
-        BUTTONS.tabButtonPage[3].active = false
-        FRAMES.tabContainer.page3:Hide()
-        BUTTONS.tabButtonPage[1]:SetFrameLevel(BUTTONS.tabButtonPage[2]:GetFrameLevel() - 1)
-        BUTTONS.tabButtonPage[1].active = false
-        FRAMES.tabContainer.page1:Hide()
-    end
-end)
-
-BUTTONS.tabButtonPage[3]:SetScript("OnClick", function(self)
-    if not self.active then
-        BUTTONS.tabButtonPage[3]:SetFrameLevel(BUTTONS.tabButtonPage[3]:GetFrameLevel() + 1)
-        BUTTONS.tabButtonPage[3].active = true
-        FRAMES.tabContainer.page3:Show()
-        BUTTONS.tabButtonPage[1]:SetFrameLevel(BUTTONS.tabButtonPage[3]:GetFrameLevel() - 1)
-        BUTTONS.tabButtonPage[1].active = false
-        FRAMES.tabContainer.page1:Hide()
-        BUTTONS.tabButtonPage[2]:SetFrameLevel(BUTTONS.tabButtonPage[3]:GetFrameLevel() - 1)
-        BUTTONS.tabButtonPage[2].active = false
-        FRAMES.tabContainer.page2:Hide()
-    end
-end)
+for i = 1, #BUTTONS.tabButtonPage do
+    BUTTONS.tabButtonPage[i]:SetScript("OnClick", function(self)
+        SoftRes.helpers:toggleTabPage(i)
+    end)
+end
 
 function BUTTONS.editPlayerDropDown_Initialize(self)
     -- If there are no players, don't initialize the list.
@@ -204,7 +167,7 @@ BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
 
     -- Popup dialog for editing a player.
     StaticPopupDialogs["SOFTRES_EDIT_PLAYER"] = {
-        text = "Editing " .. editPlayer.name .. ".\n\nType 'delete' and press the 'delete' button, to remove the softres.",
+        text = "Deleting " .. editPlayer.name .. ".\n\nType 'delete' and press the 'delete' button, to remove the softres.",
         button1 = "DELETE",
         button2 = "Cancel",
         timeout = 0,
@@ -252,31 +215,60 @@ BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
     -- If there are no players, don't start the scanner
     if #SoftResList.players <= 1 then return end
     
+    -- Check to see if we already are alerting the player with anything.
+    if not SoftRes.helpers:checkAlertPlayer("Scan") then return end
+
     -- call the toggle function without a flag, to really toggle it.
     SoftRes.state:toggleScanForSoftRes()
+
+    -- Toggle alert on.
+    SoftRes.state:toggleAlertPlayer(nil, "Scan")
 
     -- redraw the list.
     SoftRes.list:showFullSoftResList()
 end)
 
+-- local function for handling itemdrags
+local function handleDraggedItem()
+    if GetCursorInfo() then
+        -- Check to see if we are clear to handle the item.
+        if not SoftRes.helpers:checkAlertPlayer("Prep") then
+            ClearCursor()
+            return
+        end
+    
+        -- Prepare the item for announcement.
+        local itemId = SoftRes.helpers:getItemInfoFromDragged()
+        SoftRes.helpers:prepareItem(itemId)
+
+        -- Show the list.
+        SoftRes.list:showPrepSoftResList()
+        ClearCursor()
+    end
+end
 -- Announced item, icon position.
 BUTTONS.announcedItemButton:SetScript("OnReceiveDrag", function()
-    if not SoftRes.state.announcedItem and GetCursorInfo() then
-        SoftRes.helpers:getItemInfoFromDragged()
-    end
+    handleDraggedItem()
+end)
+
+-- Announced item, icon position.
+FRAMES.mainFrame:SetScript("OnReceiveDrag", function()
+    handleDraggedItem()
 end)
 
 BUTTONS.announcedItemButton:SetScript("OnClick", function(_, button)
-
     if button == "RightButton" then
-        SoftRes.debug:print("RightClicked")
-        SoftRes.state.toggleAnnouncedItem(false)
-        BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
-    elseif not SoftRes.state.announcedItem and button == "LeftButton" and GetCursorInfo() then
-        SoftRes.helpers:getItemInfoFromDragged()
-        ClearCursor();
+        SoftRes.helpers:unPrepareItem()
+    elseif button == "LeftButton" and GetCursorInfo() then
+        handleDraggedItem()
     end
+end)
 
+-- Prepare item
+BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
+    if SoftRes.preparedItem.itemId and SoftRes.preparedItem.itemId ~= "" then
+        print(SoftRes.preparedItem.itemId)
+    end
 end)
 
 -- Config
@@ -324,6 +316,7 @@ FRAMES.softResRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.softRes.minValue, SoftResConfig.timers.softRes.maxValue), SoftResConfig.timers.softRes.value)
     SoftResConfig.timers.softRes.value = text
+    print(SoftResConfig.timer.softRes.value)
 end)
 
 FRAMES.softResRollTimerEditBox:SetScript("OnTabPressed", function(self)
@@ -378,7 +371,6 @@ end)
 
 FRAMES.osRollTimerEditBox:SetScript("OnTabPressed", function(self)
     self:ClearFocus()
-    setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     SoftResConfig.timers.os.value = text
     FRAMES.ffaRollTimerEditBox:SetFocus()
@@ -404,7 +396,6 @@ end)
 
 FRAMES.ffaRollTimerEditBox:SetScript("OnTabPressed", function(self)
     self:ClearFocus()
-    setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
     SoftResConfig.timers.ffa.value = text
     FRAMES.softResRollTimerEditBox:SetFocus()

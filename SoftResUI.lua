@@ -153,7 +153,7 @@ FRAMES.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFram
       
       FRAMES.mainFrame.titleRight = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
             FRAMES.mainFrame.titleRight:SetFontObject("GameFontHighlight")
-            FRAMES.mainFrame.titleRight:SetPoint("TOPLEFT", FRAMES.mainFrame.TitleBg, "TOPRIGHT", -40, -3)
+            FRAMES.mainFrame.titleRight:SetPoint("TOPLEFT", FRAMES.mainFrame.TitleBg, "TOPRIGHT", -50, -3)
             FRAMES.mainFrame.titleRight:SetText("")
 
       FRAMES.mainFrame.fs = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
@@ -213,7 +213,7 @@ FRAMES.rollFrame = CreateFrame("Frame", nil, FRAMES.rollFrameContainer.child)
 
       FRAMES.rollFrame.fs = FRAMES.rollFrame:CreateFontString(nil, "OVERLAY") -- This is the main list FontString. Populate this one.
             FRAMES.rollFrame.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.rollFrame.fs:SetFont(FRAMES.rollFrame.fs:GetFont(), 10)
+            FRAMES.rollFrame.fs:SetFont(FRAMES.rollFrame.fs:GetFont(), 12)
             FRAMES.rollFrame.fs:SetPoint("TOPLEFT", FRAMES.rollFrame, "TOPLEFT", 0, 0)
             FRAMES.rollFrame.fs:SetText("")
             FRAMES.rollFrame.fs:SetJustifyH("Left")
@@ -279,7 +279,7 @@ FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child)
 
       FRAMES.listFrame.fs = FRAMES.listFrame:CreateFontString(nil, "OVERLAY") -- This is the main list FontString. Populate this one.
             FRAMES.listFrame.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.listFrame.fs:SetFont(FRAMES.listFrame.fs:GetFont(), 11)
+            FRAMES.listFrame.fs:SetFont(FRAMES.listFrame.fs:GetFont(), 12)
             FRAMES.listFrame.fs:SetPoint("TOPLEFT", FRAMES.listFrame, "TOPLEFT", 0, 0)
             FRAMES.listFrame.fs:SetText("Testrad-01\nTestrad-02\nTestrad-03\nTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
             FRAMES.listFrame.fs:SetJustifyH("Left")
@@ -487,7 +487,7 @@ BUTTONS.editPlayerButton = CreateFrame("Button", "EditPlayerButton", FRAMES.tabC
       BUTTONS.editPlayerButton:SetPoint("TOP", BUTTONS.addPlayerSoftResButton, "BOTTOM", 0, -5)
       BUTTONS.editPlayerButton:SetWidth(102)
       BUTTONS.editPlayerButton:SetHeight(20)
-      BUTTONS.editPlayerButton:SetText("Edit Player")
+      BUTTONS.editPlayerButton:SetText("<-Delete Player")
 
 -- Buttons Page 3
 BUTTONS.enableSoftResAddon = CreateFrame("CheckButton", "EnableSoftResAddon", FRAMES.tabContainer.page3, "UICheckButtonTemplate")

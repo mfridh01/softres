@@ -176,6 +176,17 @@ end
 function SoftRes.list:showFullSoftResList()
     local textFrame = FRAMES.listFrame.fs
     local text = SoftRes.state.scanForSoftRes.text
+    local numGroupMembers = GetNumGroupMembers()
+    local listEntries = #SoftResList.players
+    local notSoftReserved = listEntries
+
+    local colorGreen = "|cFF00FF00"
+    local colorRed = "|cFFFF0000"
+    local colorYellow = "|cFFFFFF00"
+
+    local entryText = colorRed
+    local raidTextColor = colorYellow
+    local listEntryColor = colorYellow
 
     -- Set the list-date to the center of the title.
     FRAMES.mainFrame.titleCenter:SetText(SoftResList.date)
@@ -191,6 +202,7 @@ function SoftRes.list:showFullSoftResList()
         if not itemId then 
             icon = SoftResConfig.icons.questionMark
         else
+            notSoftReserved = notSoftReserved - 1
             showItem = SoftRes.helpers:getItemLinkFromId(itemId)
         end
 
@@ -210,7 +222,58 @@ function SoftRes.list:showFullSoftResList()
         text = text .. icon .. groupPosition .. "-" .. name .. " " .. showItem .. "\n"
     end
 
+    -- Set colors.
+    if numGroupMembers > listEntries then
+        raidTextColor = colorRed
+    elseif numGroupMembers == listEntries then
+        raidTextColor = colorGreen
+        listEntryColor = colorGreen
+    end
+
+    if notSoftReserved == 0 then entryText = colorGreen end
+
     -- populate the frame with the new text.
+    local infoText = "In raid: " .. raidTextColor .. numGroupMembers .. "|r || On the list: " .. listEntryColor .. listEntries .. "|r || SoftReserves: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-------------------------------------------------------------\n"
+    textFrame:SetText(infoText .. text)
+end
+
+-- Show prepared item and softreservers on the first page.
+----------------------------------------
+function SoftRes.list:showPrepSoftResList()
+    local textFrame = FRAMES.rollFrame.fs
+    local text = SoftRes.state.scanForSoftRes.text
+    local icon = ""
+
+    -- Check if we've prepped an item.
+    if SoftRes.preparedItem.itemId and SoftRes.preparedItem.itemId ~= "" then
+    
+        -- We are preparing.
+        text = "Preparing: " .. SoftRes.helpers:getItemLinkFromId(SoftRes.preparedItem.itemId) .. "\n\n"
+
+        -- We don't have to continue, if there are no players who has SoftReserved the item.
+        if #SoftRes.preparedItem.elegible <= 1 then
+            text = text .. "     No one has SoftReserved this item."
+        else
+
+            text = text .. "  Players who have SoftReserved this item:\n"
+            -- Search through the players and only show the elegible ones.
+            for i = 1, #SoftResList.players do
+                local name = SoftResList.players[i].name
+                local itemId = SoftResList.players[i].softReserve.itemId
+                local groupPosition = SoftResList.players[i].groupPosition
+                local showItem = SoftRes.helpers:getItemLinkFromId(itemId)
+
+                -- we have the list of elegible players already.
+                for j = 1, #SoftRes.preparedItem.elegible do
+                    if SoftRes.preparedItem.elegible[j] == name then
+
+                        text = text .. icon .. "    " .. name .. "\n"
+                    end
+                end
+            end
+        end
+    end
+
     textFrame:SetText(text)
 end
 
