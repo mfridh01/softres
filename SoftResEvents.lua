@@ -43,6 +43,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
       elseif event == "GROUP_ROSTER_UPDATE" then
             SoftRes.list:reOrderPlayerList()
             SoftRes.list:showFullSoftResList()
+            SoftRes.list:showPrepSoftResList()
             print("Re-Ordering")
       
       -- listen to softReserves in raid or party
@@ -58,14 +59,34 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.debug:print("Loot window opened.")
 
             -- Get the configvalue and autoShow if enabled.
-            if SoftResConfig.state.autoShowOnLoot then FRAMES.mainFrame:Show() end
+            if SoftResConfig.state.autoShowOnLoot then
+                  FRAMES.mainFrame:Show()
+
+                  -- We want the first page to show up.
+                  SoftRes.helpers:toggleTabPage(1)
+            end
+
+            -- Reset everything.
+            SoftRes.helpers:unPrepareItem()
+
+            -- Populate dropped items.
+            SoftRes.list:populateDroppedItems()
 
       elseif event == "LOOT_SLOT_CLEARED" then
             SoftRes.debug:print("Looted something")
+            
+            -- Reset everything.
+            SoftRes.helpers:unPrepareItem()
 
       elseif event == "LOOT_CLOSED" then
             SoftRes.debug:print("Loot window closed.")
 
+            -- Get the configvalue and autoHide if enabled.
+            if SoftResConfig.state.autoHideOnLootDone then FRAMES.mainFrame:Hide() end
+
+            -- Reset everything.
+            SoftRes.helpers:unPrepareItem()
+            SoftRes.droppedItems = {}
       end
 
 end)

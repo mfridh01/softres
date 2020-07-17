@@ -99,6 +99,12 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                         value = 15,
                   }, 
             },
+            itemRarity = {
+                  minValue = 0, -- gray
+                  maxValue = 5, -- legendary
+                  value = 0, -- 0 = gray, 1 = white, 2 = green, 3 = blue, 4 = purple, 5 = orange
+                  default = 2,
+            },
       }
 end
 
@@ -124,6 +130,7 @@ function SoftRes.ui:useSavedConfigValues()
       FRAMES.msRollTimerEditBox:SetText(CONFIG_TIMERS.ms.value)
       FRAMES.osRollTimerEditBox:SetText(CONFIG_TIMERS.os.value)
       FRAMES.ffaRollTimerEditBox:SetText(CONFIG_TIMERS.ffa.value)
+      FRAMES.itemRarityEditBox:SetText(SoftResConfig.itemRarity.value)
 end
 --------------------------------------------------------------------
 
@@ -356,6 +363,24 @@ FRAMES.ffaRollTimerEditBox = CreateFrame("EditBox", "FFARollTimerEditBox", FRAME
             FRAMES.ffaRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.ffaRollTimerEditBox, "RIGHT", 5, -1)
             FRAMES.ffaRollTimerEditBox.fs:SetText("FFA Roll timer. (min: 10, max: 20)")
             FRAMES.ffaRollTimerEditBox.fs:SetJustifyH("Left")
+      
+
+FRAMES.itemRarityEditBox = CreateFrame("EditBox", "ItemRarityEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.itemRarityEditBox:SetPoint("TOPLEFT", FRAMES.ffaRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.itemRarityEditBox:SetWidth(40)
+      FRAMES.itemRarityEditBox:SetHeight(20)
+      FRAMES.itemRarityEditBox:ClearFocus() 
+      FRAMES.itemRarityEditBox:SetAutoFocus(false)
+      FRAMES.itemRarityEditBox:SetMaxLetters(1)
+      FRAMES.itemRarityEditBox:SetAltArrowKeyMode(true)
+      FRAMES.itemRarityEditBox:EnableMouse(true)
+      FRAMES.itemRarityEditBox:SetText("2")
+
+      FRAMES.itemRarityEditBox.fs = FRAMES.itemRarityEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.itemRarityEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.itemRarityEditBox.fs:SetPoint("LEFT", FRAMES.itemRarityEditBox, "RIGHT", 5, -1)
+            FRAMES.itemRarityEditBox.fs:SetText("Min. handled itemrarirty. (0=gray, 5=legendary)")
+            FRAMES.itemRarityEditBox.fs:SetJustifyH("Left")
 -- Buttons.
 -----------
 BUTTONS.tabButtonPage = {}
@@ -474,7 +499,7 @@ BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton",
       BUTTONS.addPlayerSoftResButton:SetPoint("LEFT", BUTTONS.scanForSoftResButton, "RIGHT", 4, 0)
       BUTTONS.addPlayerSoftResButton:SetWidth(102)
       BUTTONS.addPlayerSoftResButton:SetHeight(20)
-      BUTTONS.addPlayerSoftResButton:SetText("Add SoftRes")
+      BUTTONS.addPlayerSoftResButton:SetText("Add Player")
 
 BUTTONS.editPlayerDropDown = CreateFrame("Button", "EditPlayerDropDown", FRAMES.tabContainer.page2, "UIDropDownMenuTemplate")
       BUTTONS.editPlayerDropDown:SetPoint("LEFT", BUTTONS.announceRulesButton, "RIGHT", -12, -2)

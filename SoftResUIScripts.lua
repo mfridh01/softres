@@ -236,7 +236,13 @@ local function handleDraggedItem()
             ClearCursor()
             return
         end
-    
+
+        if SoftRes.preparedItem.itemId and SoftRes.preparedItem.itemId ~= "" then
+            ClearCursor()
+            SoftRes.helpers:showPopupWindow()
+            return
+        end
+
         -- Prepare the item for announcement.
         local itemId = SoftRes.helpers:getItemInfoFromDragged()
         SoftRes.helpers:prepareItem(itemId)
@@ -244,6 +250,9 @@ local function handleDraggedItem()
         -- Show the list.
         SoftRes.list:showPrepSoftResList()
         ClearCursor()
+
+        -- Handle buttons accordingly.
+        SoftRes.list:handleRollButtons()
     end
 end
 -- Announced item, icon position.
@@ -316,7 +325,9 @@ FRAMES.softResRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.softRes.minValue, SoftResConfig.timers.softRes.maxValue), SoftResConfig.timers.softRes.value)
     SoftResConfig.timers.softRes.value = text
-    print(SoftResConfig.timer.softRes.value)
+    print(SoftResConfig.timers.softRes.value)
+    FRAMES.msRollTimerEditBox:SetFocus()
+    FRAMES.msRollTimerEditBox:HighlightText()
 end)
 
 FRAMES.softResRollTimerEditBox:SetScript("OnTabPressed", function(self)
@@ -342,6 +353,8 @@ FRAMES.msRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ms.minValue, SoftResConfig.timers.ms.maxValue), SoftResConfig.timers.ms.value)
     SoftResConfig.timers.ms.value = text
+    FRAMES.osRollTimerEditBox:SetFocus()
+    FRAMES.osRollTimerEditBox:HighlightText()
 end)
 
 FRAMES.msRollTimerEditBox:SetScript("OnTabPressed", function(self)
@@ -367,6 +380,8 @@ FRAMES.osRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     SoftResConfig.timers.os.value = text
+    FRAMES.ffaRollTimerEditBox:SetFocus()
+    FRAMES.ffaRollTimerEditBox:HighlightText()
 end)
 
 FRAMES.osRollTimerEditBox:SetScript("OnTabPressed", function(self)
@@ -392,12 +407,67 @@ FRAMES.ffaRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
     SoftResConfig.timers.ffa.value = text
+    FRAMES.itemRarityEditBox:SetFocus()
+    FRAMES.itemRarityEditBox:HighlightText()
 end)
 
 FRAMES.ffaRollTimerEditBox:SetScript("OnTabPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
     SoftResConfig.timers.ffa.value = text
+    FRAMES.itemRarityEditBox:SetFocus()
+    FRAMES.itemRarityEditBox:HighlightText()
+end)
+
+-- Itemrarity editbox
+FRAMES.itemRarityEditBox:SetScript("OnTextChanged", function(self)
+    -- Convert the text to number.
+    local text = tonumber(self:GetText())
+
+    -- if it's not a number, clear the field.
+    if not text then
+        self:SetText("")
+    end
+end)
+
+FRAMES.itemRarityEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.itemRarity.minValue, SoftResConfig.itemRarity.maxValue), SoftResConfig.itemRarity.value)
+    SoftResConfig.itemRarity.value = text
     FRAMES.softResRollTimerEditBox:SetFocus()
     FRAMES.softResRollTimerEditBox:HighlightText()
+end)
+
+FRAMES.itemRarityEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.itemRarity.minValue, SoftResConfig.itemRarity.maxValue), SoftResConfig.itemRarity.value)
+    SoftResConfig.itemRarity.value = text
+    FRAMES.softResRollTimerEditBox:SetFocus()
+    FRAMES.softResRollTimerEditBox:HighlightText()
+end)
+
+-- Prepare items
+BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
+
+    -- check for availability
+    if not SoftRes.helpers:checkAlertPlayer("Prep") then return end
+
+    -- Check for items to prepare.
+    if #SoftRes.droppedItems == 0 then return end
+
+    -- We check the first item, then prepare it for loot.
+    local preparedItemId = SoftRes.droppedItems[1]
+    SoftRes.helpers:prepareItem(preparedItemId)
+
+    -- Set the icon for the item.
+    local itemIcon = GetItemIcon(preparedItemId)
+
+    -- Change the texture, to the button.
+    BUTTONS.announcedItemButton.texture:SetTexture(itemIcon)
+
+    -- Show the list of players who have soft-reserved the item.
+    SoftRes.list:showPrepSoftResList()
+
+    -- Handle buttons accordingly.
+    SoftRes.list:handleRollButtons()
 end)

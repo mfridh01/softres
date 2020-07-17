@@ -222,6 +222,25 @@ function SoftRes.helpers:prepareItem(itemId)
       end
 end
 
+-- Hide and show all roll buttons.
+function SoftRes.helpers:hideAllRollButtons(flag)
+      if flag == true then
+            BUTTONS.raidRollButton:Hide()
+            BUTTONS.softResRollButton:Hide()
+            BUTTONS.osRollButton:Hide()
+            BUTTONS.msRollButton:Hide()
+            BUTTONS.ffaRollButton:Hide()
+            BUTTONS.announceRollsButton:Hide()
+      elseif flag == false then
+            BUTTONS.raidRollButton:Show()
+            BUTTONS.softResRollButton:Show()
+            BUTTONS.osRollButton:Show()
+            BUTTONS.msRollButton:Show()
+            BUTTONS.ffaRollButton:Show()
+            BUTTONS.announceRollsButton:Show()
+      end
+end
+
 -- Unprepare item for rolls.
 -- Se SoftRes.helpers:prepareItem() function for info about what happened below.
 function SoftRes.helpers:unPrepareItem()
@@ -229,7 +248,8 @@ function SoftRes.helpers:unPrepareItem()
       BUTTONS.prepareItemButton:Show()
       BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
       FRAMES.announcedItemFrame.fs:SetText("")
-      SoftRes.state.toggleAlertPlayer(false)
+      SoftRes.state:toggleAlertPlayer(false)
       SoftRes.preparedItem.elegible = {}
       FRAMES.rollFrame.fs:SetText("")
+      SoftRes.helpers:hideAllRollButtons(false)
 end

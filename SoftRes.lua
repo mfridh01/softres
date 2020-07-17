@@ -69,6 +69,7 @@ SoftRes = {}
       SoftRes.state = {}
             SoftRes.state.__index = SoftRes.state
             SoftRes.state.announcedItem = false
+            SoftRes.state.listeningToRolls = false
             SoftRes.state.alertPlayer = {
                   text = "",
                   state = false,
@@ -78,8 +79,8 @@ SoftRes = {}
                   state = false,
             }
       
-      SoftRes.items = {}
-            SoftRes.items.__index = SoftRes.items
+      SoftRes.droppedItems = {}
+            SoftRes.droppedItems.__index = SoftRes.droppedItems
 
       SoftRes.announcedItem = {
             state = false,
@@ -159,5 +160,20 @@ function SoftRes.state.toggleAnnouncedItem(flag)
             SoftRes.state.announcedItem.state = false
       else
             SoftRes.state.announcedItem.state = true
+      end
+end
+
+function SoftRes.state.toggleListenToRolls(flag)
+      -- same as the above
+      if flag == true then
+            SoftRes.state.listeningToRolls.state = false
+      elseif flag == false then
+            SoftRes.state.listeningToRolls.state = true
+      end
+
+      if SoftRes.state.listeningToRolls then
+            SoftRes.state.listeningToRolls.state = false
+      else
+            SoftRes.state.listeningToRolls.state = true
       end
 end

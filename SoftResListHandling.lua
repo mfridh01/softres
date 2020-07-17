@@ -247,15 +247,12 @@ function SoftRes.list:showPrepSoftResList()
     -- Check if we've prepped an item.
     if SoftRes.preparedItem.itemId and SoftRes.preparedItem.itemId ~= "" then
     
-        -- We are preparing.
-        text = "Preparing: " .. SoftRes.helpers:getItemLinkFromId(SoftRes.preparedItem.itemId) .. "\n\n"
-
         -- We don't have to continue, if there are no players who has SoftReserved the item.
-        if #SoftRes.preparedItem.elegible <= 1 then
+        if #SoftRes.preparedItem.elegible == 0 then
             text = text .. "     No one has SoftReserved this item."
         else
 
-            text = text .. "  Players who have SoftReserved this item:\n"
+            text = text .. "Players who have SoftReserved this item:\n-------------------------------------------------------------\n"
             -- Search through the players and only show the elegible ones.
             for i = 1, #SoftResList.players do
                 local name = SoftResList.players[i].name
@@ -341,4 +338,52 @@ function SoftRes.list:addSoftReservePlayer(playerName)
     -- We add the new player to the last spot on the list.
     local lastIndex = #SoftResList.players + 1
     table.insert(SoftResList.players, lastIndex, SoftRes.player:new(playerName, 0))
+end
+
+-- Populate the list with dropped items.
+-- We only add the items of the accepted rarity (config.)
+-- Coins count as ZERO items.
+---------------------------------------------------------
+function SoftRes.list:populateDroppedItems()
+    local numberOfItems = 0
+
+    if SR_ElvUI or SR_TukUI then
+       numberOfItems = GetNumLootItems()
+    else
+       numberOfItems = LootFrame.numLootItems
+    end
+ 
+    -- If there are no items dropped.
+    if numberOfItems == 0 then return nil end
+    SoftRes.debug:print("Number of items to loot: " .. numberOfItems)
+
+    for i = 1, numberOfItems do
+       local itemLink = GetLootSlotLink(i)
+       local itemId = SoftRes.helpers:getItemIdFromLink(itemLink)
+       local itemRarity = SoftRes.helpers:getItemRarityFromId(itemId)
+       
+       -- If the dropped item is lower than the type of items handled by SoftRes then just don't add it.
+       if itemRarity and itemRarity >= SoftResConfig.itemRarity.value then
+          table.insert(SoftRes.droppedItems, itemId)
+       end
+    end
+end
+
+-- We will change the states of the roll-buttons according to the drops and reserves.
+-------------------------------------------------------------------------------------
+function SoftRes.list:handleRollButtons()
+    -- First we hide all the buttons.
+    SoftRes.helpers:hideAllRollButtons(true)
+
+    -- We check if there are softreservers for the current item.
+    if #SoftRes.preparedItem.elegible == 1 then
+        BUTTONS.announceRollsButton:Show()
+    elseif #SoftRes.preparedItem.elegible > 1 then
+        BUTTONS.softResRollButton:Show()
+    else
+        BUTTONS.raidRollButton:Show()
+        BUTTONS.osRollButton:Show()
+        BUTTONS.msRollButton:Show()
+        BUTTONS.ffaRollButton:Show()
+    end
 end
