@@ -68,17 +68,20 @@ SoftRes = {}
       
       SoftRes.state = {}
             SoftRes.state.__index = SoftRes.state
+            SoftRes.state.announcedItem = false
             SoftRes.state.scanForSoftRes = {
                   text = "",
-                  state = false,
-            }
-            SoftRes.state.announcedItem = {
-                  itemId = nil,
                   state = false,
             }
       
       SoftRes.items = {}
             SoftRes.items.__index = SoftRes.items
+
+      SoftRes.announcedItem = {
+            itemId = nil,
+            softReserves = {},
+            rolls = {},
+      }
 --------------------------------------------------------------------
 
 -- SoftRes Debugging.
@@ -116,22 +119,22 @@ end
 function SoftRes.state.toggleAnnouncedItem(flag, itemId)
       -- same as the above, but for announcedItem
       if flag == true then
-            SoftRes.state.announcedItem.state = false
+            SoftRes.state.announcedItem = false
       elseif flag == false then
-            SoftRes.state.announcedItem.state = true
+            SoftRes.state.announcedItem = true
       end
 
-      if SoftRes.state.announcedItem.state then
-            SoftRes.state.announcedItem.state = false
+      if SoftRes.state.announcedItem then
+            SoftRes.state.announcedItem = false
       else
-            SoftRes.state.announcedItem.state = true
+            SoftRes.state.announcedItem = true
       end
 
       if itemId then
-            SoftRes.state.announcedItem.itemId = itemId
+            SoftRes.announcedItem.itemId = itemId
             FRAMES.announcedItemFrame.fs:SetText(SoftRes.helpers:getItemLinkFromId(itemId))
       else
-            SoftRes.state.announcedItem.itemId = nil
+            SoftRes.announcedItem.itemId = nil
             FRAMES.announcedItemFrame.fs:SetText("")
       end
 end

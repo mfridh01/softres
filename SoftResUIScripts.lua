@@ -42,7 +42,7 @@ BUTTONS.tabButtonPage[1]:SetScript("OnClick", function(self)
         FRAMES.tabContainer.page2:Hide()
         BUTTONS.tabButtonPage[3]:SetFrameLevel(BUTTONS.tabButtonPage[1]:GetFrameLevel() - 1)
         BUTTONS.tabButtonPage[3].active = false
-        --FRAMES.tabContainer.page3:Hide()
+        FRAMES.tabContainer.page3:Hide()
     end
 end)
 
@@ -53,7 +53,7 @@ BUTTONS.tabButtonPage[2]:SetScript("OnClick", function(self)
         FRAMES.tabContainer.page2:Show()
         BUTTONS.tabButtonPage[3]:SetFrameLevel(BUTTONS.tabButtonPage[2]:GetFrameLevel() - 1)
         BUTTONS.tabButtonPage[3].active = false
-        --FRAMES.tabContainer.page3:Hide()
+        FRAMES.tabContainer.page3:Hide()
         BUTTONS.tabButtonPage[1]:SetFrameLevel(BUTTONS.tabButtonPage[2]:GetFrameLevel() - 1)
         BUTTONS.tabButtonPage[1].active = false
         FRAMES.tabContainer.page1:Hide()
@@ -64,7 +64,7 @@ BUTTONS.tabButtonPage[3]:SetScript("OnClick", function(self)
     if not self.active then
         BUTTONS.tabButtonPage[3]:SetFrameLevel(BUTTONS.tabButtonPage[3]:GetFrameLevel() + 1)
         BUTTONS.tabButtonPage[3].active = true
-        --FRAMES.tabContainer.page3:Show()
+        FRAMES.tabContainer.page3:Show()
         BUTTONS.tabButtonPage[1]:SetFrameLevel(BUTTONS.tabButtonPage[3]:GetFrameLevel() - 1)
         BUTTONS.tabButtonPage[1].active = false
         FRAMES.tabContainer.page1:Hide()
@@ -261,7 +261,7 @@ end)
 
 -- Announced item, icon position.
 BUTTONS.announcedItemButton:SetScript("OnReceiveDrag", function()
-    if not SoftRes.state.announcedItem.state and GetCursorInfo() then
+    if not SoftRes.state.announcedItem and GetCursorInfo() then
         SoftRes.helpers:getItemInfoFromDragged()
     end
 end)
@@ -272,9 +272,141 @@ BUTTONS.announcedItemButton:SetScript("OnClick", function(_, button)
         SoftRes.debug:print("RightClicked")
         SoftRes.state.toggleAnnouncedItem(false)
         BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
-    elseif not SoftRes.state.announcedItem.state and button == "LeftButton" and GetCursorInfo() then
+    elseif not SoftRes.state.announcedItem and button == "LeftButton" and GetCursorInfo() then
         SoftRes.helpers:getItemInfoFromDragged()
         ClearCursor();
     end
 
+end)
+
+-- Config
+BUTTONS.enableSoftResAddon:SetScript("OnClick", function(self)
+    SoftResConfig.state.softResEnabled = self:GetChecked()
+ end)
+
+BUTTONS.autoShowWindowCheckButton:SetScript("OnClick", function(self)
+   SoftResConfig.state.autoShowOnLoot = self:GetChecked()
+end)
+
+BUTTONS.autoHideWindowCheckButton:SetScript("OnClick", function(self)
+    SoftResConfig.state.autoHideOnLootDone = self:GetChecked()
+ end)
+
+-- Config, roll timers.
+-- Takes an editbox, text string and a store-variable.
+-- If there is no value, it set's the editbox to the value of the text.
+-- Returns the text-value or variable value.
+local function setEditBoxValue(editBox, text, valueVariable)
+
+    -- If we write a letter and quickly press enter, it will throw an error. This will prevent that.
+    -- We just set the text to it's previous value.
+    if text == false then
+        editBox:SetText(valueVariable)
+        return valueVariable
+    else
+        editBox:SetText(text)
+        return text
+    end
+end
+
+-- SoftRes roll timer.
+FRAMES.softResRollTimerEditBox:SetScript("OnTextChanged", function(self)
+    -- Convert the text to number.
+    local text = tonumber(self:GetText())
+
+    -- if it's not a number, clear the field.
+    if not text then
+        self:SetText("")
+    end
+end)
+
+FRAMES.softResRollTimerEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.softRes.minValue, SoftResConfig.timers.softRes.maxValue), SoftResConfig.timers.softRes.value)
+    SoftResConfig.timers.softRes.value = text
+end)
+
+FRAMES.softResRollTimerEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.softRes.minValue, SoftResConfig.timers.softRes.maxValue), SoftResConfig.timers.softRes.value)
+    SoftResConfig.timers.softRes.value = text
+    FRAMES.msRollTimerEditBox:SetFocus()
+    FRAMES.msRollTimerEditBox:HighlightText()
+end)
+
+-- MS roll timer.
+FRAMES.msRollTimerEditBox:SetScript("OnTextChanged", function(self)
+    -- Convert the text to number.
+    local text = tonumber(self:GetText())
+
+    -- if it's not a number, clear the field.
+    if not text then
+        self:SetText("")
+    end
+end)
+
+FRAMES.msRollTimerEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ms.minValue, SoftResConfig.timers.ms.maxValue), SoftResConfig.timers.ms.value)
+    SoftResConfig.timers.ms.value = text
+end)
+
+FRAMES.msRollTimerEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ms.minValue, SoftResConfig.timers.ms.maxValue), SoftResConfig.timers.ms.value)
+    SoftResConfig.timers.ms.value = text
+    FRAMES.osRollTimerEditBox:SetFocus()
+    FRAMES.osRollTimerEditBox:HighlightText()
+end)
+
+-- OS roll timer.
+FRAMES.osRollTimerEditBox:SetScript("OnTextChanged", function(self)
+    -- Convert the text to number.
+    local text = tonumber(self:GetText())
+
+    -- if it's not a number, clear the field.
+    if not text then
+        self:SetText("")
+    end
+end)
+
+FRAMES.osRollTimerEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
+    SoftResConfig.timers.os.value = text
+end)
+
+FRAMES.osRollTimerEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
+    SoftResConfig.timers.os.value = text
+    FRAMES.ffaRollTimerEditBox:SetFocus()
+    FRAMES.ffaRollTimerEditBox:HighlightText()
+end)
+
+-- FFA roll timer.
+FRAMES.ffaRollTimerEditBox:SetScript("OnTextChanged", function(self)
+    -- Convert the text to number.
+    local text = tonumber(self:GetText())
+
+    -- if it's not a number, clear the field.
+    if not text then
+        self:SetText("")
+    end
+end)
+
+FRAMES.ffaRollTimerEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
+    SoftResConfig.timers.ffa.value = text
+end)
+
+FRAMES.ffaRollTimerEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
+    SoftResConfig.timers.ffa.value = text
+    FRAMES.softResRollTimerEditBox:SetFocus()
+    FRAMES.softResRollTimerEditBox:HighlightText()
 end)

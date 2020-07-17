@@ -78,12 +78,28 @@ function SoftRes.helpers:getItemInfoFromDragged()
             -- Change the texture, to the button.
             BUTTONS.announcedItemButton.texture:SetTexture(itemIcon)
 
-            -- Set the text to the itemLink.
-
-
             -- Check so that we haven't announced an item before we drag the new one out.
-            if not SoftRes.state.announcedItem.state then
+            if not SoftRes.state.announcedItem then
                   SoftRes.state.toggleAnnouncedItem(true, itemId)
             end
       end
 end
+
+-- Takes a string, turns it into a number and checks so that the value is between the min or max.
+-- If the value is under min, it will return min. If it's over max, it will return max.
+-- If it's a string, it will return false.
+function SoftRes.helpers:returnMinBetweenOrMax(string, min, max)
+      local text = tonumber(string)
+
+      if type(text) ~= "number" then
+          return false
+      else
+          if text < min then
+              return min
+          elseif text > max then
+              return max
+          else
+              return text
+          end
+      end
+  end

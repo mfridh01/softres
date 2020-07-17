@@ -68,25 +68,70 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   readyCheck = "|TInterface\\RaidFrame\\ReadyCheck-Ready:10:10:0:0|t",
                   noLoot = "|TInterface\\COMMON\\icon-noloot:10:10:0:0|t",
             },
+            state = {
+                  softResEnabled = true,
+                  autoShowOnLoot = true,
+                  autoHideOnLootDone = true,
+            },
+            timers = {
+                  softRes = {
+                        minValue = 10,
+                        maxValue = 20,
+                        default = 15,
+                        value = 15,
+                  },
+                  ms = {
+                        minValue = 10,
+                        maxValue = 20,
+                        default = 15,
+                        value = 15,
+                  }, 
+                  os = {
+                        minValue = 10,
+                        maxValue = 20,
+                        default = 15,
+                        value = 15,
+                  }, 
+                  ffa = {
+                        minValue = 10,
+                        maxValue = 20,
+                        default = 15,
+                        value = 15,
+                  }, 
+            },
       }
 end
 
 -- Apply values from saved list, to the frames.
 function SoftRes.ui:useSavedConfigValues()
       local CONFIG_UI_FRAMES = SoftResConfig.ui.frames
+      local CONFIG_STATE = SoftResConfig.state
+      local CONFIG_TIMERS = SoftResConfig.timers
+
       FRAMES.mainFrame:SetSize(CONFIG_UI_FRAMES.mainFrame.size.full.width, CONFIG_UI_FRAMES.mainFrame.size.full.height)
       FRAMES.tabContainer:SetSize(CONFIG_UI_FRAMES.tabContainer.size.full.width, CONFIG_UI_FRAMES.tabContainer.size.full.height)
       FRAMES.rollFrameContainer:SetSize(CONFIG_UI_FRAMES.rollFrameContainer.size.full.width, CONFIG_UI_FRAMES.rollFrameContainer.size.full.height)
       FRAMES.rollFrameContainer.child:SetSize(CONFIG_UI_FRAMES.rollFrameContainer.child.size.width, CONFIG_UI_FRAMES.rollFrameContainer.child.size.height)
       FRAMES.listFrameContainer:SetSize(CONFIG_UI_FRAMES.listFrameContainer.size.full.width, CONFIG_UI_FRAMES.listFrameContainer.size.full.height)
       FRAMES.listFrameContainer.child:SetSize(CONFIG_UI_FRAMES.listFrameContainer.child.size.width, CONFIG_UI_FRAMES.listFrameContainer.child.size.height)
+
+      -- config
+      BUTTONS.enableSoftResAddon:SetChecked(CONFIG_STATE.softResEnabled)
+      BUTTONS.autoShowWindowCheckButton:SetChecked(CONFIG_STATE.autoShowOnLoot)
+      BUTTONS.autoHideWindowCheckButton:SetChecked(CONFIG_STATE.autoHideOnLootDone)
+
+      FRAMES.softResRollTimerEditBox:SetText(CONFIG_TIMERS.softRes.value)
+      FRAMES.msRollTimerEditBox:SetText(CONFIG_TIMERS.ms.value)
+      FRAMES.osRollTimerEditBox:SetText(CONFIG_TIMERS.os.value)
+      FRAMES.ffaRollTimerEditBox:SetText(CONFIG_TIMERS.ffa.value)
 end
 --------------------------------------------------------------------
 
 -- UI BEGINS HERE.
 ------------------
 
---Frames
+-- Frames.
+----------
 FRAMES.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFrameTemplate")
       FRAMES.mainFrame:SetFrameStrata("DIALOG")
       FRAMES.mainFrame:SetPoint("TOPLEFT", UIParent, "TOPLEFT", 10, -10)
@@ -234,12 +279,85 @@ FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child)
 
       FRAMES.listFrame.fs = FRAMES.listFrame:CreateFontString(nil, "OVERLAY") -- This is the main list FontString. Populate this one.
             FRAMES.listFrame.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.listFrame.fs:SetFont(FRAMES.listFrame.fs:GetFont(), 10)
+            FRAMES.listFrame.fs:SetFont(FRAMES.listFrame.fs:GetFont(), 11)
             FRAMES.listFrame.fs:SetPoint("TOPLEFT", FRAMES.listFrame, "TOPLEFT", 0, 0)
             FRAMES.listFrame.fs:SetText("Testrad-01\nTestrad-02\nTestrad-03\nTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
             FRAMES.listFrame.fs:SetJustifyH("Left")
 
--- Buttons
+-- Page 3
+FRAMES.tabContainer.page3 = CreateFrame("Frame", "TabPagesPage3", FRAMES.mainFrame)
+      FRAMES.tabContainer.page3:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
+      FRAMES.tabContainer.page3:SetSize(313, 157)
+      FRAMES.tabContainer.page3:Hide()
+
+FRAMES.softResRollTimerEditBox = CreateFrame("EditBox", "SoftResRollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.softResRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 8, -75)
+      FRAMES.softResRollTimerEditBox:SetWidth(40)
+      FRAMES.softResRollTimerEditBox:SetHeight(20)
+      FRAMES.softResRollTimerEditBox:ClearFocus() 
+      FRAMES.softResRollTimerEditBox:SetAutoFocus(false)
+      FRAMES.softResRollTimerEditBox:SetMaxLetters(2)
+      FRAMES.softResRollTimerEditBox:SetAltArrowKeyMode(true)
+      FRAMES.softResRollTimerEditBox:EnableMouse(true)
+      FRAMES.softResRollTimerEditBox:SetText("15")
+      FRAMES.softResRollTimerEditBox.fs = FRAMES.softResRollTimerEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.softResRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.softResRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.softResRollTimerEditBox, "RIGHT", 5, -1)
+            FRAMES.softResRollTimerEditBox.fs:SetText("SoftRes Roll timer. (min: 10, max: 20)")
+            FRAMES.softResRollTimerEditBox.fs:SetJustifyH("Left")
+
+FRAMES.msRollTimerEditBox = CreateFrame("EditBox", "MSRollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.msRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.softResRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.msRollTimerEditBox:SetWidth(40)
+      FRAMES.msRollTimerEditBox:SetHeight(20)
+      FRAMES.msRollTimerEditBox:ClearFocus() 
+      FRAMES.msRollTimerEditBox:SetAutoFocus(false)
+      FRAMES.msRollTimerEditBox:SetMaxLetters(2)
+      FRAMES.msRollTimerEditBox:SetAltArrowKeyMode(true)
+      FRAMES.msRollTimerEditBox:EnableMouse(true)
+      FRAMES.msRollTimerEditBox:SetText("15")
+
+      FRAMES.msRollTimerEditBox.fs = FRAMES.msRollTimerEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.msRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.msRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.msRollTimerEditBox, "RIGHT", 5, -1)
+            FRAMES.msRollTimerEditBox.fs:SetText("MS Roll timer. (min: 10, max: 20)")
+            FRAMES.msRollTimerEditBox.fs:SetJustifyH("Left")
+
+FRAMES.osRollTimerEditBox = CreateFrame("EditBox", "OSRollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.osRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.msRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.osRollTimerEditBox:SetWidth(40)
+      FRAMES.osRollTimerEditBox:SetHeight(20)
+      FRAMES.osRollTimerEditBox:ClearFocus() 
+      FRAMES.osRollTimerEditBox:SetAutoFocus(false)
+      FRAMES.osRollTimerEditBox:SetMaxLetters(2)
+      FRAMES.osRollTimerEditBox:SetAltArrowKeyMode(true)
+      FRAMES.osRollTimerEditBox:EnableMouse(true)
+      FRAMES.osRollTimerEditBox:SetText("15")
+
+      FRAMES.osRollTimerEditBox.fs = FRAMES.osRollTimerEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.osRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.osRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.osRollTimerEditBox, "RIGHT", 5, -1)
+            FRAMES.osRollTimerEditBox.fs:SetText("OS Roll timer. (min: 10, max: 20)")
+            FRAMES.osRollTimerEditBox.fs:SetJustifyH("Left")
+
+FRAMES.ffaRollTimerEditBox = CreateFrame("EditBox", "FFARollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.ffaRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.osRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.ffaRollTimerEditBox:SetWidth(40)
+      FRAMES.ffaRollTimerEditBox:SetHeight(20)
+      FRAMES.ffaRollTimerEditBox:ClearFocus() 
+      FRAMES.ffaRollTimerEditBox:SetAutoFocus(false)
+      FRAMES.ffaRollTimerEditBox:SetMaxLetters(2)
+      FRAMES.ffaRollTimerEditBox:SetAltArrowKeyMode(true)
+      FRAMES.ffaRollTimerEditBox:EnableMouse(true)
+      FRAMES.ffaRollTimerEditBox:SetText("15")
+
+      FRAMES.ffaRollTimerEditBox.fs = FRAMES.ffaRollTimerEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.ffaRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.ffaRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.ffaRollTimerEditBox, "RIGHT", 5, -1)
+            FRAMES.ffaRollTimerEditBox.fs:SetText("FFA Roll timer. (min: 10, max: 20)")
+            FRAMES.ffaRollTimerEditBox.fs:SetJustifyH("Left")
+-- Buttons.
+-----------
 BUTTONS.tabButtonPage = {}
 
 BUTTONS.tabButtonPage[1] = CreateFrame("Button", "TabButtonPage1", FRAMES.mainFrame, "TabButtonTemplate")
@@ -268,6 +386,7 @@ BUTTONS.tabButtonPage[3] = CreateFrame("Button", "TabButtonPage3", FRAMES.mainFr
             PanelTemplates_TabResize(BUTTONS.tabButtonPage[i], 0)
       end
 
+-- Buttons page 1.
 BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAMES.tabContainer.page1)
       BUTTONS.announcedItemButton:SetSize(32, 32)
       BUTTONS.announcedItemButton:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", -3, -8)
@@ -330,6 +449,7 @@ BUTTONS.announceRollsButton = CreateFrame("Button", "RaidRollButton", FRAMES.tab
       BUTTONS.announceRollsButton:SetHeight(20)
       BUTTONS.announceRollsButton:SetText("Announce Result")
 
+-- Buttons page 2.
 BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.newListButton:SetPoint("TOPLEFT", FRAMES.listFrameContainer, "BOTTOMLEFT", -5, -5)
       BUTTONS.newListButton:SetWidth(102)
@@ -368,3 +488,40 @@ BUTTONS.editPlayerButton = CreateFrame("Button", "EditPlayerButton", FRAMES.tabC
       BUTTONS.editPlayerButton:SetWidth(102)
       BUTTONS.editPlayerButton:SetHeight(20)
       BUTTONS.editPlayerButton:SetText("Edit Player")
+
+-- Buttons Page 3
+BUTTONS.enableSoftResAddon = CreateFrame("CheckButton", "EnableSoftResAddon", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
+      BUTTONS.enableSoftResAddon:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 0, 0)
+      BUTTONS.enableSoftResAddon:SetWidth(25)
+      BUTTONS.enableSoftResAddon:SetHeight(25)
+      BUTTONS.enableSoftResAddon:SetChecked(false)
+
+      BUTTONS.enableSoftResAddon.fs = BUTTONS.enableSoftResAddon:CreateFontString(nil, "OVERLAY")
+            BUTTONS.enableSoftResAddon.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.enableSoftResAddon.fs:SetPoint("LEFT", BUTTONS.enableSoftResAddon, "RIGHT", 3, 0)
+            BUTTONS.enableSoftResAddon.fs:SetJustifyH("LEFT")
+            BUTTONS.enableSoftResAddon.fs:SetText("Enable SoftRes Addon.")
+
+BUTTONS.autoShowWindowCheckButton = CreateFrame("CheckButton", "AutoShowWindowCheckButton", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
+      BUTTONS.autoShowWindowCheckButton:SetPoint("TOPLEFT", BUTTONS.enableSoftResAddon, "BOTTOMLEFT", 0, 0)
+      BUTTONS.autoShowWindowCheckButton:SetWidth(25)
+      BUTTONS.autoShowWindowCheckButton:SetHeight(25)
+      BUTTONS.autoShowWindowCheckButton:SetChecked(false)
+
+      BUTTONS.autoShowWindowCheckButton.fs = BUTTONS.autoShowWindowCheckButton:CreateFontString(nil, "OVERLAY")
+            BUTTONS.autoShowWindowCheckButton.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.autoShowWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoShowWindowCheckButton, "RIGHT", 3, 0)
+            BUTTONS.autoShowWindowCheckButton.fs:SetJustifyH("LEFT")
+            BUTTONS.autoShowWindowCheckButton.fs:SetText("Auto-show window on loot.")
+
+BUTTONS.autoHideWindowCheckButton = CreateFrame("CheckButton", "AautoHideWindowCheckButton", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
+      BUTTONS.autoHideWindowCheckButton:SetPoint("TOPLEFT", BUTTONS.autoShowWindowCheckButton, "BOTTOMLEFT", 0, 0)
+      BUTTONS.autoHideWindowCheckButton:SetWidth(25)
+      BUTTONS.autoHideWindowCheckButton:SetHeight(25)
+      BUTTONS.autoHideWindowCheckButton:SetChecked(false)
+      
+      BUTTONS.autoHideWindowCheckButton.fs = BUTTONS.autoHideWindowCheckButton:CreateFontString(nil, "OVERLAY")
+            BUTTONS.autoHideWindowCheckButton.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.autoHideWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoHideWindowCheckButton, "RIGHT", 3, 0)
+            BUTTONS.autoHideWindowCheckButton.fs:SetJustifyH("LEFT")
+            BUTTONS.autoHideWindowCheckButton.fs:SetText("Auto-hide window when done looting.")
