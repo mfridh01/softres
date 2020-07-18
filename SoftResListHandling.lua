@@ -9,6 +9,7 @@ function SoftRes.list:createNewSoftResList()
           players = {},
           removedPlayers = {},
           drops = {},
+          shitRolls = {},
     }
 
     -- If we're scanning. We toggle it off.
@@ -180,9 +181,9 @@ function SoftRes.list:showFullSoftResList()
     local listEntries = #SoftResList.players
     local notSoftReserved = listEntries
 
-    local colorGreen = "|cFF00FF00"
-    local colorRed = "|cFFFF0000"
-    local colorYellow = "|cFFFFFF00"
+    local colorGreen = SoftResConfig.colors.green
+    local colorRed = SoftResConfig.colors.red
+    local colorYellow = SoftResConfig.colors.yellow
 
     local entryText = colorRed
     local raidTextColor = colorYellow
@@ -240,38 +241,7 @@ end
 -- Show prepared item and softreservers on the first page.
 ----------------------------------------
 function SoftRes.list:showPrepSoftResList()
-    local textFrame = FRAMES.rollFrame.fs
-    local text = SoftRes.state.scanForSoftRes.text
-    local icon = ""
-
-    -- Check if we've prepped an item.
-    if SoftRes.preparedItem.itemId and SoftRes.preparedItem.itemId ~= "" then
-    
-        -- We don't have to continue, if there are no players who has SoftReserved the item.
-        if #SoftRes.preparedItem.elegible == 0 then
-            text = text .. "     No one has SoftReserved this item."
-        else
-
-            text = text .. "Players who have SoftReserved this item:\n-------------------------------------------------------------\n"
-            -- Search through the players and only show the elegible ones.
-            for i = 1, #SoftResList.players do
-                local name = SoftResList.players[i].name
-                local itemId = SoftResList.players[i].softReserve.itemId
-                local groupPosition = SoftResList.players[i].groupPosition
-                local showItem = SoftRes.helpers:getItemLinkFromId(itemId)
-
-                -- we have the list of elegible players already.
-                for j = 1, #SoftRes.preparedItem.elegible do
-                    if SoftRes.preparedItem.elegible[j] == name then
-
-                        text = text .. icon .. "    " .. name .. "\n"
-                    end
-                end
-            end
-        end
-    end
-
-    textFrame:SetText(text)
+    -- FIX SHOW LIST
 end
 
 -- Listen to the raid or party chat and get the softreserves.
@@ -378,7 +348,7 @@ function SoftRes.list:handleRollButtons()
     -- We check if there are softreservers for the current item.
     if #SoftRes.preparedItem.elegible == 1 then
         BUTTONS.announceRollsButton:Show()
-    elseif #SoftRes.preparedItem.elegible > 1 then
+    elseif #SoftRes.preparedItem.elegible > 1 and SoftRes.announcedItem.softReserved then
         BUTTONS.softResRollButton:Show()
     else
         BUTTONS.raidRollButton:Show()

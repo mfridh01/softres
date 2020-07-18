@@ -67,6 +67,8 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   questionMark = "|TInterface\\RaidFrame\\ReadyCheck-Waiting:10:10:0:0|t",
                   readyCheck = "|TInterface\\RaidFrame\\ReadyCheck-Ready:10:10:0:0|t",
                   noLoot = "|TInterface\\COMMON\\icon-noloot:10:10:0:0|t",
+                  dice = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:10:10:0:0|t",
+                  skull = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8:10:10:0:0|t",
             },
             state = {
                   softResEnabled = true,
@@ -104,6 +106,11 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   maxValue = 5, -- legendary
                   value = 0, -- 0 = gray, 1 = white, 2 = green, 3 = blue, 4 = purple, 5 = orange
                   default = 2,
+            },
+            colors = {
+                  green = "|cFF00FF00",
+                  red = "|cFFFF0000",
+                  yellow = "|cFFFFFF00",
             },
       }
 end

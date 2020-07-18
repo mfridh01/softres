@@ -471,3 +471,37 @@ BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
     -- Handle buttons accordingly.
     SoftRes.list:handleRollButtons()
 end)
+
+-- SoftRes Roll.
+BUTTONS.softResRollButton:SetScript("OnClick", function(self)
+    -- Cancel all active timers.
+    -- CANCEL
+
+    -- Switch the listening state on.
+    SoftRes.state.toggleListenToRolls(true)
+
+    -- Announce the item.
+    SoftRes.state.toggleAnnouncedItem(true)
+
+    -- Active the timer.
+    -- TIMER and Announcement to group
+
+    -- When done. deactive the rolls.
+end)
+
+-- SoftRes Roll.
+BUTTONS.msRollButton:SetScript("OnClick", function(self)
+    -- Cancel all active timers.
+    -- CANCEL
+
+    -- Switch the listening state on.
+    SoftRes.state.toggleListenToRolls(true)
+
+    -- Announce the item.
+    SoftRes.state.toggleAnnouncedItem(true)
+
+    -- Active the timer.
+    -- TIMER and Announcement to group
+
+    -- When done. deactive the rolls.
+end)

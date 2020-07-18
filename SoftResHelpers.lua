@@ -157,11 +157,13 @@ function SoftRes.helpers:getSoftReservers(itemId)
 
             -- We search for the player(s) who has SoftReserved this item.
             if tonumber(SoftResList.players[i].softReserve.itemId) == tonumber(itemId) then
-                  print("in here?")
 
                   -- Check to see if the player has received it already.
                   if not SoftResList.players[i].softReserve.received then
                         
+                        -- Set the item to softReserved.
+                        SoftRes.announcedItem.softReserved = true
+
                         -- Push the player to the table of elegible players.
                         table.insert(softReservers, SoftResList.players[i].name)
                         SoftRes.debug:print("Player: " .. SoftResList.players[i].name .. " is added to the 'elegible' list.")
@@ -171,6 +173,7 @@ function SoftRes.helpers:getSoftReservers(itemId)
             end
       end
 
+      SoftRes.debug:print("SoftReserved = " .. tostring(SoftRes.announcedItem.softReserved))
       return softReservers
 end
 
@@ -245,11 +248,117 @@ end
 -- Se SoftRes.helpers:prepareItem() function for info about what happened below.
 function SoftRes.helpers:unPrepareItem()
       SoftRes.preparedItem.itemId = nil
+      SoftRes.preparedItem.elegible = {}
+      SoftRes.preparedItem.softReserved = false
+      SoftRes.announcedItem.rolls = {}
+      SoftRes.announcedItem.shitRolls = {}
+      SoftRes.announcedItem.softReserved = false
+      SoftRes.announcedItem.highestRoll = 0
       BUTTONS.prepareItemButton:Show()
       BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
       FRAMES.announcedItemFrame.fs:SetText("")
       SoftRes.state:toggleAlertPlayer(false)
-      SoftRes.preparedItem.elegible = {}
       FRAMES.rollFrame.fs:SetText("")
       SoftRes.helpers:hideAllRollButtons(false)
+end
+
+-- Split the rolls and return user/value.
+-- Takes a string value .. "player rolls (min-max)"
+-- Returns a string with user, value.
+local function getRoll(string)
+      local splitString = SoftRes.helpers:stringSplit(string)
+      local user = splitString[1]
+      local value = splitString[3]
+      local listenToRolls = SoftRes.state.listeningToRolls
+      local listenToRaidRolls = SoftRes.state.listeningToRaidRolls
+
+      -- if it's not a roll we're listning to.
+      if splitString[2] ~= "rolls" then return nil end
+
+      -- Accepted roll values.
+      local acceptedRoll = "(1-100)"
+   
+      -- Put all the "Shit-Rolls" in the shitlist.
+      -- Rolls that aren't accepted.
+      if splitString[4] ~= acceptedRoll then
+            local isIn = false
+            for i = 1, #SoftRes.announcedItem.shitRolls do
+                  if #SoftRes.announcedItem.shitRolls[i][1] == user then
+                        isIn = true
+                        break
+                  end
+            end
+
+            if (not isIn) then
+                  table.insert(SoftRes.announcedItem.shitRolls, {user, splitString[4]})
+                  table.insert(SoftResList.shitRolls, {user, splitString[4]})
+            end
+      end
+
+
+      -- Return the roll
+      if listenToRolls then -- FOR TESTING. REMOVE LATER.
+      --if listenToRolls and splitString[4] == acceptedRoll then
+            return user, value
+      
+      -- if it's a raidRoll, only take the rolls form the player who initiated the roll.
+      elseif listenToRaidRolls and user == GetUnitName("Player") then
+         return user, value
+      end
+end
+
+-- Get rolls from the system msg channel.
+function SoftRes.helpers:rollForItem(arg1)
+      -- We only want to go through the process if we're listneing for it.
+      if not SoftRes.state.listeningToRolls then return end
+
+      -- Get the user and value from the roll.
+      local rollUser, rollValue = getRoll(arg1)
+
+      -- if we have values, we continue
+      if (not rollUser) and (not rollValue) then return end
+      
+      local alreadyRolled = false
+      local elegible = false
+      local elegibleRollers = SoftRes.announcedItem.elegible
+      local announcedItemId = SoftRes.announcedItem.itemId
+      local rolls = SoftRes.announcedItem.rolls
+
+      -- We check if there are any softressers first.
+      if table.maxn(elegibleRollers) > 0 then
+            SoftRes.preparedItem.softReserved = true
+            for i = 1, #elegibleRollers do
+
+                  -- If we find an elegible user then we continue.
+                  if elegibleRollers[i] == rollUser then
+                        elegible = true
+                        break
+                  end
+            end
+      end
+
+      -- check if already rolled.
+      for i = 1, #rolls do
+
+            -- IF we find the player in the rolls table, he has already rolled and he will not be elegible for another roll.
+            if rolls[i][1] == rollUser then
+                  alreadyRolled = true
+                  SoftRes.debug:print(rollUser .. " has Already rolled")
+                  return
+            end
+      end
+
+      -- If the player hasn't already rolled we push him into the rolled table.
+      if not alreadyRolled then
+            tinsert(SoftRes.announcedItem.rolls, {rollUser, rollValue})
+      end
+
+      -- check for highest roll.
+      -- Sort the table accordingly.
+      local sortedTable = table.sort(SoftRes.announcedItem.rolls, function(a, b)
+            return tonumber(a[2]) > tonumber(b[2])
+      end)
+
+      rolls = sortedTable
+      -- And we're done.
 end

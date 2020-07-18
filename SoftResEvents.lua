@@ -15,13 +15,15 @@ FRAMES.mainFrame:RegisterEvent("LOOT_OPENED")
 FRAMES.mainFrame:RegisterEvent("LOOT_SLOT_CLEARED")
 FRAMES.mainFrame:RegisterEvent("LOOT_CLOSED")
 
+FRAMES.mainFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+
 FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...) 
 
       if event == "PLAYER_LOGIN" then
             if (not SoftResConfig) or type(SoftResConfig) ~= "table" then
                   SoftRes.ui:createDefaultSoftResConfigList()
             else
-                  --SoftRes.ui:createDefaultSoftResConfigList() -- FOR DEBUGGING PURPOSES
+                  SoftRes.ui:createDefaultSoftResConfigList() -- FOR DEBUGGING PURPOSES
                   SoftRes.debug:print("SoftResConfig, loaded.. Do stuff.")
             end
 
@@ -87,6 +89,27 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- Reset everything.
             SoftRes.helpers:unPrepareItem()
             SoftRes.droppedItems = {}
-      end
+      
+      -- Raid Rolls and trades.
+      elseif event == "CHAT_MSG_SYSTEM" then
+            arg1, arg2, arg3, arg4 = ...
+      
+            local trade = SoftRes.helpers:stringSplit(arg1, "%s") or nil
+            local tradeCommand = trade[5]
+            local tradeUser = trade[7]
+            local tradeWith = nil
+            local listenToRaidRolls = SoftRes.state.listeningToRaidRolls
+            local listenToRolls = SoftRes.state.listeningToRolls
 
+            if tradeCommand == "trade" and tradeUser then
+                  tradeWith = tradeUser
+            elseif listenToRaidRolls then
+                  SoftRes.helpers:raidRoll(arg1)
+            elseif listenToRolls then
+                  SoftRes.helpers:rollForItem(arg1)
+            end
+
+            -- show the prepared list.
+            SoftRes.list.showPrepSoftResList()
+      end
 end)

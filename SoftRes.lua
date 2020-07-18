@@ -70,6 +70,7 @@ SoftRes = {}
             SoftRes.state.__index = SoftRes.state
             SoftRes.state.announcedItem = false
             SoftRes.state.listeningToRolls = false
+            SoftRes.state.listeningToRaidRolls = false
             SoftRes.state.alertPlayer = {
                   text = "",
                   state = false,
@@ -87,10 +88,15 @@ SoftRes = {}
             itemId = nil,
             elegible = {},
             rolls = {},
+            tieRollers = {},
+            highestRoll = 0,
+            softReserved = false,
+            shitRolls = {},
       }
       SoftRes.preparedItem = {
             itemId = nil,
             elegible = {},
+            softResrved = false,
       }
 --------------------------------------------------------------------
 
@@ -151,29 +157,55 @@ end
 function SoftRes.state.toggleAnnouncedItem(flag)
       -- same as the above, but for announcedItem
       if flag == true then
-            SoftRes.state.announcedItem.state = false
+            SoftRes.announcedItem.state = false
       elseif flag == false then
-            SoftRes.state.announcedItem.state = true
+            SoftRes.announcedItem.state = true
       end
 
-      if SoftRes.state.announcedItem then
-            SoftRes.state.announcedItem.state = false
+      if SoftRes.announcedItem.state then
+            SoftRes.announcedItem.state = false
+            SoftRes.announcedItem.itemId = nil
+            SoftRes.announcedItem.elegible = {}
+            SoftRes.announcedItem.softReserved = false
       else
-            SoftRes.state.announcedItem.state = true
+            SoftRes.announcedItem.state = true
+            SoftRes.announcedItem.itemId = SoftRes.preparedItem.itemId
+            SoftRes.announcedItem.elegible = SoftRes.preparedItem.elegible
       end
+
+      SoftRes.debug:print(SoftRes.announcedItem.state)
 end
 
 function SoftRes.state.toggleListenToRolls(flag)
       -- same as the above
       if flag == true then
-            SoftRes.state.listeningToRolls.state = false
+            SoftRes.state.listeningToRolls = false
       elseif flag == false then
-            SoftRes.state.listeningToRolls.state = true
+            SoftRes.state.listeningToRolls = true
       end
 
       if SoftRes.state.listeningToRolls then
-            SoftRes.state.listeningToRolls.state = false
+            SoftRes.state.listeningToRolls = false
       else
-            SoftRes.state.listeningToRolls.state = true
+            SoftRes.state.listeningToRolls = true
       end
+
+      SoftRes.debug:print(SoftRes.state.listeningToRolls)
+end
+
+function SoftRes.state.toggleListenToRaidRolls(flag)
+      -- same as the above
+      if flag == true then
+            SoftRes.state.listeningToRaidRolls = false
+      elseif flag == false then
+            SoftRes.state.listeningToRaidRolls = true
+      end
+
+      if SoftRes.state.listeningToRaidRolls then
+            SoftRes.state.listeningToRaidRolls = false
+      else
+            SoftRes.state.listeningToRaidRolls = true
+      end
+
+      SoftRes.debug:print(SoftRes.state.listeningToRaidRolls)
 end
