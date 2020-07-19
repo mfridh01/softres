@@ -7,6 +7,20 @@
 -- Anchor to loot window on open?
 
 --DONE [Snits] Add functionality to scan the list for soft-reserves.
---[Snits] Add Prep item functionality.
---[Snits] Add dropscanner.
+--DONE [Snits] Add Prep item functionality.
+--DONE [Snits] Add dropscanner. --
+--DONE [Snits] Add Roll scanner and announce-Winner function.
+                    Tie-Rolls are working as well.
+
+-- [] Add Functionality with all rolls-buttons.
+-- [] Add Announcements!!                    
+-- [] Add a cancel announcement button. Clears all states.
+-- [Snits] Add an announcement after half the time, if a SoftRes player hasn't rolled in time.
+
+-- Added functions:
+    -- Shit rolls.... People who tries to "trick" the addon by rolling something else than 1-100 .. will be added to the "ShitRolls" list and have a SKULL icon AND red text.
+    -- Many rolls.... People who rolls many times on the same item, will be added to this list. It will just show up for the announced item and will not be saved for future runs. It will show up with Yellow text and an "!" icon.
+
+
+
 --[Snits] Config, add "sliders" for timers. Softres, MS, OS, FFA

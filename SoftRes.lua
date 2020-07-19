@@ -68,9 +68,12 @@ SoftRes = {}
       
       SoftRes.state = {}
             SoftRes.state.__index = SoftRes.state
+            SoftRes.state.lootOpened = false
             SoftRes.state.announcedItem = false
             SoftRes.state.listeningToRolls = false
             SoftRes.state.listeningToRaidRolls = false
+            SoftRes.state.announcedResult = false
+            SoftRes.state.rollingForLoot = false
             SoftRes.state.alertPlayer = {
                   text = "",
                   state = false,
@@ -92,12 +95,22 @@ SoftRes = {}
             highestRoll = 0,
             softReserved = false,
             shitRolls = {},
+            manyRolls = {},
+            notElegibleRolls = {},
+            
       }
       SoftRes.preparedItem = {
             itemId = nil,
             elegible = {},
             softResrved = false,
       }
+--------------------------------------------------------------------
+
+-- SoftResDB, a table with saved values that will be kept forever.
+------------------------------------------------------------------
+SoftResDB = {
+      shitRollers = {},
+}
 --------------------------------------------------------------------
 
 -- SoftRes Debugging.
@@ -154,7 +167,7 @@ function SoftRes.state:toggleScanForSoftRes(flag)
       end
 end
 
-function SoftRes.state.toggleAnnouncedItem(flag)
+function SoftRes.state:toggleAnnouncedItem(flag)
       -- same as the above, but for announcedItem
       if flag == true then
             SoftRes.announcedItem.state = false
@@ -167,16 +180,18 @@ function SoftRes.state.toggleAnnouncedItem(flag)
             SoftRes.announcedItem.itemId = nil
             SoftRes.announcedItem.elegible = {}
             SoftRes.announcedItem.softReserved = false
+            BUTTONS.announceRollsButton:Hide()
       else
             SoftRes.announcedItem.state = true
             SoftRes.announcedItem.itemId = SoftRes.preparedItem.itemId
             SoftRes.announcedItem.elegible = SoftRes.preparedItem.elegible
+            BUTTONS.announceRollsButton:Show()
       end
 
       SoftRes.debug:print(SoftRes.announcedItem.state)
 end
 
-function SoftRes.state.toggleListenToRolls(flag)
+function SoftRes.state:toggleListenToRolls(flag)
       -- same as the above
       if flag == true then
             SoftRes.state.listeningToRolls = false
@@ -193,7 +208,7 @@ function SoftRes.state.toggleListenToRolls(flag)
       SoftRes.debug:print(SoftRes.state.listeningToRolls)
 end
 
-function SoftRes.state.toggleListenToRaidRolls(flag)
+function SoftRes.state:toggleListenToRaidRolls(flag)
       -- same as the above
       if flag == true then
             SoftRes.state.listeningToRaidRolls = false
@@ -208,4 +223,21 @@ function SoftRes.state.toggleListenToRaidRolls(flag)
       end
 
       SoftRes.debug:print(SoftRes.state.listeningToRaidRolls)
+end
+
+-- Toggle roling for loot
+function SoftRes.state:toggleRollingForLoot(flag, modeText)
+      -- same as the above, but for announcedItem
+      if flag == true then
+            SoftRes.state.rollingForLoot = false
+      elseif flag == false then
+            SoftRes.state.rollingForLoot = true
+      end
+
+      if SoftRes.state.rollingForLoot then
+            SoftRes.state.rollingForLoot = false
+      else
+            SoftRes.state.rollingForLoot = true
+      end
+
 end

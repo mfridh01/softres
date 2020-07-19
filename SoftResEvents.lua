@@ -71,12 +71,19 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- Reset everything.
             SoftRes.helpers:unPrepareItem()
 
+            -- Alert player.
+            SoftRes.state:toggleAlertPlayer(true, "Loot")
+            SoftRes.state.lootOpened = true
+
             -- Populate dropped items.
             SoftRes.list:populateDroppedItems()
 
       elseif event == "LOOT_SLOT_CLEARED" then
             SoftRes.debug:print("Looted something")
             
+            -- Remove the item from the dropped items list.
+            SoftRes.helpers:removeHandledItem()
+
             -- Reset everything.
             SoftRes.helpers:unPrepareItem()
 
@@ -89,6 +96,8 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- Reset everything.
             SoftRes.helpers:unPrepareItem()
             SoftRes.droppedItems = {}
+            SoftRes.state.lootOpened = false
+            SoftRes.state:toggleAlertPlayer(false)
       
       -- Raid Rolls and trades.
       elseif event == "CHAT_MSG_SYSTEM" then

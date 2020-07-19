@@ -172,6 +172,83 @@ function SoftRes.list:reOrderPlayerList()
     end
 end
 
+-- local function for getting a skull, if the player is on shit-list.
+-- Takes a player, return a skull.
+local function checkIfShitRoller(player)
+    -- If the player is in the ShitRollers list. Give them the skull icon.
+    if SoftRes.helpers:findStringInTable(SoftResDB.shitRollers, player) then
+        return " " .. SoftResConfig.icons.skull
+    end
+
+    return ""
+end
+
+-- local function for getting a questicon, if the player is on manyRolls list.
+-- Takes a player, returns a quest icon.
+local function checkIfManyRolls(player)
+    -- If the player is in the manyRollers list. Give them the quest icon.
+    for i = 1, #SoftRes.announcedItem.manyRolls do
+        if SoftRes.announcedItem.manyRolls[i][1] == player then
+            return SoftResConfig.icons.quest .. " "
+        end
+    end
+
+    return ""
+end
+
+-- local function for getting a dice, if the player has rolled.
+-- Takes a player, returns a dice icon and the value.
+local function checkIfRolled(player)
+    
+    for i = 1, #SoftRes.announcedItem.rolls do
+        if SoftRes.announcedItem.rolls[i][1] == player then
+            return "" .. SoftResConfig.icons.dice .. " (" .. SoftRes.announcedItem.rolls[i][2] .. ") "
+        end
+    end
+
+    return ""
+end
+
+-- local function for getting a green check icon, if the player has a high roll.
+-- Takes a player, returns a green check icon.
+local function checkIfHighestRoll(player)
+    local iconText = "" .. SoftResConfig.icons.readyCheck .. SoftResConfig.colors.green
+
+    -- If there is only one elegible roller, automaticly send back that player as the winner.
+    if #SoftRes.preparedItem.elegible == 1 then
+        return iconText
+    end
+
+    for i = 1, #SoftRes.announcedItem.rolls do
+        if SoftRes.announcedItem.rolls[i][1] == player and tonumber(SoftRes.announcedItem.rolls[i][2]) == tonumber(SoftRes.announcedItem.highestRoll) then
+            return iconText
+        end
+    end
+
+    return ""
+end
+
+-- local function for getting a green check icon, if the player has a high roll.
+-- Takes a player, returns a green check icon.
+local function checkIfPlayerIsOffline(player)
+    local groupPosition = 0
+
+    for i = 1, #SoftResList.players do
+        if SoftResList.players[i].name == player then
+            groupPosition = SoftResList.players[i].groupPosition
+        end
+    end
+
+    if groupPosition > 0 then
+        name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(groupPosition)
+        if not online then
+            return SoftResConfig.icons.redCross .. SoftResConfig.colors.red .. " (OFFLINE) "
+        end
+    end
+
+    return ""
+end
+
 -- Show the SoftRessers on the second tabpage.
 ----------------------------------------------
 function SoftRes.list:showFullSoftResList()
@@ -188,6 +265,9 @@ function SoftRes.list:showFullSoftResList()
     local entryText = colorRed
     local raidTextColor = colorYellow
     local listEntryColor = colorYellow
+    local offlineColor = colorRed
+
+    local numOffline = numGroupMembers
 
     -- Set the list-date to the center of the title.
     FRAMES.mainFrame.titleCenter:SetText(SoftResList.date)
@@ -220,7 +300,15 @@ function SoftRes.list:showFullSoftResList()
         -- if there still is no item, we set it to ""
         if not showItem then showItem = "" end
 
-        text = text .. icon .. groupPosition .. "-" .. name .. " " .. showItem .. "\n"
+        text = text .. icon .. groupPosition .. "-" .. name .. checkIfShitRoller(name) .. " " .. showItem .. "\n"
+    end
+
+    -- Check for offline players
+    for i = 1, numGroupMembers do
+        name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
+        if not online then
+            numOffline = numOffline - 1
+        end
     end
 
     -- Set colors.
@@ -232,16 +320,125 @@ function SoftRes.list:showFullSoftResList()
     end
 
     if notSoftReserved == 0 then entryText = colorGreen end
+    if numOffline == numGroupMembers then offlineColor = colorGreen end
 
     -- populate the frame with the new text.
-    local infoText = "In raid: " .. raidTextColor .. numGroupMembers .. "|r || On the list: " .. listEntryColor .. listEntries .. "|r || SoftReserves: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-------------------------------------------------------------\n"
+    local infoText = "Raid: " .. offlineColor .. numOffline .. "|r/" .. raidTextColor .. numGroupMembers .. "|r || Listentries: " .. listEntryColor .. listEntries .. "|r || SoftRes: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-------------------------------------------------------------\n"
     textFrame:SetText(infoText .. text)
 end
 
 -- Show prepared item and softreservers on the first page.
 ----------------------------------------
 function SoftRes.list:showPrepSoftResList()
-    -- FIX SHOW LIST
+    local textFrame = FRAMES.rollFrame.fs
+    local text = ""
+    local textTitle = ""
+    local rollIcon = SoftResConfig.icons.dice
+
+    -- Set the tile accordingly.
+    if SoftRes.announcedItem.softReserved then
+        textTitle = "The following players are elegible for rolls:\n-------------------------------------------------------------\n"
+
+        -- List all players.
+        for i = 1, #SoftRes.preparedItem.elegible do
+            local playerName = SoftRes.preparedItem.elegible[i]
+            text = text .. checkIfPlayerIsOffline(playerName) .. checkIfHighestRoll(playerName) .. checkIfRolled(playerName) .. playerName .. checkIfManyRolls(playerName) .. checkIfShitRoller(playerName) .. "|r\n"
+        end
+      
+    elseif #SoftRes.announcedItem.rolls > 0 then
+        textTitle = "The follwing players has rolled on it:\n-------------------------------------------------------------\n"
+
+    elseif SoftRes.preparedItem.itemId then
+        textTitle = "The item is NOT SoftReserved:\n-------------------------------------------------------------\n"
+    else
+        textTitle = "Rolls list.\n-------------------------------------------------------------\n"
+    end
+
+    -- If we have a winner, we override the title.
+    -- If there is only 1 person left for the elgible rollers, that means that player is the winner.
+    if #SoftRes.preparedItem.elegible == 1 then
+        textTitle = "The winner is:\n-------------------------------------------------------------\n"
+    end
+
+    -- If we have announced the winner, but don't have any rolls.
+    if SoftRes.state.announcedResult and #SoftRes.preparedItem.elegible == 0 and #SoftRes.announcedItem.rolls == 0 then
+        textTitle = "No one wanted the item.\n-------------------------------------------------------------\n\n  NO ROLLS"
+    end
+
+
+    -- Keep track of all the players with the same rollValue.
+    -- We need to know if there is a tie or not.
+    -- SoftRes.announcedItem.highestRoll, is the item we're using.
+    -- SoftRes.announcedItem.tieRollers is the table we're using.
+    local highRollersText = ""
+
+    -- for now, we just show the people who rolled.
+    for i = 1, #SoftRes.announcedItem.rolls do
+        local rollUser = SoftRes.announcedItem.rolls[i][1]
+        local rollValue = tonumber(SoftRes.announcedItem.rolls[i][2])
+        local highRollIcon = ""
+        local playerColor = ""
+        local shitRollersIcon = ""
+        local manyRollersIcon = ""
+
+        -- Check if the player who rolled is the highest roller.
+        -- If it's higher or same, we set the new value. If not, then we don't give then the nice icon =)
+        if rollValue > SoftRes.announcedItem.highestRoll then
+            -- Set the new value.
+            SoftRes.announcedItem.highestRoll = rollValue
+
+            -- Clear the tie-rolls.
+            -- We don't need to know about the ties that are lower than the highest roll.
+            SoftRes.announcedItem.tieRollers = {}
+
+            -- Set the winning icon.
+            highRollIcon = SoftResConfig.icons.readyCheck
+        elseif rollValue == SoftRes.announcedItem.highestRoll then
+            
+            -- Check if the player is already in the tieRollers list.
+            -- Add the player to the HighRollers table.
+            if not SoftRes.helpers:findStringInTable(SoftRes.announcedItem.tieRollers, rollUser) then
+                table.insert(SoftRes.announcedItem.tieRollers, rollUser)
+            end
+
+            -- Set the winning icon.
+            highRollIcon = SoftResConfig.icons.readyCheck
+            playerColor = SoftResConfig.colors.green
+        end
+
+        -- If the player is in the manyrollers list.
+        -- This will not override any other color, but will always set an icon.
+        for j = 1, #SoftRes.announcedItem.manyRolls do
+            if SoftRes.announcedItem.manyRolls[j][1] == rollUser then
+                manyRollersIcon = " " .. SoftResConfig.icons.quest
+
+                if highRollIcon == "" then
+                    playerColor = SoftResConfig.colors.yellow
+                end
+            end
+        end
+        
+        -- this is the last row of the rollers.
+        -- We don't show it if the item is soft-reserved.
+        if not SoftRes.announcedItem.softReserved then
+            text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. "|r\n"
+        end
+    end
+
+    -- We have a TIE??!? set the title accordingly.
+    if #SoftRes.announcedItem.tieRollers > 1 then
+
+        textTitle = "We have a TIE:\n-------------------------------------------------------------\n"
+
+        -- Read through the highRollers and add them to the front.
+        for i = 1, #SoftRes.announcedItem.tieRollers do
+            highRollersText = highRollersText .. SoftRes.announcedItem.tieRollers[i] .. "\n"
+        end
+
+        highRollersText = highRollersText .. "-------------------------------------------------------------\n"
+    end
+
+    textFrame:SetText(textTitle .. highRollersText .. text)
 end
 
 -- Listen to the raid or party chat and get the softreserves.
@@ -325,7 +522,7 @@ function SoftRes.list:populateDroppedItems()
  
     -- If there are no items dropped.
     if numberOfItems == 0 then return nil end
-    SoftRes.debug:print("Number of items to loot: " .. numberOfItems)
+        SoftRes.debug:print("Number of items to loot: " .. numberOfItems)
 
     for i = 1, numberOfItems do
        local itemLink = GetLootSlotLink(i)
@@ -337,6 +534,8 @@ function SoftRes.list:populateDroppedItems()
           table.insert(SoftRes.droppedItems, itemId)
        end
     end
+
+    BUTTONS.prepareItemButton:Show()
 end
 
 -- We will change the states of the roll-buttons according to the drops and reserves.

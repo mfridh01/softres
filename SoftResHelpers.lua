@@ -104,6 +104,18 @@ function SoftRes.helpers:returnMinBetweenOrMax(string, min, max)
       end
 end
 
+-- Takes an Index-Value table and searches for the string.
+-- If it finds it, returns true.
+function SoftRes.helpers:findStringInTable(table, string)
+      for i = 1, #table do
+            if table[i] == string then
+                  return string
+            end
+      end
+
+      return false
+end
+
 -- Shows a simple pop-up message window, with an OK button.
 -- Takes a text-string as a parameter for displaying text.
 function SoftRes.helpers:showPopupWindow(text)
@@ -111,7 +123,8 @@ function SoftRes.helpers:showPopupWindow(text)
 
       if alertText == "Scan" then alertText = "Scanning chat for SoftReserves."
       elseif alertText == "Prep" then alertText = "An item is prepared for distribution."
-      elseif alertText == "Anno" then alertText = "Announced an item but not done with the distribution."
+      elseif alertText == "Anno" then alertText = "Announced an item and still taking rolls.\nDistribution not yet finnished."
+      elseif alertText == "Loot" then alertText = "The lootwindow is still opened."
       end
 
 
@@ -244,22 +257,58 @@ function SoftRes.helpers:hideAllRollButtons(flag)
       end
 end
 
+-- When we loot something from the lootwindow, it must be removed from the droppedItemsList.
+function SoftRes.helpers:removeHandledItem()
+      local temp = {}
+      
+      for k, v in ipairs(SoftRes.droppedItems) do
+            if v ~= SoftRes.preparedItem.itemId then
+            tinsert(temp, v)
+            end
+      end
+      
+      if table.maxn(temp) > 0 then
+            SoftRes.droppedItems = {}
+            SoftRes.droppedItems = temp
+      end
+end
+
 -- Unprepare item for rolls.
 -- Se SoftRes.helpers:prepareItem() function for info about what happened below.
 function SoftRes.helpers:unPrepareItem()
       SoftRes.preparedItem.itemId = nil
       SoftRes.preparedItem.elegible = {}
       SoftRes.preparedItem.softReserved = false
+
+      SoftRes.announcedItem.state = false
+      SoftRes.announcedItem.itemId = nil
+      SoftRes.announcedItem.elegible = {}
       SoftRes.announcedItem.rolls = {}
-      SoftRes.announcedItem.shitRolls = {}
-      SoftRes.announcedItem.softReserved = false
+      SoftRes.announcedItem.tieRollers = {}
       SoftRes.announcedItem.highestRoll = 0
-      BUTTONS.prepareItemButton:Show()
+      SoftRes.announcedItem.softReserved = false
+      SoftRes.announcedItem.shitRolls = {}
+      SoftRes.announcedItem.manyRolls = {}
+
+      SoftRes.helpers:hideAllRollButtons(true)
       BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
+      SoftRes.state:toggleScanForSoftRes(false)
+
+      SoftRes.state.announcedResult = false
+
       FRAMES.announcedItemFrame.fs:SetText("")
-      SoftRes.state:toggleAlertPlayer(false)
       FRAMES.rollFrame.fs:SetText("")
-      SoftRes.helpers:hideAllRollButtons(false)
+
+      if SoftRes.state.lootOpened then
+            SoftRes.state:toggleAlertPlayer(true, "Loot")
+            BUTTONS.prepareItemButton:Show()
+      else
+            SoftRes.state:toggleAlertPlayer(false)
+            BUTTONS.prepareItemButton:Hide()
+      end
+
+      SoftRes.list:showFullSoftResList()
+      SoftRes.list.showPrepSoftResList()
 end
 
 -- Split the rolls and return user/value.
@@ -282,6 +331,7 @@ local function getRoll(string)
       -- Rolls that aren't accepted.
       if splitString[4] ~= acceptedRoll then
             local isIn = false
+            local isInDB = false
             for i = 1, #SoftRes.announcedItem.shitRolls do
                   if #SoftRes.announcedItem.shitRolls[i][1] == user then
                         isIn = true
@@ -289,9 +339,22 @@ local function getRoll(string)
                   end
             end
 
+            -- We search for the player in our ShitRollers DB.
+            for i = 1, #SoftResDB.shitRollers do
+                  if #SoftResDB.shitRollers[i] == user then
+                        isInDB = true
+                        break
+                  end
+            end
+
             if (not isIn) then
                   table.insert(SoftRes.announcedItem.shitRolls, {user, splitString[4]})
                   table.insert(SoftResList.shitRolls, {user, splitString[4]})
+            end
+
+            -- Put the player IN the DB for ShitRollers.
+            if (not isInDB) then
+                  table.insert(SoftResDB.shitRollers, user)
             end
       end
 
@@ -320,7 +383,7 @@ function SoftRes.helpers:rollForItem(arg1)
       
       local alreadyRolled = false
       local elegible = false
-      local elegibleRollers = SoftRes.announcedItem.elegible
+      local elegibleRollers = SoftRes.preparedItem.elegible
       local announcedItemId = SoftRes.announcedItem.itemId
       local rolls = SoftRes.announcedItem.rolls
 
@@ -335,6 +398,21 @@ function SoftRes.helpers:rollForItem(arg1)
                         break
                   end
             end
+
+            if not elegible then
+                  SoftRes.debug:print(rollUser .. " is not elegible for rolls...")
+
+                  -- Even if the player is not elegible for rolls, we sill want to catch them.
+                  for i = 1, #SoftRes.announcedItem.notElegibleRolls do
+                        if SoftRes.announcedITem.notElegibleRolls[i][1] == rollUser then
+                              SoftRes.debug:print(rollUser .. " is already in the NotElegibleRolls list.")
+                              break
+                        end
+                  end
+
+                  SoftRes.debug:print(rollUser .. " added to the NotElegibleRolls list.")
+                  table.insert(SoftRes.announcedItem.notElegibleRolls, {rollUser, rollValue})
+            end
       end
 
       -- check if already rolled.
@@ -343,7 +421,29 @@ function SoftRes.helpers:rollForItem(arg1)
             -- IF we find the player in the rolls table, he has already rolled and he will not be elegible for another roll.
             if rolls[i][1] == rollUser then
                   alreadyRolled = true
-                  SoftRes.debug:print(rollUser .. " has Already rolled")
+                  SoftRes.debug:print(rollUser .. " has Already rolled...")
+
+                  -- if we find the player in the many-rolls table. (A table for keeping track of people who tries to roll many times on the same item.)
+                  -- We simply adds to the value. it will be shown. Or we add the player to the list.
+
+                  if #SoftRes.announcedItem.manyRolls == 0 then
+                        table.insert(SoftRes.announcedItem.manyRolls, {rollUser, 1})
+                        SoftRes.debug:print(rollUser .. " was added to the 'ManyRolls' list.")
+                  else
+                  
+                        for j = 1 ,#SoftRes.announcedItem.manyRolls do
+                              
+                              if SoftRes.announcedItem.manyRolls[j][1] == rollUser then
+                                    SoftRes.announcedItem.manyRolls[j][2] = SoftRes.announcedItem.manyRolls[j][2] + 1
+                                    SoftRes.debug:print(rollUser .. " is already in the 'ManyRolls' list.")
+                                    break
+                              else
+                                    table.insert(SoftRes.announcedItem.manyRolls, {rollUser, 1})
+                                    SoftRes.debug:print(rollUser .. " was added to the 'ManyRolls' list.")
+                              end
+                        end
+                  end
+
                   return
             end
       end
@@ -361,4 +461,75 @@ function SoftRes.helpers:rollForItem(arg1)
 
       rolls = sortedTable
       -- And we're done.
+end
+
+function SoftRes.helpers:handleTieRolls()
+      -- Check if we have a tie roll.
+      if #SoftRes.announcedItem.tieRollers > 1 then
+
+            SoftRes.debug:print("Handling tie rolls.")
+            return true
+      end
+
+      return false
+end
+
+-- Announce the results of the rolls.
+function SoftRes.helpers:announceResult()
+      -- Check if there are any rolls.
+      if #SoftRes.announcedItem.rolls > 0 then
+
+            -- Handle tie-rolls.
+            if SoftRes.helpers:handleTieRolls() then
+
+                  -- Populate the elegible list with only the tie-rollers.
+                  SoftRes.preparedItem.elegible = {}
+                  SoftRes.preparedItem.elegible = SoftRes.announcedItem.tieRollers
+
+                  -- Slear the rolls lists
+                  -- Clear the tie-rollers list. It could be populated again.
+                  SoftRes.announcedItem.rolls = {}
+                  SoftRes.announcedItem.tieRollers = {}
+                  SoftRes.announcedItem.highestRoll = 0
+
+                  -- Listen to rolls again.
+                  SoftRes.state:toggleListenToRolls(true)
+
+                  -- Announce Re-Roll for only the tie-rollers.
+                  -- ANNOUNCE RE ROLLS
+
+            -- We don't have tie-rolls.
+            -- But we do actually have rolls.
+            else
+
+                  -- Get the highest roller.
+                  -- that's the Index #1 in rollers lite, since it's already sorted.
+                  local highestRoller = SoftRes.announcedItem.rolls[1]
+
+                  -- Clear all rollers except the winner.
+                  SoftRes.announcedItem.rolls = {}
+                  table.insert(SoftRes.announcedItem.rolls, highestRoller)
+
+                  -- Show only the winner.
+                  -- We push the winner to be the sole elegible player for the roll.
+                  -- That way we will announce the winner however that player won.
+                  SoftRes.preparedItem.elegible = {}
+                  table.insert(SoftRes.preparedItem.elegible, highestRoller[1])
+            end
+      end
+
+      SoftRes.debug:print("Winner = " .. tostring(SoftRes.preparedItem.elegible[1]))
+
+      -- stop listening to rolls.
+      SoftRes.state:toggleListenToRolls(false)
+
+      -- Rolling has stopped.
+      SoftRes.state:toggleRollingForLoot(false)
+
+      -- We have announced the results.
+      SoftRes.state.announcedResult = true
+
+      -- Re-draw the list.
+      SoftRes.list:showPrepSoftResList()
+      
 end

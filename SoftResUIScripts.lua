@@ -1,5 +1,5 @@
 -- OnUpdate for mainframe
-FRAMES.mainFrame.updateInterval = 1.0; -- How often the OnUpdate code will run (in seconds)
+FRAMES.mainFrame.updateInterval = 0.5; -- How often the OnUpdate code will run (in seconds)
 FRAMES.mainFrame.timeSinceLastUpdate = 0
 FRAMES.mainFrame.scanDots = 1
 
@@ -25,6 +25,7 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
 
     -- Update the softRes list.
     SoftRes.list:showFullSoftResList()
+    SoftRes.list.showPrepSoftResList()
 
     self.timeSinceLastUpdate = 0;
   end
@@ -65,6 +66,8 @@ end
 
 -- New List
 BUTTONS.newListButton:SetScript("OnClick", function(self)
+    if not SoftRes.helpers:checkAlertPlayer("New") then return end
+
     -- Popup dialog for creating a new list.
     StaticPopupDialogs["SOFTRES_NEW_LIST"] = {
         text = "Do you really want to generate a new list?\nThis will remove all the entries.\n\nWrite 'yes' in the box to continue.",
@@ -106,6 +109,8 @@ end)
 -- Add player
 -- Edit player
 BUTTONS.addPlayerSoftResButton:SetScript("OnClick", function(self)
+    if not SoftRes.helpers:checkAlertPlayer("Add") then return end
+
     -- Check to see that there is a list.
     if not SoftResList then return end
 
@@ -156,6 +161,8 @@ end)
 
 -- Edit player
 BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
+    if not SoftRes.helpers:checkAlertPlayer("Edit") then return end
+
     local editPlayer = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
 
     -- If there is no player to edit. Then don't.
@@ -237,12 +244,6 @@ local function handleDraggedItem()
             return
         end
 
-        if SoftRes.preparedItem.itemId and SoftRes.preparedItem.itemId ~= "" then
-            ClearCursor()
-            SoftRes.helpers:showPopupWindow()
-            return
-        end
-
         -- Prepare the item for announcement.
         local itemId = SoftRes.helpers:getItemInfoFromDragged()
         SoftRes.helpers:prepareItem(itemId)
@@ -267,16 +268,16 @@ end)
 
 BUTTONS.announcedItemButton:SetScript("OnClick", function(_, button)
     if button == "RightButton" then
+
+        -- If we have started a roll on an item, but not announced a winner, we alert the player.
+        if SoftRes.state.rollingForLoot then
+            SoftRes.helpers:showPopupWindow()
+            return
+        end
+
         SoftRes.helpers:unPrepareItem()
     elseif button == "LeftButton" and GetCursorInfo() then
         handleDraggedItem()
-    end
-end)
-
--- Prepare item
-BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
-    if SoftRes.preparedItem.itemId and SoftRes.preparedItem.itemId ~= "" then
-        print(SoftRes.preparedItem.itemId)
     end
 end)
 
@@ -450,7 +451,7 @@ end)
 BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
 
     -- check for availability
-    if not SoftRes.helpers:checkAlertPlayer("Prep") then return end
+    if not SoftRes.helpers:checkAlertPlayer("Loot") then return end
 
     -- Check for items to prepare.
     if #SoftRes.droppedItems == 0 then return end
@@ -478,10 +479,16 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     -- CANCEL
 
     -- Switch the listening state on.
-    SoftRes.state.toggleListenToRolls(true)
+    SoftRes.state:toggleListenToRolls(true)
 
     -- Announce the item.
-    SoftRes.state.toggleAnnouncedItem(true)
+    SoftRes.state:toggleAnnouncedItem(true)
+
+    -- Rolling for loot
+    SoftRes.state:toggleRollingForLoot(true)
+
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(nil, "Anno")
 
     -- Active the timer.
     -- TIMER and Announcement to group
@@ -495,13 +502,24 @@ BUTTONS.msRollButton:SetScript("OnClick", function(self)
     -- CANCEL
 
     -- Switch the listening state on.
-    SoftRes.state.toggleListenToRolls(true)
+    SoftRes.state:toggleListenToRolls(true)
 
     -- Announce the item.
-    SoftRes.state.toggleAnnouncedItem(true)
+    SoftRes.state:toggleAnnouncedItem(true)
+
+    -- Rolling for loot
+    SoftRes.state:toggleRollingForLoot(true)
+
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Anno")
 
     -- Active the timer.
     -- TIMER and Announcement to group
 
     -- When done. deactive the rolls.
+end)
+
+BUTTONS.announceRollsButton:SetScript("OnClick", function(self)
+    -- handle the announcement.
+    SoftRes.helpers:announceResult()
 end)

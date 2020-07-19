@@ -69,6 +69,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   noLoot = "|TInterface\\COMMON\\icon-noloot:10:10:0:0|t",
                   dice = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:10:10:0:0|t",
                   skull = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8:10:10:0:0|t",
+                  quest = "|TInterface\\GossipFrame\\AvailableQuestIcon:10:10:0:0|t",
             },
             state = {
                   softResEnabled = true,
@@ -443,42 +444,49 @@ BUTTONS.prepareItemButton = CreateFrame("Button", "PrepareItemButton", FRAMES.ta
       BUTTONS.prepareItemButton:SetPoint("TOPLEFT", BUTTONS.announcedItemButton, "BOTTOMLEFT", -1, -2)
       BUTTONS.prepareItemButton:SetWidth(102)
       BUTTONS.prepareItemButton:SetHeight(20)
+      BUTTONS.prepareItemButton:Hide()
       BUTTONS.prepareItemButton:SetText("Prepare Item")
       
 BUTTONS.raidRollButton = CreateFrame("Button", "RaidRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.raidRollButton:SetPoint("TOPLEFT", BUTTONS.announcedItemButton, "BOTTOMLEFT", -1, -24)
       BUTTONS.raidRollButton:SetWidth(102)
       BUTTONS.raidRollButton:SetHeight(20)
+      BUTTONS.raidRollButton:Hide()
       BUTTONS.raidRollButton:SetText("Raid Roll")
 
 BUTTONS.softResRollButton = CreateFrame("Button", "SoftResRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.softResRollButton:SetPoint("LEFT", BUTTONS.prepareItemButton, "RIGHT", 3, 0)
       BUTTONS.softResRollButton:SetWidth(102)
       BUTTONS.softResRollButton:SetHeight(20)
+      BUTTONS.softResRollButton:Hide()
       BUTTONS.softResRollButton:SetText("SoftRes Roll")
 
 BUTTONS.osRollButton = CreateFrame("Button", "OSRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.osRollButton:SetPoint("TOP", BUTTONS.softResRollButton, "BOTTOM", 0, -2)
       BUTTONS.osRollButton:SetWidth(30)
       BUTTONS.osRollButton:SetHeight(20)
+      BUTTONS.osRollButton:Hide()
       BUTTONS.osRollButton:SetText("OS")
 
 BUTTONS.msRollButton = CreateFrame("Button", "MSRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.msRollButton:SetPoint("RIGHT", BUTTONS.osRollButton, "LEFT", -4, -0)
       BUTTONS.msRollButton:SetWidth(30)
       BUTTONS.msRollButton:SetHeight(20)
+      BUTTONS.msRollButton:Hide()
       BUTTONS.msRollButton:SetText("MS")
 
 BUTTONS.ffaRollButton = CreateFrame("Button", "FFARollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.ffaRollButton:SetPoint("LEFT", BUTTONS.osRollButton, "RIGHT", 4, 0)
       BUTTONS.ffaRollButton:SetWidth(30)
       BUTTONS.ffaRollButton:SetHeight(20)
+      BUTTONS.ffaRollButton:Hide()
       BUTTONS.ffaRollButton:SetText("FFA")
 
 BUTTONS.announceRollsButton = CreateFrame("Button", "RaidRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.announceRollsButton:SetPoint("LEFT", BUTTONS.softResRollButton, "RIGHT", 3, 0)
       BUTTONS.announceRollsButton:SetWidth(102)
       BUTTONS.announceRollsButton:SetHeight(20)
+      BUTTONS.announceRollsButton:Hide()
       BUTTONS.announceRollsButton:SetText("Announce Result")
 
 -- Buttons page 2.
