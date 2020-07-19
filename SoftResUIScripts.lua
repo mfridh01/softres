@@ -27,6 +27,13 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
     SoftRes.list:showFullSoftResList()
     SoftRes.list.showPrepSoftResList()
 
+    -- Show AddonEnabled indicator.
+    if BUTTONS.enableSoftResAddon:GetChecked() == true then
+        FRAMES.addonIndicator.texture:SetTexture("Interface\\COMMON\\Indicator-Green")
+    else
+        FRAMES.addonIndicator.texture:SetTexture("Interface\\COMMON\\Indicator-Red")
+    end
+
     self.timeSinceLastUpdate = 0;
   end
 end)
@@ -219,6 +226,9 @@ end)
 
 -- Scan chat for softreserves.
 BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
+    -- only scan if the addon is enabled.
+    if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+
     -- If there are no players, don't start the scanner
     if #SoftResList.players <= 1 then return end
     
@@ -237,6 +247,9 @@ end)
 
 -- local function for handling itemdrags
 local function handleDraggedItem()
+    -- only scan if the addon is enabled.
+    if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+
     if GetCursorInfo() then
         -- Check to see if we are clear to handle the item.
         if not SoftRes.helpers:checkAlertPlayer("Prep") then
@@ -449,6 +462,8 @@ end)
 
 -- Prepare items
 BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
+    -- only scan if the addon is enabled.
+    if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
 
     -- check for availability
     if not SoftRes.helpers:checkAlertPlayer("Loot") then return end

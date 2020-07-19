@@ -104,6 +104,9 @@ SoftRes = {}
             elegible = {},
             softResrved = false,
       }
+
+      SoftRes.announce = {}
+            SoftRes.announce.__index = SoftRes.announce
 --------------------------------------------------------------------
 
 -- SoftResDB, a table with saved values that will be kept forever.
@@ -240,4 +243,10 @@ function SoftRes.state:toggleRollingForLoot(flag, modeText)
             SoftRes.state.rollingForLoot = true
       end
 
+end
+
+-- ANNOUNCE!!
+-------------
+function SoftRes.announce:softResAnnounce()
+      
 end

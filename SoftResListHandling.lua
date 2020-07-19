@@ -323,7 +323,7 @@ function SoftRes.list:showFullSoftResList()
     if numOffline == numGroupMembers then offlineColor = colorGreen end
 
     -- populate the frame with the new text.
-    local infoText = "Raid: " .. offlineColor .. numOffline .. "|r/" .. raidTextColor .. numGroupMembers .. "|r || Listentries: " .. listEntryColor .. listEntries .. "|r || SoftRes: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-------------------------------------------------------------\n"
+    local infoText = "Raid: " .. offlineColor .. numOffline .. "|r/" .. raidTextColor .. numGroupMembers .. "|r || Listentries: " .. listEntryColor .. listEntries .. "|r || SoftRes: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-----------------------------------------------------------------------\n"
     textFrame:SetText(infoText .. text)
 end
 
@@ -337,7 +337,7 @@ function SoftRes.list:showPrepSoftResList()
 
     -- Set the tile accordingly.
     if SoftRes.announcedItem.softReserved then
-        textTitle = "The following players are elegible for rolls:\n-------------------------------------------------------------\n"
+        textTitle = "The following players are elegible for rolls:\n-----------------------------------------------------------------------\n"
 
         -- List all players.
         for i = 1, #SoftRes.preparedItem.elegible do
@@ -346,18 +346,18 @@ function SoftRes.list:showPrepSoftResList()
         end
       
     elseif #SoftRes.announcedItem.rolls > 0 then
-        textTitle = "The follwing players has rolled on it:\n-------------------------------------------------------------\n"
+        textTitle = "The follwing players has rolled on it:\n-----------------------------------------------------------------------\n"
 
     elseif SoftRes.preparedItem.itemId then
-        textTitle = "The item is NOT SoftReserved:\n-------------------------------------------------------------\n"
+        textTitle = "The item is NOT SoftReserved:\n-----------------------------------------------------------------------\n"
     else
-        textTitle = "Rolls list.\n-------------------------------------------------------------\n"
+        textTitle = "Rolls list.\n-----------------------------------------------------------------------\n"
     end
 
     -- If we have a winner, we override the title.
     -- If there is only 1 person left for the elgible rollers, that means that player is the winner.
     if #SoftRes.preparedItem.elegible == 1 then
-        textTitle = "The winner is:\n-------------------------------------------------------------\n"
+        textTitle = "The winner is:\n-----------------------------------------------------------------------\n"
     end
 
     -- If we have announced the winner, but don't have any rolls.
@@ -428,14 +428,14 @@ function SoftRes.list:showPrepSoftResList()
     -- We have a TIE??!? set the title accordingly.
     if #SoftRes.announcedItem.tieRollers > 1 then
 
-        textTitle = "We have a TIE:\n-------------------------------------------------------------\n"
+        textTitle = "We have a TIE:\n-----------------------------------------------------------------------\n"
 
         -- Read through the highRollers and add them to the front.
         for i = 1, #SoftRes.announcedItem.tieRollers do
             highRollersText = highRollersText .. SoftRes.announcedItem.tieRollers[i] .. "\n"
         end
 
-        highRollersText = highRollersText .. "-------------------------------------------------------------\n"
+        highRollersText = highRollersText .. "----------------------------------------------------------------------\n"
     end
 
     textFrame:SetText(textTitle .. highRollersText .. text)

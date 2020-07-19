@@ -1,7 +1,6 @@
 
 -- Eventscanning begins here.
 --------------------------------------------------------------------
-
 FRAMES.mainFrame:RegisterEvent("PLAYER_LOGIN")
 
 FRAMES.mainFrame:RegisterEvent("GROUP_ROSTER_UPDATE")
@@ -16,6 +15,7 @@ FRAMES.mainFrame:RegisterEvent("LOOT_SLOT_CLEARED")
 FRAMES.mainFrame:RegisterEvent("LOOT_CLOSED")
 
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+
 
 FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...) 
 
@@ -50,6 +50,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
       
       -- listen to softReserves in raid or party
       elseif event == "CHAT_MSG_PARTY" or event == "CHAT_MSG_PARTY_LEADER" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
+            -- only scan if the addon is enabled.
+            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+
             if SoftRes.state.scanForSoftRes.state then
                   arg1, arg2 = ...
                   SoftRes.list:getSoftReserves(arg1, arg2)
@@ -58,6 +61,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             end
       
       elseif event == "LOOT_OPENED" then
+            -- only scan if the addon is enabled.
+            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+
             SoftRes.debug:print("Loot window opened.")
 
             -- Get the configvalue and autoShow if enabled.
@@ -79,6 +85,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.list:populateDroppedItems()
 
       elseif event == "LOOT_SLOT_CLEARED" then
+            -- only scan if the addon is enabled.
+            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+
             SoftRes.debug:print("Looted something")
             
             -- Remove the item from the dropped items list.
@@ -88,6 +97,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.helpers:unPrepareItem()
 
       elseif event == "LOOT_CLOSED" then
+            -- only scan if the addon is enabled.
+            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+
             SoftRes.debug:print("Loot window closed.")
 
             -- Get the configvalue and autoHide if enabled.
@@ -101,6 +113,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
       
       -- Raid Rolls and trades.
       elseif event == "CHAT_MSG_SYSTEM" then
+            -- only scan if the addon is enabled.
+            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+            
             arg1, arg2, arg3, arg4 = ...
       
             local trade = SoftRes.helpers:stringSplit(arg1, "%s") or nil

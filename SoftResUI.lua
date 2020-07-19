@@ -48,7 +48,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                         listFrameContainer = {
                               size = {
                                     full = {
-                                          width = 314,
+                                          width = 314-30,
                                           height = 118+30,
                                     },
                               },
@@ -71,6 +71,8 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   skull = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8:10:10:0:0|t",
                   quest = "|TInterface\\GossipFrame\\AvailableQuestIcon:10:10:0:0|t",
                   cancel = "|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t",
+                  indicatorGreen = "|TInterface\\COMMON\\Indicator-Green:10:10:0:0|t",
+                  indicatorRed = "|TInterface\\COMMON\\Indicator-Red:10:10:0:0|t",
             },
             state = {
                   softResEnabled = true,
@@ -186,6 +188,13 @@ FRAMES.tabContainer = CreateFrame("Frame", "TabContainer", FRAMES.mainFrame, "In
             insets   = { left = 4, right = 4, top = 4, bottom = 4 }
       })
 
+FRAMES.addonIndicator = CreateFrame("Frame", "AddonIndicatorFrame", FRAMES.mainFrame)
+      FRAMES.addonIndicator:SetPoint("TOPRIGHT", FRAMES.mainFrame, "TOPRIGHT", -7, -25)
+      FRAMES.addonIndicator:SetSize(25,25)
+      FRAMES.addonIndicator.texture = FRAMES.addonIndicator:CreateTexture("AddonIndicatorFrameTexture", "OVERLAY")
+      FRAMES.addonIndicator.texture:SetAllPoints(true)
+      FRAMES.addonIndicator.texture:SetTexture("Interface\\COMMON\\Indicator-Green")
+
 
 -- PAGE 1
 FRAMES.tabContainer.page1 = CreateFrame("Frame", "TabPagesPage1", FRAMES.mainFrame)
@@ -277,10 +286,10 @@ FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRA
       FRAMES.listFrameContainer.scrollDownButton = _G[listScrollbarName .. "ScrollBarScrollDownButton"]
 
             FRAMES.listFrameContainer.scrollUpButton:ClearAllPoints()
-            FRAMES.listFrameContainer.scrollUpButton:SetPoint("TOPRIGHT", FRAMES.listFrameContainer, "TOPRIGHT", -10, 0)
+            FRAMES.listFrameContainer.scrollUpButton:SetPoint("TOPRIGHT", FRAMES.listFrameContainer, "TOPRIGHT", -10+30, 0)
       
             FRAMES.listFrameContainer.scrollDownButton:ClearAllPoints()
-            FRAMES.listFrameContainer.scrollDownButton:SetPoint("BOTTOMRIGHT", FRAMES.listFrameContainer, "BOTTOMRIGHT", -10, 0)      
+            FRAMES.listFrameContainer.scrollDownButton:SetPoint("BOTTOMRIGHT", FRAMES.listFrameContainer, "BOTTOMRIGHT", -10+30, 0)      
 
             FRAMES.listFrameContainer.scrollBar:ClearAllPoints()
             FRAMES.listFrameContainer.scrollBar:SetPoint("TOP", FRAMES.listFrameContainer.scrollUpButton, "BOTTOM", 0, 0)
