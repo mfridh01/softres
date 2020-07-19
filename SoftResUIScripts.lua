@@ -599,3 +599,26 @@ BUTTONS.announceRollsButton:SetScript("OnClick", function(self)
     -- handle the announcement.
     SoftRes.helpers:announceResult()
 end)
+
+-- If we want to cancel stuff, we do it here.
+BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
+    -- Popup dialog for creating a new list.
+    StaticPopupDialogs["SOFTRES_CANCEL_ALL"] = {
+        text = "Do you really want to cancel all announcements, rolls and such?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            -- Canceling stuff.
+            SoftRes.helpers:unPrepareItem()
+            
+            SoftRes.debug:print("Cancelled all announcements, rolls and such.")
+        end,
+        OnCancel = function (_,reason)
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopup_Show ("SOFTRES_CANCEL_ALL")
+end)

@@ -292,7 +292,10 @@ function SoftRes.helpers:unPrepareItem()
 
       SoftRes.helpers:hideAllRollButtons(true)
       BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
+
       SoftRes.state:toggleScanForSoftRes(false)
+      SoftRes.state:toggleListenToRolls(false)
+      SoftRes.state:toggleListenToRaidRolls(false)
 
       SoftRes.state.announcedResult = false
 

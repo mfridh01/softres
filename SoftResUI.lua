@@ -70,6 +70,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   dice = "|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:10:10:0:0|t",
                   skull = "|TInterface\\TARGETINGFRAME\\UI-RaidTargetingIcon_8:10:10:0:0|t",
                   quest = "|TInterface\\GossipFrame\\AvailableQuestIcon:10:10:0:0|t",
+                  cancel = "|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t",
             },
             state = {
                   softResEnabled = true,
@@ -488,6 +489,12 @@ BUTTONS.announceRollsButton = CreateFrame("Button", "RaidRollButton", FRAMES.tab
       BUTTONS.announceRollsButton:SetHeight(20)
       BUTTONS.announceRollsButton:Hide()
       BUTTONS.announceRollsButton:SetText("Announce Result")
+
+BUTTONS.cancelEverythingButton = CreateFrame("Button", "CancelEverythingButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
+      BUTTONS.cancelEverythingButton:SetPoint("BOTTOMRIGHT", FRAMES.tabContainer, "BOTTOMRIGHT", -7, 7)
+      BUTTONS.cancelEverythingButton:SetWidth(25)
+      BUTTONS.cancelEverythingButton:SetHeight(20)
+      BUTTONS.cancelEverythingButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t")
 
 -- Buttons page 2.
 BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
