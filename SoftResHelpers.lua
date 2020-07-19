@@ -474,6 +474,24 @@ function SoftRes.helpers:handleTieRolls()
       return false
 end
 
+-- do the raid roll.
+-- It does a roll between all the members in the group/raid.
+-- Announces the winner.
+function SoftRes.helpers:raidRollForItem()
+      -- We only want to go through the process if we're listneing for it.
+      if not SoftRes.state.listeningToRaidRolls then return end
+
+      -- Get the user and value from the roll.
+      local rollUser, rollValue = getRoll(arg1)
+
+      -- Get the rollWinner from the raid list.
+      name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(rollValue)
+
+      -- Add the winner to the elegible list and the rolls list.
+      table.insert(SoftRes.preparedItem.elegible, name)
+      table.insert(SoftRes.announcedItem.rolls, {name, rollValue})
+end
+
 -- Announce the results of the rolls.
 function SoftRes.helpers:announceResult()
       -- Check if there are any rolls.

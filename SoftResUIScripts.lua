@@ -519,6 +519,82 @@ BUTTONS.msRollButton:SetScript("OnClick", function(self)
     -- When done. deactive the rolls.
 end)
 
+BUTTONS.osRollButton:SetScript("OnClick", function(self)
+    -- Cancel all active timers.
+    -- CANCEL
+
+    -- Switch the listening state on.
+    SoftRes.state:toggleListenToRolls(true)
+
+    -- Announce the item.
+    SoftRes.state:toggleAnnouncedItem(true)
+
+    -- Rolling for loot
+    SoftRes.state:toggleRollingForLoot(true)
+
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Anno")
+
+    -- Active the timer.
+    -- TIMER and Announcement to group
+
+    -- When done. deactive the rolls.
+end)
+
+BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
+    -- Cancel all active timers.
+    -- CANCEL
+
+    -- Switch the listening state on.
+    SoftRes.state:toggleListenToRolls(true)
+
+    -- Announce the item.
+    SoftRes.state:toggleAnnouncedItem(true)
+
+    -- Rolling for loot
+    SoftRes.state:toggleRollingForLoot(true)
+
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Anno")
+
+    -- Active the timer.
+    -- TIMER and Announcement to group
+
+    -- When done. deactive the rolls.
+end)
+
+BUTTONS.raidRollButton:SetScript("OnClick", function(self)
+
+    -- If we have started a roll on an item, but not announced a winner, we alert the player.
+    if SoftRes.state.rollingForLoot then
+        SoftRes.helpers:showPopupWindow()
+        return
+    end
+
+    -- Cancel all active timers.
+    -- CANCEL
+
+    -- Switch the listening state on.
+    SoftRes.state:toggleListenToRaidRolls(true)
+
+    -- Announce the item.
+    SoftRes.state:toggleAnnouncedItem(true)
+
+    -- Rolling for loot
+    SoftRes.state:toggleRollingForLoot(true)
+
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Anno")
+
+    -- Active the timer.
+    -- TIMER and Announcement to group
+
+    -- Do the roll
+    RandomRoll(1, GetNumGroupMembers())
+
+    -- When done. deactive the rolls.
+end)
+
 BUTTONS.announceRollsButton:SetScript("OnClick", function(self)
     -- handle the announcement.
     SoftRes.helpers:announceResult()

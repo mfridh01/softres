@@ -113,7 +113,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             if tradeCommand == "trade" and tradeUser then
                   tradeWith = tradeUser
             elseif listenToRaidRolls then
-                  SoftRes.helpers:raidRoll(arg1)
+                  SoftRes.helpers:raidRollForItem(arg1)
             elseif listenToRolls then
                   SoftRes.helpers:rollForItem(arg1)
             end
