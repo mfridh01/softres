@@ -98,7 +98,15 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                         default = 15,
                         value = 15,
                   }, 
-                  ffa = {
+            },
+            dropDecay = {
+                  ms = {
+                        minValue = 10,
+                        maxValue = 20,
+                        default = 15,
+                        value = 15,
+                  },
+                  os = {
                         minValue = 10,
                         maxValue = 20,
                         default = 15,
@@ -124,6 +132,7 @@ function SoftRes.ui:useSavedConfigValues()
       local CONFIG_UI_FRAMES = SoftResConfig.ui.frames
       local CONFIG_STATE = SoftResConfig.state
       local CONFIG_TIMERS = SoftResConfig.timers
+      local CONFIG_DECAY = SoftResConfig.dropDecay
 
       FRAMES.mainFrame:SetSize(CONFIG_UI_FRAMES.mainFrame.size.full.width, CONFIG_UI_FRAMES.mainFrame.size.full.height)
       FRAMES.tabContainer:SetSize(CONFIG_UI_FRAMES.tabContainer.size.full.width, CONFIG_UI_FRAMES.tabContainer.size.full.height)
@@ -140,8 +149,10 @@ function SoftRes.ui:useSavedConfigValues()
       FRAMES.softResRollTimerEditBox:SetText(CONFIG_TIMERS.softRes.value)
       FRAMES.msRollTimerEditBox:SetText(CONFIG_TIMERS.ms.value)
       FRAMES.osRollTimerEditBox:SetText(CONFIG_TIMERS.os.value)
-      FRAMES.ffaRollTimerEditBox:SetText(CONFIG_TIMERS.ffa.value)
       FRAMES.itemRarityEditBox:SetText(SoftResConfig.itemRarity.value)
+
+      FRAMES.msDropDecayEditBox:SetText(CONFIG_DECAY.ms.value)
+      FRAMES.osDropDecayEditBox:SetText(CONFIG_DECAY.os.value)
 end
 --------------------------------------------------------------------
 
@@ -362,29 +373,11 @@ FRAMES.osRollTimerEditBox = CreateFrame("EditBox", "OSRollTimerEditBox", FRAMES.
       FRAMES.osRollTimerEditBox.fs = FRAMES.osRollTimerEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.osRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
             FRAMES.osRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.osRollTimerEditBox, "RIGHT", 5, -1)
-            FRAMES.osRollTimerEditBox.fs:SetText("OS Roll timer. (min: 10, max: 20)")
+            FRAMES.osRollTimerEditBox.fs:SetText("OS/FFA Roll timer. (min: 10, max: 20)")
             FRAMES.osRollTimerEditBox.fs:SetJustifyH("Left")
 
-FRAMES.ffaRollTimerEditBox = CreateFrame("EditBox", "FFARollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.ffaRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.osRollTimerEditBox, "BOTTOMLEFT", 0, 0)
-      FRAMES.ffaRollTimerEditBox:SetWidth(40)
-      FRAMES.ffaRollTimerEditBox:SetHeight(20)
-      FRAMES.ffaRollTimerEditBox:ClearFocus() 
-      FRAMES.ffaRollTimerEditBox:SetAutoFocus(false)
-      FRAMES.ffaRollTimerEditBox:SetMaxLetters(2)
-      FRAMES.ffaRollTimerEditBox:SetAltArrowKeyMode(true)
-      FRAMES.ffaRollTimerEditBox:EnableMouse(true)
-      FRAMES.ffaRollTimerEditBox:SetText("15")
-
-      FRAMES.ffaRollTimerEditBox.fs = FRAMES.ffaRollTimerEditBox:CreateFontString(nil, "OVERLAY")
-            FRAMES.ffaRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.ffaRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.ffaRollTimerEditBox, "RIGHT", 5, -1)
-            FRAMES.ffaRollTimerEditBox.fs:SetText("FFA Roll timer. (min: 10, max: 20)")
-            FRAMES.ffaRollTimerEditBox.fs:SetJustifyH("Left")
-      
-
 FRAMES.itemRarityEditBox = CreateFrame("EditBox", "ItemRarityEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.itemRarityEditBox:SetPoint("TOPLEFT", FRAMES.ffaRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.itemRarityEditBox:SetPoint("TOPLEFT", FRAMES.osRollTimerEditBox, "BOTTOMLEFT", 0, 0)
       FRAMES.itemRarityEditBox:SetWidth(40)
       FRAMES.itemRarityEditBox:SetHeight(20)
       FRAMES.itemRarityEditBox:ClearFocus() 
@@ -399,6 +392,40 @@ FRAMES.itemRarityEditBox = CreateFrame("EditBox", "ItemRarityEditBox", FRAMES.ta
             FRAMES.itemRarityEditBox.fs:SetPoint("LEFT", FRAMES.itemRarityEditBox, "RIGHT", 5, -1)
             FRAMES.itemRarityEditBox.fs:SetText("Min. handled itemrarirty. (0=gray, 5=legendary)")
             FRAMES.itemRarityEditBox.fs:SetJustifyH("Left")
+
+FRAMES.msDropDecayEditBox = CreateFrame("EditBox", "MSDropDecayEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.msDropDecayEditBox:SetPoint("TOPLEFT", FRAMES.itemRarityEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.msDropDecayEditBox:SetWidth(40)
+      FRAMES.msDropDecayEditBox:SetHeight(20)
+      FRAMES.msDropDecayEditBox:ClearFocus() 
+      FRAMES.msDropDecayEditBox:SetAutoFocus(false)
+      FRAMES.msDropDecayEditBox:SetMaxLetters(2)
+      FRAMES.msDropDecayEditBox:SetAltArrowKeyMode(true)
+      FRAMES.msDropDecayEditBox:EnableMouse(true)
+      FRAMES.msDropDecayEditBox:SetText("15")
+
+      FRAMES.msDropDecayEditBox.fs = FRAMES.msDropDecayEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.msDropDecayEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.msDropDecayEditBox.fs:SetPoint("LEFT", FRAMES.msDropDecayEditBox, "RIGHT", 5, -1)
+            FRAMES.msDropDecayEditBox.fs:SetText("Roll reduction on MS loot.")
+            FRAMES.msDropDecayEditBox.fs:SetJustifyH("Left")
+
+FRAMES.osDropDecayEditBox = CreateFrame("EditBox", "OSDropDecayEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.osDropDecayEditBox:SetPoint("TOPLEFT", FRAMES.msDropDecayEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.osDropDecayEditBox:SetWidth(40)
+      FRAMES.osDropDecayEditBox:SetHeight(20)
+      FRAMES.osDropDecayEditBox:ClearFocus() 
+      FRAMES.osDropDecayEditBox:SetAutoFocus(false)
+      FRAMES.osDropDecayEditBox:SetMaxLetters(2)
+      FRAMES.osDropDecayEditBox:SetAltArrowKeyMode(true)
+      FRAMES.osDropDecayEditBox:EnableMouse(true)
+      FRAMES.osDropDecayEditBox:SetText("15")
+
+      FRAMES.osDropDecayEditBox.fs = FRAMES.osDropDecayEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.osDropDecayEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.osDropDecayEditBox.fs:SetPoint("LEFT", FRAMES.osDropDecayEditBox, "RIGHT", 5, -1)
+            FRAMES.osDropDecayEditBox.fs:SetText("Roll reduction on MS loot.")
+            FRAMES.osDropDecayEditBox.fs:SetJustifyH("Left")
 -- Buttons.
 -----------
 BUTTONS.tabButtonPage = {}

@@ -10,7 +10,7 @@ FRAMES.mainFrame:RegisterEvent("CHAT_MSG_PARTY_LEADER")
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_RAID")
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_RAID_LEADER")
 
-FRAMES.mainFrame:RegisterEvent("LOOT_OPENED")
+FRAMES.mainFrame:RegisterEvent("LOOT_READY")
 FRAMES.mainFrame:RegisterEvent("LOOT_SLOT_CLEARED")
 FRAMES.mainFrame:RegisterEvent("LOOT_CLOSED")
 
@@ -46,12 +46,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.list:reOrderPlayerList()
             SoftRes.list:showFullSoftResList()
             SoftRes.list:showPrepSoftResList()
-            print("Re-Ordering")
       
       -- listen to softReserves in raid or party
       elseif event == "CHAT_MSG_PARTY" or event == "CHAT_MSG_PARTY_LEADER" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" then
-            -- only scan if the addon is enabled.
-            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
 
             if SoftRes.state.scanForSoftRes.state then
                   arg1, arg2 = ...
@@ -60,9 +57,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                   print("Listened to raid")
             end
       
-      elseif event == "LOOT_OPENED" then
-            -- only scan if the addon is enabled.
-            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+      elseif event == "LOOT_READY" then
 
             SoftRes.debug:print("Loot window opened.")
 
@@ -84,9 +79,10 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- Populate dropped items.
             SoftRes.list:populateDroppedItems()
 
+            -- Always show the prepare button.
+            BUTTONS.prepareItemButton:Show()
+
       elseif event == "LOOT_SLOT_CLEARED" then
-            -- only scan if the addon is enabled.
-            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
 
             SoftRes.debug:print("Looted something")
             
@@ -96,9 +92,10 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- Reset everything.
             SoftRes.helpers:unPrepareItem()
 
+            -- Always show prepare button.
+            BUTTONS.prepareItemButton:Show()
+
       elseif event == "LOOT_CLOSED" then
-            -- only scan if the addon is enabled.
-            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
 
             SoftRes.debug:print("Loot window closed.")
 
@@ -113,8 +110,6 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
       
       -- Raid Rolls and trades.
       elseif event == "CHAT_MSG_SYSTEM" then
-            -- only scan if the addon is enabled.
-            if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
 
             arg1, arg2, arg3, arg4 = ...
       

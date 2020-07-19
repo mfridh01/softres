@@ -512,17 +512,13 @@ end
 -- Coins count as ZERO items.
 ---------------------------------------------------------
 function SoftRes.list:populateDroppedItems()
-    local numberOfItems = 0
-
-    if SR_ElvUI or SR_TukUI then
-       numberOfItems = GetNumLootItems()
-    else
-       numberOfItems = LootFrame.numLootItems
-    end
+    local numberOfItems = GetNumLootItems()
  
     -- If there are no items dropped.
     if numberOfItems == 0 then return nil end
-        SoftRes.debug:print("Number of items to loot: " .. numberOfItems)
+    SoftRes.debug:print("Number of items to loot: " .. tostring(numberOfItems))
+
+    if (not numberOfItems) then return nil end
 
     for i = 1, numberOfItems do
        local itemLink = GetLootSlotLink(i)

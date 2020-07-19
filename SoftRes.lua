@@ -248,5 +248,5 @@ end
 -- ANNOUNCE!!
 -------------
 function SoftRes.announce:softResAnnounce()
-      
+
 end

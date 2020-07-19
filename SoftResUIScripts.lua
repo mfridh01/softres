@@ -34,6 +34,7 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
         FRAMES.addonIndicator.texture:SetTexture("Interface\\COMMON\\Indicator-Red")
     end
 
+    -----------------------------
     self.timeSinceLastUpdate = 0;
   end
 end)
@@ -394,43 +395,16 @@ FRAMES.osRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     SoftResConfig.timers.os.value = text
-    FRAMES.ffaRollTimerEditBox:SetFocus()
-    FRAMES.ffaRollTimerEditBox:HighlightText()
+    FRAMES.msDropDecayEditBox:SetFocus()
+    FRAMES.msDropDecayEditBox:HighlightText()
 end)
 
 FRAMES.osRollTimerEditBox:SetScript("OnTabPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     SoftResConfig.timers.os.value = text
-    FRAMES.ffaRollTimerEditBox:SetFocus()
-    FRAMES.ffaRollTimerEditBox:HighlightText()
-end)
-
--- FFA roll timer.
-FRAMES.ffaRollTimerEditBox:SetScript("OnTextChanged", function(self)
-    -- Convert the text to number.
-    local text = tonumber(self:GetText())
-
-    -- if it's not a number, clear the field.
-    if not text then
-        self:SetText("")
-    end
-end)
-
-FRAMES.ffaRollTimerEditBox:SetScript("OnEnterPressed", function(self)
-    self:ClearFocus()
-    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
-    SoftResConfig.timers.ffa.value = text
-    FRAMES.itemRarityEditBox:SetFocus()
-    FRAMES.itemRarityEditBox:HighlightText()
-end)
-
-FRAMES.ffaRollTimerEditBox:SetScript("OnTabPressed", function(self)
-    self:ClearFocus()
-    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ffa.minValue, SoftResConfig.timers.ffa.maxValue), SoftResConfig.timers.ffa.value)
-    SoftResConfig.timers.ffa.value = text
-    FRAMES.itemRarityEditBox:SetFocus()
-    FRAMES.itemRarityEditBox:HighlightText()
+    FRAMES.msDropDecayEditBox:SetFocus()
+    FRAMES.msDropDecayEditBox:HighlightText()
 end)
 
 -- Itemrarity editbox
@@ -460,6 +434,60 @@ FRAMES.itemRarityEditBox:SetScript("OnTabPressed", function(self)
     FRAMES.softResRollTimerEditBox:HighlightText()
 end)
 
+-- MS Roll decay.
+FRAMES.msDropDecayEditBox:SetScript("OnTextChanged", function(self)
+    -- Convert the text to number.
+    local text = tonumber(self:GetText())
+
+    -- if it's not a number, clear the field.
+    if not text then
+        self:SetText("")
+    end
+end)
+
+FRAMES.msDropDecayEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.ms.minValue, SoftResConfig.dropDecay.ms.maxValue), SoftResConfig.dropDecay.ms.value)
+    SoftResConfig.dropDecay.ms.value = text
+    FRAMES.osDropDecayEditBox:SetFocus()
+    FRAMES.osDropDecayEditBox:HighlightText()
+end)
+
+FRAMES.msDropDecayEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.ms.minValue, SoftResConfig.dropDecay.ms.maxValue), SoftResConfig.dropDecay.ms.value)
+    SoftResConfig.dropDecay.ms.value = text
+    FRAMES.osDropDecayEditBox:SetFocus()
+    FRAMES.osDropDecayEditBox:HighlightText()
+end)
+
+-- OS Roll decay.
+FRAMES.osDropDecayEditBox:SetScript("OnTextChanged", function(self)
+    -- Convert the text to number.
+    local text = tonumber(self:GetText())
+
+    -- if it's not a number, clear the field.
+    if not text then
+        self:SetText("")
+    end
+end)
+
+FRAMES.osDropDecayEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.os.minValue, SoftResConfig.dropDecay.os.maxValue), SoftResConfig.dropDecay.os.value)
+    SoftResConfig.dropDecay.os.value = text
+    FRAMES.softResRollTimerEditBox:SetFocus()
+    FRAMES.softResRollTimerEditBox:HighlightText()
+end)
+
+FRAMES.osDropDecayEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.os.minValue, SoftResConfig.dropDecay.os.maxValue), SoftResConfig.dropDecay.os.value)
+    SoftResConfig.dropDecay.os.value = text
+    FRAMES.softResRollTimerEditBox:SetFocus()
+    FRAMES.softResRollTimerEditBox:HighlightText()
+end)
+
 -- Prepare items
 BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
     -- only scan if the addon is enabled.
@@ -469,6 +497,7 @@ BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Loot") then return end
 
     -- Check for items to prepare.
+    print(tostring(#SoftRes.droppedItems))
     if #SoftRes.droppedItems == 0 then return end
 
     -- We check the first item, then prepare it for loot.
