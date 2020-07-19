@@ -115,7 +115,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
       elseif event == "CHAT_MSG_SYSTEM" then
             -- only scan if the addon is enabled.
             if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
-            
+
             arg1, arg2, arg3, arg4 = ...
       
             local trade = SoftRes.helpers:stringSplit(arg1, "%s") or nil
@@ -137,3 +137,36 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.list.showPrepSoftResList()
       end
 end)
+
+-- Slashcommands
+local function slashCommands(msg, editbox)
+      -- pattern matching that skips leading whitespace and whitespace between cmd and args
+      -- any whitespace at end of args is retained
+      local _, _, cmd, args = string.find(msg, "%s?(%w+)%s?(.*)")
+            
+      if cmd == "show" then
+            if FRAMES.mainFrame:IsShown() then
+                  FRAMES.mainFrame:Hide()
+            else
+                  FRAMES.mainFrame:Show()
+            end
+      elseif cmd == "hide" then
+            FRAMES.mainFrame:Hide()
+      elseif cmd == "enable" then
+            BUTTONS.enableSoftResAddon:SetChecked(true)
+      elseif cmd == "disable" then
+            BUTTONS.enableSoftResAddon:SetChecked(false)
+      else
+            print("print","Syntax: /softres (show||hide, enable|disable)");
+      end
+      
+      if BUTTONS.enableSoftResAddon:GetChecked() == true then
+            printText = "SoftRes is Enabled."
+      else
+            printText = "SoftRes is Disabled."
+      end
+      print(printText)
+end
+
+SLASH_SOFTRES1 = '/softres'
+SlashCmdList["SOFTRES"] = slashCommands
