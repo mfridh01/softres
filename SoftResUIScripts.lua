@@ -42,6 +42,13 @@ end)
 -- TabButtons
 for i = 1, #BUTTONS.tabButtonPage do
     BUTTONS.tabButtonPage[i]:SetScript("OnClick", function(self)
+        -- If config window.
+        -- We can't press it if we have anything else going on.
+        -- This means that we can't change any settings while we're doing something else.
+        if i == 3 then
+            if not SoftRes.helpers:checkAlertPlayer("Rules") then return end
+        end
+
         SoftRes.helpers:toggleTabPage(i)
     end)
 end
@@ -237,7 +244,8 @@ BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Scan") then return end
 
     -- call the toggle function without a flag, to really toggle it.
-    SoftRes.state:toggleScanForSoftRes()
+    -- First argument is wether or not we should announce the scan.
+    SoftRes.state:toggleScanForSoftRes(true, nil)
 
     -- Toggle alert on.
     SoftRes.state:toggleAlertPlayer(nil, "Scan")
@@ -340,7 +348,6 @@ FRAMES.softResRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.softRes.minValue, SoftResConfig.timers.softRes.maxValue), SoftResConfig.timers.softRes.value)
     SoftResConfig.timers.softRes.value = text
-    print(SoftResConfig.timers.softRes.value)
     FRAMES.msRollTimerEditBox:SetFocus()
     FRAMES.msRollTimerEditBox:HighlightText()
 end)
@@ -508,7 +515,6 @@ BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Loot") then return end
 
     -- Check for items to prepare.
-    print(tostring(#SoftRes.droppedItems))
     if #SoftRes.droppedItems == 0 then return end
 
     -- We check the first item, then prepare it for loot.
@@ -531,7 +537,7 @@ end)
 -- SoftRes Roll.
 BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     -- Cancel all active timers.
-    -- CANCEL
+    aceTimer:CancelAllTimers()
 
     -- Switch the listening state on.
     SoftRes.state:toggleListenToRolls(true)
@@ -543,7 +549,10 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     SoftRes.state:toggleRollingForLoot(true)
 
     -- Alert the player.
-    SoftRes.state:toggleAlertPlayer(nil, "Anno")
+    SoftRes.state:toggleAlertPlayer(true, "Anno")
+
+    -- Disable all other buttons while rolling.
+    SoftRes.helpers:hideAllRollButtons(true)
 
     -- Active the timer.
     SoftRes.announce:softResRollAnnounce()
@@ -638,7 +647,7 @@ BUTTONS.raidRollButton:SetScript("OnClick", function(self)
     SoftRes.state:toggleAlertPlayer(true, "Anno")
 
     -- Disable all other buttons while rolling.
-        SoftRes.helpers:hideAllRollButtons(true)
+    SoftRes.helpers:hideAllRollButtons(true)
 
     -- Active the timer.
     SoftRes.announce:raidRollAnnounce()
@@ -673,4 +682,30 @@ BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
     }
 
     StaticPopup_Show ("SOFTRES_CANCEL_ALL")
+end)
+
+-- Announce the rules and stuff to the group
+BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
+    if not SoftRes.helpers:checkAlertPlayer("Rules") then return end
+
+    local groupType = "/Party"
+    local raid = UnitInRaid("Player")
+
+    if raid then groupType = "/Raid" end
+
+    local colorBlue = "|cFF6EA5DC"
+    local colorGreen = "|cFF00FF00"
+    local colorYellow = "|cFFFFFF00"
+    local colorWhite = "|cFFFFFFFF"
+
+    -- Just a welcome message.
+    SoftRes.announce:sendMessageToChat("Party_Leader", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
+    SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon]--------------+")
+    SoftRes.announce:sendMessageToChat("Party", "|| Everyone will SoftReserve one item.")
+    SoftRes.announce:sendMessageToChat("Party", "|| When prompted, link that item in " .. groupType .. ".")
+    SoftRes.announce:sendMessageToChat("Party", "|| Drops except SoftReserved = MS>OS")
+    SoftRes.announce:sendMessageToChat("Party", "|| Timers- SoftRes: " .. SoftResConfig.timers.softRes.value .. "s. MS: "  .. SoftResConfig.timers.ms.value .. "s. OS: " .. SoftResConfig.timers.os.value .. "s.")
+    SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
+    SoftRes.announce:sendMessageToChat("Party", "|| " .. SoftResConfig.extraInformation.value)
+    SoftRes.announce:sendMessageToChat("Party", "\\-------------------[By Snits]")
 end)

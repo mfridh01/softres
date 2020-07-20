@@ -85,6 +85,19 @@ function SoftRes.helpers:getItemInfoFromDragged()
       end
 end
 
+-- Takes a player name and returns the player item.
+function SoftRes.helpers:getPlayerFromName(name)
+      if not name then return end
+
+      for i = 1, #SoftResList.players do
+            if SoftResList.players[i].name == name then
+                  return SoftResList.players[i]
+            end
+      end
+
+      return nil
+end
+
 -- Takes a string, turns it into a number and checks so that the value is between the min or max.
 -- If the value is under min, it will return min. If it's over max, it will return max.
 -- If it's a string, it will return false.
@@ -129,7 +142,7 @@ function SoftRes.helpers:showPopupWindow(text)
 
 
       StaticPopupDialogs["SOFTRES_MSG_WINDOW"] = {
-            text = "ERROR!\n\n" .. alertText .. "\n\nFinish that before continuing.",
+            text = alertText .. "\n\nFinish that before continuing.",
             button1 = "OK",
             OnAccept = function()
 
@@ -293,7 +306,8 @@ function SoftRes.helpers:unPrepareItem()
       SoftRes.helpers:hideAllRollButtons(true)
       BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
 
-      SoftRes.state:toggleScanForSoftRes(false)
+      -- toggleScanForSoftRes takes the first argument as an announcement flag.
+      SoftRes.state:toggleScanForSoftRes(false, false)
       SoftRes.state:toggleListenToRolls(false)
       SoftRes.state:toggleListenToRaidRolls(false)
 
@@ -313,6 +327,52 @@ function SoftRes.helpers:unPrepareItem()
 
       SoftRes.list:showFullSoftResList()
       SoftRes.list.showPrepSoftResList()
+end
+
+-- local function for return an icon per item won.
+-- Takes a player, returns 1 loot icon per item won.
+function SoftRes.helpers:getRollPenalty(playerName, msPenalty, osPenalty)
+      local wonMS = 0
+      local wonOS = 0
+      local player = SoftRes.helpers:getPlayerFromName(playerName)
+
+      -- Check to see if the player has recieved items.
+      if #player.receivedItems > 0 then
+            for i = 1, #player.receivedItems do
+
+                  -- get the rollType.
+                  local rollType = player.receivedItems[i][2]
+
+
+                  -- just add to the corresponding type
+                  if rollType == "ms" then
+                        wonMS = wonMS + 1
+                  elseif rollType == "os" then
+                        wonOS = wonOS + 1
+                  end
+            end
+      end
+
+      wonMS = wonMS * msPenalty
+      wonOS = wonOS * osPenalty
+  
+      return wonMS + wonOS
+end
+
+-- Handle the winner.
+-- Takes a name, rollValue, rollType, itemId 
+-- Adds the winning item to the player-list.
+-- Will be used to calculate Roll-penalties.
+function SoftRes.helpers:handleWinner(name, roll, rollType, itemId)
+      -- Get the winner.
+      local player = SoftRes.helpers:getPlayerFromName(name)
+
+      if rollType == "softRes" then
+            player.softReserve.received = true
+      else
+            -- Set the values.
+            table.insert(player.receivedItems, {time(), rollType, itemId, roll})
+      end
 end
 
 -- Split the rolls and return user/value.
@@ -454,7 +514,14 @@ function SoftRes.helpers:rollForItem(arg1)
 
       -- If the player hasn't already rolled we push him into the rolled table.
       if not alreadyRolled then
-            tinsert(SoftRes.announcedItem.rolls, {rollUser, rollValue})
+            -- Add the rollPenalty.
+            local rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value)
+            tinsert(SoftRes.announcedItem.rolls, {rollUser, rollValue - rollPenalty})
+            
+            -- if we have a roll penalty, we announce it in chat.
+            if rollPenalty > 0 then
+                  SoftRes.announce:rollPenalty(rollUser, rollValue, rollPenalty)
+            end
       end
 
       -- check for highest roll.
@@ -489,6 +556,7 @@ function SoftRes.helpers:raidRollForItem()
       local rollUser, rollValue = getRoll(arg1)
 
       -- Get the rollWinner from the raid list.
+      if not rollValue then return end
       name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(rollValue)
 
       -- Add the winner to the elegible list and the rolls list.
@@ -627,6 +695,10 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
                   -- Re-draw the list.
                   SoftRes.list:showPrepSoftResList()
 
+                  -- Add the winning item to the player-list.
+                  -- For decay.
+                  SoftRes.helpers:handleWinner(winnerName, winnerRoll, rollType, SoftRes.announcedItem.itemId)
+
                   return
             end
       end
@@ -649,8 +721,9 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
 
             -- We only have one SoftRes.
             local winnerName = SoftRes.preparedItem.elegible[1]
-            local announceText = "Only one SoftRes. The winner is: " .. winnerName .. "."
+            local announceText = "One SoftRes. Grats: " .. winnerName .. "."
 
+            SoftRes.helpers:handleWinner(winnerName, _, "softRes", _)
             SoftRes.announce:sendMessageToChat("Party_Leader", announceText)
       end
 

@@ -53,7 +53,6 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                   arg1, arg2 = ...
                   SoftRes.list:getSoftReserves(arg1, arg2)
                   SoftRes.list:showFullSoftResList()
-                  print("Listened to raid")
             end
       
       elseif event == "LOOT_READY" then
@@ -159,7 +158,6 @@ local function slashCommands(msg, editbox)
       else
             printText = "SoftRes is Disabled."
       end
-      print(printText)
 end
 
 SLASH_SOFTRES1 = '/softres'

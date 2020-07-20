@@ -50,7 +50,7 @@ aceTimer = LibStub("AceAddon-3.0"):NewAddon("SoftRes", "AceTimer-3.0")
 SoftRes = {}
       SoftRes.debug = {}
             SoftRes.debug.__index = SoftRes.debug
-            SoftRes.debug.enabled = true -------------------- DEBUG
+            SoftRes.debug.enabled = false -------------------- DEBUG
 
       SoftRes.helpers = {}
             SoftRes.helpers.__index = SoftRes.helpers
@@ -130,6 +130,25 @@ function SoftRes.debug:print(text)
       if SoftRes.debug.enabled then print(text) end
 end
 --------------------------------------------------------------------
+-- Send message, using ChatThrottleLib.
+function SoftRes.announce:sendMessageToChat(chat, text)
+
+      local raid = UnitInRaid("Player")
+      local party = UnitInParty("Player")
+      
+      if raid and chat == "Party_Leader" then
+         chat2 = "RAID_WARNING"
+      else
+         chat2 = "RAID"
+      end
+   
+      if raid then
+            ChatThrottleLib:SendChatMessage("ALERT", "SoftResRollAnnounce", text, chat2, nil, nil, nil, nil, nil)
+      elseif party then
+            ChatThrottleLib:SendChatMessage("ALERT", "SoftResRollAnnounce", text, "PARTY", nil, nil, nil, nil, nil);
+      end
+   end
+
 
 -- Toggle alert on and off + mode
 function SoftRes.state:toggleAlertPlayer(flag, modeText)
@@ -155,14 +174,19 @@ end
 
 -- Switch for Chat scanning of SoftReserves.
 -- Takes a state-flag or not, then toggles the state of SoftRes scanning.
-function SoftRes.state:toggleScanForSoftRes(flag)
+function SoftRes.state:toggleScanForSoftRes(announce, flag)
       -- If we want to force a state.
       -- We toggle it to the opposite of what we want, and then the toggle function will trigger back.
-      if flag == true then
+      if flag and flag == true then
             SoftRes.state.scanForSoftRes.state = false
       elseif flag == false then
             SoftRes.state.scanForSoftRes.state = true
       end
+
+      local groupType = "/Party"
+      local raid = UnitInRaid("Player")
+  
+      if raid then groupType = "/Raid" end
 
       -- a simple toggle function
       if SoftRes.state.scanForSoftRes.state then
@@ -170,7 +194,17 @@ function SoftRes.state:toggleScanForSoftRes(flag)
             SoftRes.state.scanForSoftRes.text = ""
             BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
             FRAMES.mainFrame.titleRight:SetText("")
+
+            if announce == true then
+                  SoftRes.announce:sendMessageToChat("Party","+----------------------------+")
+                  SoftRes.announce:sendMessageToChat("Party_Leader","|| No more reservations taken. GL HF.")
+            end
       else
+            if announce == true then
+                  SoftRes.announce: sendMessageToChat("Party_Leader","|| Everyone! Link your SoftRes items in " .. groupType .. ".")
+                  SoftRes.announce: sendMessageToChat("Party","+----------------------------+")
+            end
+
             SoftRes.state.scanForSoftRes.state = true
             SoftRes.state.scanForSoftRes.text = "Scanning chat for SoftReserves.\n\n"
             BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.activeText)
@@ -254,23 +288,6 @@ end
 
 -- ANNOUNCE!!
 -------------
-function SoftRes.announce:sendMessageToChat(chat, text)
-
-      local raid = UnitInRaid("Player")
-      local party = UnitInParty("Player")
-      
-      if raid and chat == "Party_Leader" then
-         chat2 = "RAID_WARNING"
-      else
-         chat2 = "RAID"
-      end
-   
-      if raid then
-            ChatThrottleLib:SendChatMessage("ALERT", "SoftResRollAnnounce", text, chat2, nil, nil, nil, nil, nil);
-      elseif party then
-         SendChatMessage(text, "PARTY")
-      end
-   end
 
 function SoftRes.announce:raidRollAnnounce()
       SoftRes.debug:print("Announcing raidRoll.")
@@ -300,4 +317,34 @@ end
 
 function SoftRes.announce:softResRollAnnounce()
       SoftRes.debug:print("Announcing softResRoll")
+
+      -- Get the item, and announce it to the group.
+      local announcedItemId = SoftRes.announcedItem.itemId
+
+      -- if the announced Item is bogus.
+      if (not announcedItemId) or announcedItemId == "" then return end
+
+      -- Get the elegible players.
+      local playerText = ""
+
+      for i = 1, #SoftRes.preparedItem.elegible do
+            playerText = playerText .. SoftRes.preparedItem.elegible[i] .. ". "
+      end
+
+      -- Announce the players.
+      SoftRes.announce:sendMessageToChat("Party_Leader", playerText)
+
+      -- Active the timer.
+      SoftRes.helpers:countDown("SoftRes", "softRes", nil, false)
+end
+
+-- If we detect a roll-penalty.
+-- Annoucne it to the raid.
+-- Takes a playername, his roll and his penalty.
+function SoftRes.announce:rollPenalty(rollUser, rollValue, rollPenalty)
+      SoftRes.debug:print("Announcing rollPenalty.")
+
+      -- Send the announcement to chat, we're using ChatThrottle for this.
+      SoftRes.announce:sendMessageToChat("Party", "Roll-Penalty detected on " .. rollUser .. ".")
+      SoftRes.announce:sendMessageToChat("Party", "Roll = " .. rollValue .. ", Penalty = " .. rollPenalty .. ". New roll = " .. rollValue - rollPenalty .. ".")
 end

@@ -12,12 +12,11 @@ function SoftRes.player:new(playerName, groupPosition)
                   itemId = nil, -- Ingame itemId.
                   received = false, -- If it has been received or not. Always defaults to false.
             },
-            receivedItems = { -- Log every received item.
-                  time = nil, -- Time, when you received the item.
+            receivedItems = {} -- Log every received item.
+--[[              time = nil, -- Time, when you received the item.
                   rollType = nil, -- MS, OS, FFA, SoftRes, RaidRoll.
                   itemId = nil, -- ingame itemId.
-                  roll = nil, -- Winning roll.
-            },
+                  roll = nil, -- Winning roll. ]]
       }
       setmetatable(self, SoftRes.player)
 

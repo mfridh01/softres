@@ -13,7 +13,7 @@ function SoftRes.list:createNewSoftResList()
     }
 
     -- If we're scanning. We toggle it off.
-    SoftRes.state:toggleScanForSoftRes(false)
+    SoftRes.state:toggleScanForSoftRes(false, false)
 end
 
 -- ListGetters
@@ -45,8 +45,6 @@ function SoftRes.list:populateListWithPlayers()
         -- Populate the newly created palyer
         SoftResList.players[index].name = inputName
         SoftResList.players[index].groupPosition = index
-
-        print("Inserted: " .. inputName .. ", at index: " .. index)
     end
 
 
@@ -175,12 +173,41 @@ end
 -- local function for getting a skull, if the player is on shit-list.
 -- Takes a player, return a skull.
 local function checkIfShitRoller(player)
+    -- For now, we just skip this. might add this feature later.
     -- If the player is in the ShitRollers list. Give them the skull icon.
     if SoftRes.helpers:findStringInTable(SoftResDB.shitRollers, player) then
-        return " " .. SoftResConfig.icons.skull
+--        return " " .. SoftResConfig.icons.skull
     end
 
     return ""
+end
+
+-- local function for return an icon per item won.
+-- Takes a player, returns 1 loot icon per item won.
+local function checkIfReceivedItems(name)
+    local lootIcon = ""
+    local player = nil
+    
+    -- get the player.
+    for i = 1, #SoftResList.players do
+        if SoftResList.players[i].name == name then
+
+            -- Found player.
+            player = SoftResList.players[i]
+            break
+        else
+            return ""
+        end
+    end
+
+    -- Check to see if the player has recieved items.
+    if #player.receivedItems > 0 then
+        for j = 1, #player.receivedItems do
+            lootIcon = lootIcon .. SoftResConfig.icons.loot
+        end
+    end
+
+    return lootIcon
 end
 
 -- local function for getting a questicon, if the player is on manyRolls list.
@@ -229,7 +256,7 @@ local function checkIfHighestRoll(player)
 end
 
 -- local function for getting a green check icon, if the player has a high roll.
--- Takes a player, returns a green check icon.
+-- Takes a playerName, returns a green check icon.
 local function checkIfPlayerIsOffline(player)
     local groupPosition = 0
 
@@ -247,6 +274,33 @@ local function checkIfPlayerIsOffline(player)
     end
 
     return ""
+end
+
+-- local function for getting roll and penalty.
+-- Takes a roll and a penalty. Returns formated information about the roll.
+local function checkIfRollPenalty(roll, rollPenalty)
+
+    -- If we don't have a penalty, we just return an empty string.
+    if rollPenalty == 0 then return "" end
+
+    local iconDice = SoftResConfig.icons.dice
+    local iconLoot = SoftResConfig.icons.loot
+
+    return "(" .. iconDice .. roll .. " - " .. iconLoot .. rollPenalty ..")"    
+end
+
+-- local function for return an icon if received the softReserved item.
+-- Takes a player name, returns the icon for SoftReserved item.
+local function checkIfReceveidSoftRes(name)
+    local lootIcon = ""
+    local player = SoftRes.helpers:getPlayerFromName(name)
+
+    -- Check to see if the player has recieved the items.
+    if player.softReserve.received then
+        lootIcon = SoftResConfig.icons.readyCheck
+    end
+
+    return lootIcon
 end
 
 -- Show the SoftRessers on the second tabpage.
@@ -293,14 +347,12 @@ function SoftRes.list:showFullSoftResList()
         elseif groupPosition > 0 and itemId and SoftRes.state.scanForSoftRes.state then
             -- Change the icon to OK if there is a softReserve AND we're scanning.
             icon = SoftResConfig.icons.readyCheck
-        end
-
-        
+        end        
         
         -- if there still is no item, we set it to ""
         if not showItem then showItem = "" end
 
-        text = text .. icon .. groupPosition .. "-" .. name .. checkIfShitRoller(name) .. " " .. showItem .. "\n"
+        text = text .. icon .. groupPosition .. "-" .. name .. checkIfShitRoller(name) .. checkIfReceivedItems(name) .. checkIfReceveidSoftRes(name) .. " " .. showItem .. "\n"
     end
 
     -- Check for offline players
@@ -342,7 +394,7 @@ function SoftRes.list:showPrepSoftResList()
         -- List all players.
         for i = 1, #SoftRes.preparedItem.elegible do
             local playerName = SoftRes.preparedItem.elegible[i]
-            text = text .. checkIfPlayerIsOffline(playerName) .. checkIfHighestRoll(playerName) .. checkIfRolled(playerName) .. playerName .. checkIfManyRolls(playerName) .. checkIfShitRoller(playerName) .. "|r\n"
+            text = text .. checkIfPlayerIsOffline(playerName) .. checkIfHighestRoll(playerName) .. checkIfRolled(playerName) .. playerName .. checkIfManyRolls(playerName) .. checkIfShitRoller(playerName) .. checkIfReceivedItems(playerName) .. checkIfReceveidSoftRes(playerName) .."|r\n"
         end
       
     elseif #SoftRes.announcedItem.rolls > 0 then
@@ -375,11 +427,16 @@ function SoftRes.list:showPrepSoftResList()
     -- for now, we just show the people who rolled.
     for i = 1, #SoftRes.announcedItem.rolls do
         local rollUser = SoftRes.announcedItem.rolls[i][1]
-        local rollValue = tonumber(SoftRes.announcedItem.rolls[i][2])
+        local tempRollValue = tonumber(SoftRes.announcedItem.rolls[i][2])
+        local rollValue = 0 
         local highRollIcon = ""
         local playerColor = ""
         local shitRollersIcon = ""
         local manyRollersIcon = ""
+        local rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value)
+
+        -- add penalty to the rollValue
+        rollValue = tempRollValue + rollPenalty
 
         -- Check if the player who rolled is the highest roller.
         -- If it's higher or same, we set the new value. If not, then we don't give then the nice icon =)
@@ -421,7 +478,7 @@ function SoftRes.list:showPrepSoftResList()
         -- this is the last row of the rollers.
         -- We don't show it if the item is soft-reserved.
         if not SoftRes.announcedItem.softReserved then
-            text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. "|r\n"
+            text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. checkIfRollPenalty(tempRollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
         end
     end
 

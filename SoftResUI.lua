@@ -73,6 +73,8 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   cancel = "|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t",
                   indicatorGreen = "|TInterface\\COMMON\\Indicator-Green:10:10:0:0|t",
                   indicatorRed = "|TInterface\\COMMON\\Indicator-Red:10:10:0:0|t",
+                  loot = "|TInterface\\GroupFrame\\UI-Group-MasterLooter:10:10:0:0|t",
+                  softResBag = "|TInterface\\Store\\category-icon-bag:30:30:-5:0|t",
             },
             state = {
                   softResEnabled = true,
@@ -332,8 +334,25 @@ FRAMES.tabContainer.page3 = CreateFrame("Frame", "TabPagesPage3", FRAMES.mainFra
       FRAMES.tabContainer.page3:SetSize(313, 157)
       FRAMES.tabContainer.page3:Hide()
 
+FRAMES.itemRarityEditBox = CreateFrame("EditBox", "ItemRarityEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.itemRarityEditBox:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 8, -45)
+      FRAMES.itemRarityEditBox:SetWidth(40)
+      FRAMES.itemRarityEditBox:SetHeight(20)
+      FRAMES.itemRarityEditBox:ClearFocus() 
+      FRAMES.itemRarityEditBox:SetAutoFocus(false)
+      FRAMES.itemRarityEditBox:SetMaxLetters(1)
+      FRAMES.itemRarityEditBox:SetAltArrowKeyMode(true)
+      FRAMES.itemRarityEditBox:EnableMouse(true)
+      FRAMES.itemRarityEditBox:SetText("2")
+
+      FRAMES.itemRarityEditBox.fs = FRAMES.itemRarityEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.itemRarityEditBox.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.itemRarityEditBox.fs:SetPoint("LEFT", FRAMES.itemRarityEditBox, "RIGHT", 5, -1)
+            FRAMES.itemRarityEditBox.fs:SetText("Min. handled itemrarirty. (0=gray, 5=legendary)")
+            FRAMES.itemRarityEditBox.fs:SetJustifyH("Left")
+
 FRAMES.softResRollTimerEditBox = CreateFrame("EditBox", "SoftResRollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.softResRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 70, -75)
+      FRAMES.softResRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.itemRarityEditBox, "BOTTOMLEFT", 60, -32)
       FRAMES.softResRollTimerEditBox:SetWidth(40)
       FRAMES.softResRollTimerEditBox:SetHeight(20)
       FRAMES.softResRollTimerEditBox:ClearFocus() 
@@ -395,25 +414,8 @@ FRAMES.osRollTimerEditBox = CreateFrame("EditBox", "OSRollTimerEditBox", FRAMES.
             FRAMES.osRollTimerEditBox.fs:SetText("OS/FFA")
             FRAMES.osRollTimerEditBox.fs:SetJustifyH("Left")
 
-FRAMES.itemRarityEditBox = CreateFrame("EditBox", "ItemRarityEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.itemRarityEditBox:SetPoint("TOPLEFT", FRAMES.softResRollTimerEditBox, "BOTTOMLEFT", -65, -5)
-      FRAMES.itemRarityEditBox:SetWidth(40)
-      FRAMES.itemRarityEditBox:SetHeight(20)
-      FRAMES.itemRarityEditBox:ClearFocus() 
-      FRAMES.itemRarityEditBox:SetAutoFocus(false)
-      FRAMES.itemRarityEditBox:SetMaxLetters(1)
-      FRAMES.itemRarityEditBox:SetAltArrowKeyMode(true)
-      FRAMES.itemRarityEditBox:EnableMouse(true)
-      FRAMES.itemRarityEditBox:SetText("2")
-
-      FRAMES.itemRarityEditBox.fs = FRAMES.itemRarityEditBox:CreateFontString(nil, "OVERLAY")
-            FRAMES.itemRarityEditBox.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.itemRarityEditBox.fs:SetPoint("LEFT", FRAMES.itemRarityEditBox, "RIGHT", 5, -1)
-            FRAMES.itemRarityEditBox.fs:SetText("Min. handled itemrarirty. (0=gray, 5=legendary)")
-            FRAMES.itemRarityEditBox.fs:SetJustifyH("Left")
-
 FRAMES.msDropDecayEditBox = CreateFrame("EditBox", "MSDropDecayEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.msDropDecayEditBox:SetPoint("TOPLEFT", FRAMES.itemRarityEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.msDropDecayEditBox:SetPoint("TOPLEFT", FRAMES.softResRollTimerEditBox, "BOTTOMLEFT", -60, 0)
       FRAMES.msDropDecayEditBox:SetWidth(40)
       FRAMES.msDropDecayEditBox:SetHeight(20)
       FRAMES.msDropDecayEditBox:ClearFocus() 
