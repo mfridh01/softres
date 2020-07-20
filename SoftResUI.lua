@@ -101,16 +101,16 @@ function SoftRes.ui:createDefaultSoftResConfigList()
             },
             dropDecay = {
                   ms = {
-                        minValue = 10,
-                        maxValue = 20,
-                        default = 15,
-                        value = 15,
+                        minValue = 0,
+                        maxValue = 100,
+                        default = 10,
+                        value = 10,
                   },
                   os = {
-                        minValue = 10,
-                        maxValue = 20,
-                        default = 15,
-                        value = 15,
+                        minValue = 0,
+                        maxValue = 100,
+                        default = 5,
+                        value = 5,
                   }, 
             },
             itemRarity = {
@@ -118,6 +118,10 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   maxValue = 5, -- legendary
                   value = 0, -- 0 = gray, 1 = white, 2 = green, 3 = blue, 4 = purple, 5 = orange
                   default = 2,
+            },
+            extraInformation = {
+                  default = "Ω SoftRes, by Snits-NoggenfoggerEU",
+                  value = "Ω SoftRes, by Snits-NoggenfoggerEU",
             },
             colors = {
                   green = "|cFF00FF00",
@@ -153,6 +157,8 @@ function SoftRes.ui:useSavedConfigValues()
 
       FRAMES.msDropDecayEditBox:SetText(CONFIG_DECAY.ms.value)
       FRAMES.osDropDecayEditBox:SetText(CONFIG_DECAY.os.value)
+
+      FRAMES.extraInfoEditBox:SetText(SoftResConfig.extraInformation.value)
 end
 --------------------------------------------------------------------
 
@@ -327,7 +333,7 @@ FRAMES.tabContainer.page3 = CreateFrame("Frame", "TabPagesPage3", FRAMES.mainFra
       FRAMES.tabContainer.page3:Hide()
 
 FRAMES.softResRollTimerEditBox = CreateFrame("EditBox", "SoftResRollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.softResRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 8, -75)
+      FRAMES.softResRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 70, -75)
       FRAMES.softResRollTimerEditBox:SetWidth(40)
       FRAMES.softResRollTimerEditBox:SetHeight(20)
       FRAMES.softResRollTimerEditBox:ClearFocus() 
@@ -336,14 +342,27 @@ FRAMES.softResRollTimerEditBox = CreateFrame("EditBox", "SoftResRollTimerEditBox
       FRAMES.softResRollTimerEditBox:SetAltArrowKeyMode(true)
       FRAMES.softResRollTimerEditBox:EnableMouse(true)
       FRAMES.softResRollTimerEditBox:SetText("15")
+
       FRAMES.softResRollTimerEditBox.fs = FRAMES.softResRollTimerEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.softResRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.softResRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.softResRollTimerEditBox, "RIGHT", 5, -1)
-            FRAMES.softResRollTimerEditBox.fs:SetText("SoftRes Roll timer. (min: 10, max: 20)")
-            FRAMES.softResRollTimerEditBox.fs:SetJustifyH("Left")
+            FRAMES.softResRollTimerEditBox.fs:SetPoint("RIGHT", FRAMES.softResRollTimerEditBox, "LEFT", -8, 0)
+            FRAMES.softResRollTimerEditBox.fs:SetText("SoftRes")
+            FRAMES.softResRollTimerEditBox.fs:SetJustifyH("Right")
+
+      FRAMES.softResRollTimerEditBox.title = FRAMES.softResRollTimerEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.softResRollTimerEditBox.title:SetFontObject("GameFontHighlightSmall")
+            FRAMES.softResRollTimerEditBox.title:SetPoint("BOTTOMLEFT", FRAMES.softResRollTimerEditBox, "TOPLEFT", 8, 0)
+            FRAMES.softResRollTimerEditBox.title:SetText("Roll timers. (Min: 10, Max: 20)")
+            FRAMES.softResRollTimerEditBox.title:SetJustifyH("Right")
+
+      FRAMES.softResRollTimerEditBox.mainTitle = FRAMES.softResRollTimerEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.softResRollTimerEditBox.mainTitle:SetFontObject("GameFontHighlightSmall")
+            FRAMES.softResRollTimerEditBox.mainTitle:SetPoint("BOTTOMLEFT", FRAMES.softResRollTimerEditBox, "TOPLEFT", 18, 12)
+            FRAMES.softResRollTimerEditBox.mainTitle:SetText("-----[ SoftRes Rules. ]-----")
+            FRAMES.softResRollTimerEditBox.mainTitle:SetJustifyH("Right")
 
 FRAMES.msRollTimerEditBox = CreateFrame("EditBox", "MSRollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.msRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.softResRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.msRollTimerEditBox:SetPoint("LEFT", FRAMES.softResRollTimerEditBox, "RIGHT", 50, 0)
       FRAMES.msRollTimerEditBox:SetWidth(40)
       FRAMES.msRollTimerEditBox:SetHeight(20)
       FRAMES.msRollTimerEditBox:ClearFocus() 
@@ -355,12 +374,12 @@ FRAMES.msRollTimerEditBox = CreateFrame("EditBox", "MSRollTimerEditBox", FRAMES.
 
       FRAMES.msRollTimerEditBox.fs = FRAMES.msRollTimerEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.msRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.msRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.msRollTimerEditBox, "RIGHT", 5, -1)
-            FRAMES.msRollTimerEditBox.fs:SetText("MS Roll timer. (min: 10, max: 20)")
+            FRAMES.msRollTimerEditBox.fs:SetPoint("RIGHT", FRAMES.msRollTimerEditBox, "LEFT", -8, 0)
+            FRAMES.msRollTimerEditBox.fs:SetText("MS")
             FRAMES.msRollTimerEditBox.fs:SetJustifyH("Left")
 
 FRAMES.osRollTimerEditBox = CreateFrame("EditBox", "OSRollTimerEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.osRollTimerEditBox:SetPoint("TOPLEFT", FRAMES.msRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.osRollTimerEditBox:SetPoint("LEFT", FRAMES.msRollTimerEditBox, "RIGHT", 60, 0)
       FRAMES.osRollTimerEditBox:SetWidth(40)
       FRAMES.osRollTimerEditBox:SetHeight(20)
       FRAMES.osRollTimerEditBox:ClearFocus() 
@@ -372,12 +391,12 @@ FRAMES.osRollTimerEditBox = CreateFrame("EditBox", "OSRollTimerEditBox", FRAMES.
 
       FRAMES.osRollTimerEditBox.fs = FRAMES.osRollTimerEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.osRollTimerEditBox.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.osRollTimerEditBox.fs:SetPoint("LEFT", FRAMES.osRollTimerEditBox, "RIGHT", 5, -1)
-            FRAMES.osRollTimerEditBox.fs:SetText("OS/FFA Roll timer. (min: 10, max: 20)")
+            FRAMES.osRollTimerEditBox.fs:SetPoint("RIGHT", FRAMES.osRollTimerEditBox, "LEFT", -8, 0)
+            FRAMES.osRollTimerEditBox.fs:SetText("OS/FFA")
             FRAMES.osRollTimerEditBox.fs:SetJustifyH("Left")
 
 FRAMES.itemRarityEditBox = CreateFrame("EditBox", "ItemRarityEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
-      FRAMES.itemRarityEditBox:SetPoint("TOPLEFT", FRAMES.osRollTimerEditBox, "BOTTOMLEFT", 0, 0)
+      FRAMES.itemRarityEditBox:SetPoint("TOPLEFT", FRAMES.softResRollTimerEditBox, "BOTTOMLEFT", -65, -5)
       FRAMES.itemRarityEditBox:SetWidth(40)
       FRAMES.itemRarityEditBox:SetHeight(20)
       FRAMES.itemRarityEditBox:ClearFocus() 
@@ -399,7 +418,7 @@ FRAMES.msDropDecayEditBox = CreateFrame("EditBox", "MSDropDecayEditBox", FRAMES.
       FRAMES.msDropDecayEditBox:SetHeight(20)
       FRAMES.msDropDecayEditBox:ClearFocus() 
       FRAMES.msDropDecayEditBox:SetAutoFocus(false)
-      FRAMES.msDropDecayEditBox:SetMaxLetters(2)
+      FRAMES.msDropDecayEditBox:SetMaxLetters(3)
       FRAMES.msDropDecayEditBox:SetAltArrowKeyMode(true)
       FRAMES.msDropDecayEditBox:EnableMouse(true)
       FRAMES.msDropDecayEditBox:SetText("15")
@@ -407,7 +426,7 @@ FRAMES.msDropDecayEditBox = CreateFrame("EditBox", "MSDropDecayEditBox", FRAMES.
       FRAMES.msDropDecayEditBox.fs = FRAMES.msDropDecayEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.msDropDecayEditBox.fs:SetFontObject("GameFontHighlightSmall")
             FRAMES.msDropDecayEditBox.fs:SetPoint("LEFT", FRAMES.msDropDecayEditBox, "RIGHT", 5, -1)
-            FRAMES.msDropDecayEditBox.fs:SetText("Roll reduction on MS loot.")
+            FRAMES.msDropDecayEditBox.fs:SetText("MS Roll reduction on loot. (Min: 0, Max: 100)")
             FRAMES.msDropDecayEditBox.fs:SetJustifyH("Left")
 
 FRAMES.osDropDecayEditBox = CreateFrame("EditBox", "OSDropDecayEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
@@ -416,16 +435,35 @@ FRAMES.osDropDecayEditBox = CreateFrame("EditBox", "OSDropDecayEditBox", FRAMES.
       FRAMES.osDropDecayEditBox:SetHeight(20)
       FRAMES.osDropDecayEditBox:ClearFocus() 
       FRAMES.osDropDecayEditBox:SetAutoFocus(false)
-      FRAMES.osDropDecayEditBox:SetMaxLetters(2)
+      FRAMES.osDropDecayEditBox:SetMaxLetters(3)
       FRAMES.osDropDecayEditBox:SetAltArrowKeyMode(true)
       FRAMES.osDropDecayEditBox:EnableMouse(true)
       FRAMES.osDropDecayEditBox:SetText("15")
 
-      FRAMES.osDropDecayEditBox.fs = FRAMES.osDropDecayEditBox:CreateFontString(nil, "OVERLAY")
-            FRAMES.osDropDecayEditBox.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.osDropDecayEditBox.fs:SetPoint("LEFT", FRAMES.osDropDecayEditBox, "RIGHT", 5, -1)
-            FRAMES.osDropDecayEditBox.fs:SetText("Roll reduction on MS loot.")
-            FRAMES.osDropDecayEditBox.fs:SetJustifyH("Left")
+FRAMES.osDropDecayEditBox.fs = FRAMES.osDropDecayEditBox:CreateFontString(nil, "OVERLAY")
+      FRAMES.osDropDecayEditBox.fs:SetFontObject("GameFontHighlightSmall")
+      FRAMES.osDropDecayEditBox.fs:SetPoint("LEFT", FRAMES.osDropDecayEditBox, "RIGHT", 5, -1)
+      FRAMES.osDropDecayEditBox.fs:SetText("OS Roll reduction on loot. (Min: 0, Max: 100)")
+      FRAMES.osDropDecayEditBox.fs:SetJustifyH("Left")
+
+-- Extra info edit box.
+FRAMES.extraInfoEditBox = CreateFrame("EditBox", "ExtraInfoEditBox", FRAMES.tabContainer.page3, "InputBoxTemplate")
+      FRAMES.extraInfoEditBox:SetPoint("BOTTOM", FRAMES.mainFrame, "BOTTOM", 0, 15)
+      FRAMES.extraInfoEditBox:SetWidth(250)
+      FRAMES.extraInfoEditBox:SetHeight(20)
+      FRAMES.extraInfoEditBox:ClearFocus() 
+      FRAMES.extraInfoEditBox:SetAutoFocus(false)
+      FRAMES.extraInfoEditBox:SetMaxLetters(100)
+      FRAMES.extraInfoEditBox:SetAltArrowKeyMode(true)
+      FRAMES.extraInfoEditBox:EnableMouse(true)
+      FRAMES.extraInfoEditBox:SetText("Ω SoftRes, by Snits-NoggenfoggerEU")
+
+      FRAMES.extraInfoEditBox.mainTitle = FRAMES.extraInfoEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.extraInfoEditBox.mainTitle:SetFontObject("GameFontHighlightSmall")
+            FRAMES.extraInfoEditBox.mainTitle:SetPoint("TOP", FRAMES.extraInfoEditBox, "TOP", 0, 15)
+            FRAMES.extraInfoEditBox.mainTitle:SetText("Extra row for custom information.")
+            FRAMES.extraInfoEditBox.mainTitle:SetJustifyH("Center")
+
 -- Buttons.
 -----------
 BUTTONS.tabButtonPage = {}
@@ -574,37 +612,37 @@ BUTTONS.editPlayerButton = CreateFrame("Button", "EditPlayerButton", FRAMES.tabC
 
 -- Buttons Page 3
 BUTTONS.enableSoftResAddon = CreateFrame("CheckButton", "EnableSoftResAddon", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
-      BUTTONS.enableSoftResAddon:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 0, 0)
-      BUTTONS.enableSoftResAddon:SetWidth(25)
-      BUTTONS.enableSoftResAddon:SetHeight(25)
+      BUTTONS.enableSoftResAddon:SetPoint("TOPLEFT", FRAMES.tabContainer.page3, "TOPLEFT", 0, 5)
+      BUTTONS.enableSoftResAddon:SetWidth(20)
+      BUTTONS.enableSoftResAddon:SetHeight(20)
       BUTTONS.enableSoftResAddon:SetChecked(false)
 
       BUTTONS.enableSoftResAddon.fs = BUTTONS.enableSoftResAddon:CreateFontString(nil, "OVERLAY")
             BUTTONS.enableSoftResAddon.fs:SetFontObject("GameFontHighlight")
-            BUTTONS.enableSoftResAddon.fs:SetPoint("LEFT", BUTTONS.enableSoftResAddon, "RIGHT", 3, 0)
+            BUTTONS.enableSoftResAddon.fs:SetPoint("LEFT", BUTTONS.enableSoftResAddon, "RIGHT", 0, 0)
             BUTTONS.enableSoftResAddon.fs:SetJustifyH("LEFT")
             BUTTONS.enableSoftResAddon.fs:SetText("Enable SoftRes Addon.")
 
 BUTTONS.autoShowWindowCheckButton = CreateFrame("CheckButton", "AutoShowWindowCheckButton", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
-      BUTTONS.autoShowWindowCheckButton:SetPoint("TOPLEFT", BUTTONS.enableSoftResAddon, "BOTTOMLEFT", 0, 0)
-      BUTTONS.autoShowWindowCheckButton:SetWidth(25)
-      BUTTONS.autoShowWindowCheckButton:SetHeight(25)
+      BUTTONS.autoShowWindowCheckButton:SetPoint("TOPLEFT", BUTTONS.enableSoftResAddon, "BOTTOMLEFT", 0, 5)
+      BUTTONS.autoShowWindowCheckButton:SetWidth(20)
+      BUTTONS.autoShowWindowCheckButton:SetHeight(20)
       BUTTONS.autoShowWindowCheckButton:SetChecked(false)
 
       BUTTONS.autoShowWindowCheckButton.fs = BUTTONS.autoShowWindowCheckButton:CreateFontString(nil, "OVERLAY")
             BUTTONS.autoShowWindowCheckButton.fs:SetFontObject("GameFontHighlight")
-            BUTTONS.autoShowWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoShowWindowCheckButton, "RIGHT", 3, 0)
+            BUTTONS.autoShowWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoShowWindowCheckButton, "RIGHT", 0, 0)
             BUTTONS.autoShowWindowCheckButton.fs:SetJustifyH("LEFT")
             BUTTONS.autoShowWindowCheckButton.fs:SetText("Auto-show window on loot.")
 
 BUTTONS.autoHideWindowCheckButton = CreateFrame("CheckButton", "AautoHideWindowCheckButton", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
-      BUTTONS.autoHideWindowCheckButton:SetPoint("TOPLEFT", BUTTONS.autoShowWindowCheckButton, "BOTTOMLEFT", 0, 0)
-      BUTTONS.autoHideWindowCheckButton:SetWidth(25)
-      BUTTONS.autoHideWindowCheckButton:SetHeight(25)
+      BUTTONS.autoHideWindowCheckButton:SetPoint("TOPLEFT", BUTTONS.autoShowWindowCheckButton, "BOTTOMLEFT", 0, 5)
+      BUTTONS.autoHideWindowCheckButton:SetWidth(20)
+      BUTTONS.autoHideWindowCheckButton:SetHeight(20)
       BUTTONS.autoHideWindowCheckButton:SetChecked(false)
       
       BUTTONS.autoHideWindowCheckButton.fs = BUTTONS.autoHideWindowCheckButton:CreateFontString(nil, "OVERLAY")
             BUTTONS.autoHideWindowCheckButton.fs:SetFontObject("GameFontHighlight")
-            BUTTONS.autoHideWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoHideWindowCheckButton, "RIGHT", 3, 0)
+            BUTTONS.autoHideWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoHideWindowCheckButton, "RIGHT", 0, 0)
             BUTTONS.autoHideWindowCheckButton.fs:SetJustifyH("LEFT")
             BUTTONS.autoHideWindowCheckButton.fs:SetText("Auto-hide window when done looting.")

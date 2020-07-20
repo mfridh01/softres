@@ -1,4 +1,3 @@
-
 -- Eventscanning begins here.
 --------------------------------------------------------------------
 FRAMES.mainFrame:RegisterEvent("PLAYER_LOGIN")

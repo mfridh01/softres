@@ -5,6 +5,11 @@
 ## Title: SoftRes |cFF6EA5DC(Soft-reserve helper)|r
 ## Notes: Create a list of soft-reserved items and helps with rolls.
 
+libs\LibStub.lua
+libs\ChatThrottleLib.lua
+libs\AceAddon-3.0.lua
+libs\AceTimer-3.0.lua
+
 SoftRes.lua
 SoftResHelpers.lua
 SoftResListHandling.lua

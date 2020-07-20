@@ -44,7 +44,7 @@ nyLista  = {
 }--]]
 
 --------------------------------------------------------------------
-
+aceTimer = LibStub("AceAddon-3.0"):NewAddon("SoftRes", "AceTimer-3.0")
 -- SoftRes functions and tables.
 --------------------------------
 SoftRes = {}
@@ -107,6 +107,13 @@ SoftRes = {}
 
       SoftRes.announce = {}
             SoftRes.announce.__index = SoftRes.announce
+
+      SoftRes.timers = {
+            timers = {},
+      }
+            SoftRes.timers.__index = SoftRes.timers
+            SoftRes.timers.timers.countDownTimer = nil
+            SoftRes.timers.timers.raidRollTimer = nil
 --------------------------------------------------------------------
 
 -- SoftResDB, a table with saved values that will be kept forever.
@@ -247,6 +254,50 @@ end
 
 -- ANNOUNCE!!
 -------------
-function SoftRes.announce:softResAnnounce()
+function SoftRes.announce:sendMessageToChat(chat, text)
 
+      local raid = UnitInRaid("Player")
+      local party = UnitInParty("Player")
+      
+      if raid and chat == "Party_Leader" then
+         chat2 = "RAID_WARNING"
+      else
+         chat2 = "RAID"
+      end
+   
+      if raid then
+            ChatThrottleLib:SendChatMessage("ALERT", "SoftResRollAnnounce", text, chat2, nil, nil, nil, nil, nil);
+      elseif party then
+         SendChatMessage(text, "PARTY")
+      end
+   end
+
+function SoftRes.announce:raidRollAnnounce()
+      SoftRes.debug:print("Announcing raidRoll.")
+
+      -- Get the item, and announce it to the group.
+      local announcedItemId = SoftRes.announcedItem.itemId
+
+      -- if the announced Item is bogus.
+      if (not announcedItemId) or announcedItemId == "" then return end
+
+      -- Send the announcement to chat, we're using ChatThrottle for this.
+      SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(announcedItemId) .. " -> Raid-Rolling.")
+
+      -- Wait 2.5 seconds before rolling.
+      aceTimer:ScheduleTimer(function()
+
+            -- Roll the dice.
+            RandomRoll(1, GetNumGroupMembers())
+
+            -- Announce to the group, who the winner is.
+            aceTimer:ScheduleTimer(function()
+
+                  SoftRes.helpers:announceResult()
+            end, 2.5)
+      end, 2.5)
+end
+
+function SoftRes.announce:softResRollAnnounce()
+      SoftRes.debug:print("Announcing softResRoll")
 end

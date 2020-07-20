@@ -395,16 +395,16 @@ FRAMES.osRollTimerEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     SoftResConfig.timers.os.value = text
-    FRAMES.msDropDecayEditBox:SetFocus()
-    FRAMES.msDropDecayEditBox:HighlightText()
+    FRAMES.itemRarityEditBox:SetFocus()
+    FRAMES.itemRarityEditBox:HighlightText()
 end)
 
 FRAMES.osRollTimerEditBox:SetScript("OnTabPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     SoftResConfig.timers.os.value = text
-    FRAMES.msDropDecayEditBox:SetFocus()
-    FRAMES.msDropDecayEditBox:HighlightText()
+    FRAMES.itemRarityEditBox:SetFocus()
+    FRAMES.itemRarityEditBox:HighlightText()
 end)
 
 -- Itemrarity editbox
@@ -422,16 +422,16 @@ FRAMES.itemRarityEditBox:SetScript("OnEnterPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.itemRarity.minValue, SoftResConfig.itemRarity.maxValue), SoftResConfig.itemRarity.value)
     SoftResConfig.itemRarity.value = text
-    FRAMES.softResRollTimerEditBox:SetFocus()
-    FRAMES.softResRollTimerEditBox:HighlightText()
+    FRAMES.msDropDecayEditBox:SetFocus()
+    FRAMES.msDropDecayEditBox:HighlightText()
 end)
 
 FRAMES.itemRarityEditBox:SetScript("OnTabPressed", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.itemRarity.minValue, SoftResConfig.itemRarity.maxValue), SoftResConfig.itemRarity.value)
     SoftResConfig.itemRarity.value = text
-    FRAMES.softResRollTimerEditBox:SetFocus()
-    FRAMES.softResRollTimerEditBox:HighlightText()
+    FRAMES.msDropDecayEditBox:SetFocus()
+    FRAMES.msDropDecayEditBox:HighlightText()
 end)
 
 -- MS Roll decay.
@@ -488,6 +488,17 @@ FRAMES.osDropDecayEditBox:SetScript("OnTabPressed", function(self)
     FRAMES.softResRollTimerEditBox:HighlightText()
 end)
 
+-- Extra information
+FRAMES.extraInfoEditBox:SetScript("OnEnterPressed", function(self)
+    self:ClearFocus()
+    SoftResConfig.extraInformation.value = self:GetText()
+end)
+
+FRAMES.extraInfoEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    SoftResConfig.extraInformation.value = self:GetText()
+end)
+
 -- Prepare items
 BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
     -- only scan if the addon is enabled.
@@ -535,7 +546,7 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     SoftRes.state:toggleAlertPlayer(nil, "Anno")
 
     -- Active the timer.
-    -- TIMER and Announcement to group
+    SoftRes.announce:softResRollAnnounce()
 
     -- When done. deactive the rolls.
 end)
@@ -543,10 +554,7 @@ end)
 -- SoftRes Roll.
 BUTTONS.msRollButton:SetScript("OnClick", function(self)
     -- Cancel all active timers.
-    -- CANCEL
-
-    -- Switch the listening state on.
-    SoftRes.state:toggleListenToRolls(true)
+    aceTimer:CancelAllTimers()
 
     -- Announce the item.
     SoftRes.state:toggleAnnouncedItem(true)
@@ -557,18 +565,18 @@ BUTTONS.msRollButton:SetScript("OnClick", function(self)
     -- Alert the player.
     SoftRes.state:toggleAlertPlayer(true, "Anno")
 
+    -- Disable all other buttons while rolling.
+    SoftRes.helpers:hideAllRollButtons(true)
+
     -- Active the timer.
-    -- TIMER and Announcement to group
+    SoftRes.helpers:countDown("MS", "ms", nil)
 
     -- When done. deactive the rolls.
 end)
 
 BUTTONS.osRollButton:SetScript("OnClick", function(self)
     -- Cancel all active timers.
-    -- CANCEL
-
-    -- Switch the listening state on.
-    SoftRes.state:toggleListenToRolls(true)
+    aceTimer:CancelAllTimers()
 
     -- Announce the item.
     SoftRes.state:toggleAnnouncedItem(true)
@@ -579,18 +587,16 @@ BUTTONS.osRollButton:SetScript("OnClick", function(self)
     -- Alert the player.
     SoftRes.state:toggleAlertPlayer(true, "Anno")
 
-    -- Active the timer.
-    -- TIMER and Announcement to group
+    -- Disable all other buttons while rolling.
+    SoftRes.helpers:hideAllRollButtons(true)
 
-    -- When done. deactive the rolls.
+    -- Active the timer.
+    SoftRes.helpers:countDown("OS", "os", nil)
 end)
 
 BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
     -- Cancel all active timers.
-    -- CANCEL
-
-    -- Switch the listening state on.
-    SoftRes.state:toggleListenToRolls(true)
+    aceTimer:CancelAllTimers()
 
     -- Announce the item.
     SoftRes.state:toggleAnnouncedItem(true)
@@ -601,10 +607,11 @@ BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
     -- Alert the player.
     SoftRes.state:toggleAlertPlayer(true, "Anno")
 
-    -- Active the timer.
-    -- TIMER and Announcement to group
+    -- Disable all other buttons while rolling.
+    SoftRes.helpers:hideAllRollButtons(true)
 
-    -- When done. deactive the rolls.
+    -- Active the timer.
+    SoftRes.helpers:countDown("FFA", "os", nil)
 end)
 
 BUTTONS.raidRollButton:SetScript("OnClick", function(self)
@@ -616,7 +623,7 @@ BUTTONS.raidRollButton:SetScript("OnClick", function(self)
     end
 
     -- Cancel all active timers.
-    -- CANCEL
+    aceTimer:CancelAllTimers()
 
     -- Switch the listening state on.
     SoftRes.state:toggleListenToRaidRolls(true)
@@ -630,13 +637,11 @@ BUTTONS.raidRollButton:SetScript("OnClick", function(self)
     -- Alert the player.
     SoftRes.state:toggleAlertPlayer(true, "Anno")
 
+    -- Disable all other buttons while rolling.
+        SoftRes.helpers:hideAllRollButtons(true)
+
     -- Active the timer.
-    -- TIMER and Announcement to group
-
-    -- Do the roll
-    RandomRoll(1, GetNumGroupMembers())
-
-    -- When done. deactive the rolls.
+    SoftRes.announce:raidRollAnnounce()
 end)
 
 BUTTONS.announceRollsButton:SetScript("OnClick", function(self)
@@ -654,6 +659,9 @@ BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
         OnAccept = function()
             -- Canceling stuff.
             SoftRes.helpers:unPrepareItem()
+
+            -- Cancel all active timers.
+            aceTimer:CancelAllTimers()
             
             SoftRes.debug:print("Cancelled all announcements, rolls and such.")
         end,

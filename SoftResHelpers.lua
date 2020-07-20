@@ -298,6 +298,7 @@ function SoftRes.helpers:unPrepareItem()
       SoftRes.state:toggleListenToRaidRolls(false)
 
       SoftRes.state.announcedResult = false
+      SoftRes.state.rollingForLoot = false
 
       FRAMES.announcedItemFrame.fs:SetText("")
       FRAMES.rollFrame.fs:SetText("")
@@ -495,8 +496,55 @@ function SoftRes.helpers:raidRollForItem()
       table.insert(SoftRes.announcedItem.rolls, {name, rollValue})
 end
 
+function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
+      -- Start the countdown timer.
+      local rollTime = SoftResConfig.timers[rollType].value
+      local itemId = SoftRes.announcedItem.itemId
+
+      SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " " .. beginningText .. "-roll (" .. rollTime .. "s.)")
+      SoftRes.announce:sendMessageToChat("Party", "+-[" .. beginningText .. "-rolls start]----------+")
+
+      -- Listen to rolls again.
+      SoftRes.state:toggleListenToRolls(true)
+
+      aceTimer:ScheduleTimer(function()
+
+            SoftRes.announce:sendMessageToChat("Party_Leader", "3")
+            aceTimer:ScheduleTimer(function()
+
+                  SoftRes.announce:sendMessageToChat("Party_Leader", "2")
+                  aceTimer:ScheduleTimer(function()
+
+                        SoftRes.announce:sendMessageToChat("Party_Leader", "1")
+                        aceTimer:ScheduleTimer(function()
+
+                              SoftRes.announce:sendMessageToChat("Party", "+----------[" .. beginningText .. "-rolls end]-+")
+                              SoftRes.helpers:announceResult(tieRollers, rollType)
+                        end ,1)
+                  end, 1)
+            end, 1)
+      end, rollTime - 4)
+end
+
 -- Announce the results of the rolls.
-function SoftRes.helpers:announceResult()
+function SoftRes.helpers:announceResult(tieRollers, rollType)
+      -- Stop listening to rolls.
+      SoftRes.state:toggleListenToRolls(false)
+
+      -- if it's a tie-roll and no one rolled. re-announce it.
+      if #SoftRes.preparedItem.elegible >= 2 and #SoftRes.announcedItem.rolls == 0 then
+            -- Call the announcement function again.
+            SoftRes.helpers:countDown("Tie", "os", tieRollers)
+            return
+      end
+
+      -- if no one wants the item and it's an MS roll. Start an OS-roll
+      if #SoftRes.announcedItem.rolls == 0 and rollType == "ms" then
+            -- Call the announcement function again.
+            SoftRes.helpers:countDown("OS", "os")
+            return
+      end
+
       -- Check if there are any rolls.
       if #SoftRes.announcedItem.rolls > 0 then
 
@@ -513,11 +561,34 @@ function SoftRes.helpers:announceResult()
                   SoftRes.announcedItem.tieRollers = {}
                   SoftRes.announcedItem.highestRoll = 0
 
-                  -- Listen to rolls again.
-                  SoftRes.state:toggleListenToRolls(true)
-
                   -- Announce Re-Roll for only the tie-rollers.
-                  -- ANNOUNCE RE ROLLS
+                  local tieRollers = ""
+                  local announceText = "We have a TIE. Roll again:"
+
+                  -- Get the tie-rollers.
+                  for i = 1, #SoftRes.preparedItem.elegible do
+                        tieRollers = tieRollers .. SoftRes.preparedItem.elegible[i] .. ". "
+                  end
+
+                  -- Send the announcement after 1 second.
+                  aceTimer:ScheduleTimer(function()
+                        -- send the text.
+                        SoftRes.announce:sendMessageToChat("Party_Leader", announceText)
+
+                        -- Wait another second before posting the players.
+                        aceTimer:ScheduleTimer(function()
+
+                              SoftRes.announce:sendMessageToChat("Party_Leader", tieRollers)
+                              
+                              -- Call the announcement function again.
+                              SoftRes.helpers:countDown("Tie", "os", tieRollers)
+                        end, 1)
+                  end, 0.5)
+
+                  -- Re-draw the list.
+                  SoftRes.list:showPrepSoftResList()
+
+                  return
 
             -- We don't have tie-rolls.
             -- But we do actually have rolls.
@@ -536,10 +607,34 @@ function SoftRes.helpers:announceResult()
                   -- That way we will announce the winner however that player won.
                   SoftRes.preparedItem.elegible = {}
                   table.insert(SoftRes.preparedItem.elegible, highestRoller[1])
+
+                  -- We have announced the results.
+                  SoftRes.state.announcedResult = true
+
+                  -- stop listening to rolls.
+                  SoftRes.state:toggleListenToRolls(false)
+
+                  -- Rolling has stopped.
+                  SoftRes.state:toggleRollingForLoot(false)
+
+                  -- ANNOUNCE IT
+                  local winnerName = SoftRes.announcedItem.rolls[1][1]
+                  local winnerRoll = SoftRes.announcedItem.rolls[1][2]
+                  local announceText = "The winner is: " .. winnerName .. ", with a (" .. winnerRoll .. ") roll."
+
+                  SoftRes.announce:sendMessageToChat("Party_Leader", announceText)
+
+                  -- Re-draw the list.
+                  SoftRes.list:showPrepSoftResList()
+
+                  return
             end
       end
 
-      SoftRes.debug:print("Winner = " .. tostring(SoftRes.preparedItem.elegible[1]))
+      -- Winner by softres.
+
+      -- We have announced the results.
+      SoftRes.state.announcedResult = true
 
       -- stop listening to rolls.
       SoftRes.state:toggleListenToRolls(false)
@@ -547,8 +642,17 @@ function SoftRes.helpers:announceResult()
       -- Rolling has stopped.
       SoftRes.state:toggleRollingForLoot(false)
 
-      -- We have announced the results.
-      SoftRes.state.announcedResult = true
+      -- No rollers?`
+      if SoftRes.state.announcedResult and #SoftRes.preparedItem.elegible == 0 and #SoftRes.announcedItem.rolls == 0 then
+            SoftRes.announce:sendMessageToChat("Party_Leader", "No one wanted the item.")
+      else
+
+            -- We only have one SoftRes.
+            local winnerName = SoftRes.preparedItem.elegible[1]
+            local announceText = "Only one SoftRes. The winner is: " .. winnerName .. "."
+
+            SoftRes.announce:sendMessageToChat("Party_Leader", announceText)
+      end
 
       -- Re-draw the list.
       SoftRes.list:showPrepSoftResList()
