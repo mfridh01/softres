@@ -10,6 +10,7 @@ function SoftRes.list:createNewSoftResList()
           removedPlayers = {},
           drops = {},
           shitRolls = {},
+          onHold = {},
     }
 
     -- If we're scanning. We toggle it off.

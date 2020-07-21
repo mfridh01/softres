@@ -85,6 +85,8 @@ SoftRes = {}
       
       SoftRes.droppedItems = {}
             SoftRes.droppedItems.__index = SoftRes.droppedItems
+      
+      SoftRes.skippedItem = 0
 
       SoftRes.announcedItem = {
             state = false,
@@ -325,17 +327,14 @@ function SoftRes.announce:softResRollAnnounce()
       if (not announcedItemId) or announcedItemId == "" then return end
 
       -- Get the elegible players.
-      local playerText = ""
+      local players = {}
 
       for i = 1, #SoftRes.preparedItem.elegible do
-            playerText = playerText .. SoftRes.preparedItem.elegible[i] .. ". "
+            table.insert(players, SoftRes.preparedItem.elegible[i])
       end
 
-      -- Announce the players.
-      SoftRes.announce:sendMessageToChat("Party_Leader", playerText)
-
-      -- Active the timer.
-      SoftRes.helpers:countDown("SoftRes", "softRes", nil, false)
+      -- Activate the timer.
+      SoftRes.helpers:softResCountDown(players, nil)
 end
 
 -- If we detect a roll-penalty.

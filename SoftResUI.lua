@@ -581,10 +581,17 @@ BUTTONS.announceRollsButton = CreateFrame("Button", "RaidRollButton", FRAMES.tab
       BUTTONS.announceRollsButton:SetText("Announce Result")
 
 BUTTONS.cancelEverythingButton = CreateFrame("Button", "CancelEverythingButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
-      BUTTONS.cancelEverythingButton:SetPoint("BOTTOMRIGHT", FRAMES.tabContainer, "BOTTOMRIGHT", -7, 7)
+      BUTTONS.cancelEverythingButton:SetPoint("BOTTOMRIGHT", FRAMES.tabContainer, "BOTTOMRIGHT", -7, 10)
       BUTTONS.cancelEverythingButton:SetWidth(25)
       BUTTONS.cancelEverythingButton:SetHeight(20)
       BUTTONS.cancelEverythingButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t")
+
+BUTTONS.skipItemButton = CreateFrame("Button", "RaidRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
+      BUTTONS.skipItemButton:SetPoint("TOPLEFT", BUTTONS.announceRollsButton, "BOTTOMLEFT", 0, -2)
+      BUTTONS.skipItemButton:SetWidth(75)
+      BUTTONS.skipItemButton:SetHeight(20)
+      BUTTONS.skipItemButton:Hide()
+      BUTTONS.skipItemButton:SetText("Next Item")
 
 -- Buttons page 2.
 BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")

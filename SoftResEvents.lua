@@ -79,6 +79,13 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
 
             -- Always show the prepare button.
             BUTTONS.prepareItemButton:Show()
+            
+            -- Show skip-button.
+            if #SoftRes.droppedItems > 1 then
+                  BUTTONS.skipItemButton:Show()
+            else
+                  BUTTONS.skipItemButton:Hide()
+            end
 
       elseif event == "LOOT_SLOT_CLEARED" then
 
@@ -93,6 +100,13 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- Always show prepare button.
             BUTTONS.prepareItemButton:Show()
 
+            -- Show skip-button.
+            if #SoftRes.droppedItems > 1 then
+                  BUTTONS.skipItemButton:Show()
+            else
+                  BUTTONS.skipItemButton:Hide()
+            end
+
       elseif event == "LOOT_CLOSED" then
 
             SoftRes.debug:print("Loot window closed.")
@@ -105,6 +119,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.droppedItems = {}
             SoftRes.state.lootOpened = false
             SoftRes.state:toggleAlertPlayer(false)
+
+            -- Always hide prepare button.
+            BUTTONS.prepareItemButton:Hide()
       
       -- Raid Rolls and trades.
       elseif event == "CHAT_MSG_SYSTEM" then

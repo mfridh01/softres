@@ -517,18 +517,6 @@ BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
     -- We check the first item, then prepare it for loot.
     local preparedItemId = SoftRes.droppedItems[1]
     SoftRes.helpers:prepareItem(preparedItemId)
-
-    -- Set the icon for the item.
-    local itemIcon = GetItemIcon(preparedItemId)
-
-    -- Change the texture, to the button.
-    BUTTONS.announcedItemButton.texture:SetTexture(itemIcon)
-
-    -- Show the list of players who have soft-reserved the item.
-    SoftRes.list:showPrepSoftResList()
-
-    -- Handle buttons accordingly.
-    SoftRes.list:handleRollButtons()
 end)
 
 -- SoftRes Roll.
@@ -539,9 +527,6 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     -- Switch the listening state on.
     SoftRes.state:toggleListenToRolls(true)
 
-    -- Announce the item.
-    SoftRes.state:toggleAnnouncedItem(true)
-
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
 
@@ -551,10 +536,14 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     -- Disable all other buttons while rolling.
     SoftRes.helpers:hideAllRollButtons(true)
 
+    -- announce the item.
+    SoftRes.state:toggleAnnouncedItem(true)
+
+    -- force State
+    SoftRes.state.announcedItem = false
+
     -- Active the timer.
     SoftRes.announce:softResRollAnnounce()
-
-    -- When done. deactive the rolls.
 end)
 
 -- SoftRes Roll.
@@ -716,4 +705,19 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
 
     -- redraw the list.
     SoftRes.list:showFullSoftResList()
+end)
+
+-- Skip item.
+BUTTONS.skipItemButton:SetScript("OnClick", function(self)
+    -- Set the index of skipped item
+    SoftRes.skippedItem = SoftRes.skippedItem + 1
+
+    -- Check to see so that the index is not higher than the actual drop list.
+    -- If it is, just set it to the first item.
+    if SoftRes.skippedItem == #SoftRes.droppedItems then
+        SoftRes.skippedItem = 0
+    end
+
+    -- Prepare the next item on the list.
+    SoftRes.helpers:prepareItem(SoftRes.droppedItems[SoftRes.skippedItem + 1])
 end)

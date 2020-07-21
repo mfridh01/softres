@@ -229,6 +229,17 @@ end
 function SoftRes.helpers:prepareItem(itemId)
 
       if itemId then
+            -- Set the icon for the item.
+            local itemIcon = GetItemIcon(itemId)
+
+            -- Change the texture, to the button.
+            BUTTONS.announcedItemButton.texture:SetTexture(itemIcon)
+
+            -- Show the list of players who have soft-reserved the item.
+            SoftRes.list:showPrepSoftResList()
+
+            -- Disable all other buttons while rolling.
+            SoftRes.helpers:hideAllRollButtons(true)
 
             -- Set the prepared item to prep item variable.
             SoftRes.preparedItem.itemId = itemId
@@ -248,6 +259,9 @@ function SoftRes.helpers:prepareItem(itemId)
 
             -- Show the first page.
             SoftRes.helpers:toggleTabPage(1)
+
+            -- Handle buttons accordingly.
+            SoftRes.list:handleRollButtons()
       end
 end
 
@@ -284,6 +298,14 @@ function SoftRes.helpers:removeHandledItem()
             SoftRes.droppedItems = {}
             SoftRes.droppedItems = temp
       end
+
+      for i = 1, #SoftRes.droppedItems do
+            if SoftRes.droppedItems[i] == SoftRes.skippedItem then
+                  table.remove(SoftRes.droppedItems, i)
+                  print("Removed " .. SoftRes.helpers:getItemLinkFromId(i))
+                  break
+            end
+      end
 end
 
 -- Unprepare item for rolls.
@@ -302,6 +324,7 @@ function SoftRes.helpers:unPrepareItem()
       SoftRes.announcedItem.softReserved = false
       SoftRes.announcedItem.shitRolls = {}
       SoftRes.announcedItem.manyRolls = {}
+      SoftRes.skippedItem = 0
 
       SoftRes.helpers:hideAllRollButtons(true)
       BUTTONS.announcedItemButton.texture:SetTexture(BUTTONS.announcedItemButton.defaultTexture)
@@ -594,8 +617,95 @@ function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
       end, rollTime - 4)
 end
 
+-- Local function for softResCountDown.
+-- Takes a table of players and checks if they have all rolled.
+-- returns true if everyone has rolled.
+local function checkForAllRolls(players)
+      local allRolls = 0
+      local notRolled = ""
+
+      -- for every player, check for the rolls.
+      for i = 1, #players do
+            local isIn = false
+
+            -- find the player in rolls.
+            for j = 1, #SoftRes.announcedItem.rolls do
+                  if players[i] == SoftRes.announcedItem.rolls[j][1] then
+                        isIn = true
+                        break
+                  end
+            end
+            
+            if isIn then
+                  allRolls = allRolls + 1
+            else
+                  notRolled = notRolled .. players[i] .. ". "
+            end            
+      end
+
+      if allRolls == #players then
+            return ""
+      end
+
+
+      return notRolled
+end
+
+function SoftRes.helpers:softResCountDown(players, rolls)
+      local rollTime = SoftResConfig.timers.softRes.value
+      local itemId = SoftRes.announcedItem.itemId
+      local playerNames = ""
+
+      -- Convert players to string.
+      for i = 1, #players do
+            playerNames = playerNames .. players[i] .. ". "
+      end
+
+      -- Listen to rolls again.
+      SoftRes.state:toggleListenToRolls(true)
+
+      if SoftRes.state.announcedItem == false then
+            SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " SoftRes-roll")
+            SoftRes.announce:sendMessageToChat("Party_Leader", playerNames)
+            SoftRes.announce:sendMessageToChat("Party", "+-[SoftRes-rolls start]----------+")
+
+            -- force State
+            SoftRes.state.announcedItem = true
+
+            -- Every time the timer triggers it will announce which players who hasn't rolled for their softreserved item.
+            local numLoop = 0
+            aceTimer:ScheduleRepeatingTimer(function()
+                  numLoop = numLoop + 1
+
+                  if numLoop == rollTime then
+                        numLoop = 0
+                        local notRolled = checkForAllRolls(players)
+                        if notRolled ~= "" then
+                              SoftRes.announce:sendMessageToChat("Party_Leader", notRolled .. " still needs to roll.")
+                        end
+                  else
+                        -- Calls a check function every second.
+                        if checkForAllRolls(players) == "" then
+                              -- cancel all timers if we have all rolls.
+                              aceTimer:CancelAllTimers()
+
+                              -- announce the winner.
+                              SoftRes.helpers:announceResult(false, "softRes")
+                        end
+                  end
+            end, 1)
+      end
+end
+
 -- Announce the results of the rolls.
 function SoftRes.helpers:announceResult(tieRollers, rollType)
+      -- We don't stop the rolls-listen state for this.
+      -- We check so that we have all the rolls done by the SoftRessers.
+      if #SoftRes.preparedItem.elegible >= 2 and #SoftRes.announcedItem.rolls < #SoftRes.preparedItem.elegible then
+            SoftRes.helpers:softResCountDown(SoftRes.preparedItem.elegible, SoftRes.preparedItem.rolls)
+            return
+      end
+
       -- Stop listening to rolls.
       SoftRes.state:toggleListenToRolls(false)
 
@@ -603,12 +713,6 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
       if #SoftRes.preparedItem.elegible >= 2 and #SoftRes.announcedItem.rolls == 0 then
             local newRollType = "tie"
             local newText = "Tie"
-
-            -- If we have a tie-roll but the roll was a SoftRes, we just do a softRes roll again.
-            if rollType == "softRes" then
-                  newRollType = "softRes"
-                  newText = "SoftRes-Tie"
-            end
 
             -- Call the announcement function again.
             SoftRes.helpers:countDown(newText, newRollType, tieRollers)

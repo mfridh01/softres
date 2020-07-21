@@ -26,3 +26,5 @@
 
 -- for later.
 --[Snits] Config, add "sliders" for timers. Softres, MS, OS, FFA
+
+-- [] Add mouse-over on icons for information about won items.
