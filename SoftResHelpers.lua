@@ -58,6 +58,9 @@ end
 
 -- Takes a string, ex: Playername, and formats it to first char to upper, rest lower.
 function SoftRes.helpers:formatPlayerName(string)
+
+      if string.len(string) < 3 then return false end
+
       local lower = string.lower(string)
       return (lower:gsub("^%l", string.upper))
 end

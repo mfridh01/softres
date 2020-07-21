@@ -130,48 +130,7 @@ BUTTONS.addPlayerSoftResButton:SetScript("OnClick", function(self)
     if not SoftResList then return end
 
     -- Popup dialog for adding a player.
-    StaticPopupDialogs["SOFTRES_ADD_PLAYER"] = {
-        text = "Addinga new player.\n\nEnter the player name.",
-        name = "",
-        button1 = "Add",
-        button2 = "Cancel",
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        hasEditBox = true,
-        editBoxWidth = 250,
-        OnShow = function(self)
-            self.button1:Disable()
-        end,
-        OnAccept = function(self)
-            -- Format the playername. First char upper, rest lower.
-            local playerName = SoftRes.helpers:formatPlayerName(self.name)
-
-            -- Add the player
-            SoftRes.list:addSoftReservePlayer(playerName)
-
-            -- ReOrder the list.
-            SoftRes.list:reOrderPlayerList()
-
-            -- Refresh the list.
-            SoftRes.list:showFullSoftResList()
-            SoftRes.debug:print("Added player: " .. playerName)
-        end,
-        OnCancel = function (_,reason)
-            -- Cancel.
-            SoftRes.debug:print("Canceled adding player player")
-        end,
-        EditBoxOnTextChanged = function (self, data)
-            if string.len(self:GetText()) >= 3 then
-                self:GetParent().name = self:GetText()
-                self:GetParent().button1:Enable()
-            else
-                self:GetParent().button1:Disable()
-            end
-        end,
-    }
-
-    StaticPopup_Show ("SOFTRES_ADD_PLAYER")
+    FRAMES.addPlayerPopupWindow:Show()
 end)
 
 -- Edit player
@@ -720,4 +679,70 @@ BUTTONS.skipItemButton:SetScript("OnClick", function(self)
 
     -- Prepare the next item on the list.
     SoftRes.helpers:prepareItem(SoftRes.droppedItems[SoftRes.skippedItem + 1])
+end)
+
+-- Adds a button for getting the target name. For easier add.
+BUTTONS.addPlayerTargetNameButton:SetScript("OnClick", function(self)
+    local targetName = GetUnitName("Target")
+
+    if UnitIsPlayer("Target") and targetName then
+        FRAMES.addPlayerNameEditBox:SetText(targetName)
+    end
+end)
+
+-- Cancel
+BUTTONS.addPlayerPopUpCancelButton:SetScript("OnClick", function(self)
+    -- Clear the editboxes.
+    FRAMES.addPlayerNameEditBox:SetText("")
+    FRAMES.addPlayerItemEditBox:SetText("")
+
+    -- close the window.
+    FRAMES.addPlayerPopupWindow:Hide()
+end)
+
+-- Add player
+BUTTONS.addPlayerPopUpAddButton:SetScript("OnClick", function(self)
+
+    local playerNameRaw = FRAMES.addPlayerNameEditBox:GetText()
+    local itemLinkRaw = FRAMES.addPlayerItemEditBox:GetText()
+    local infoText = FRAMES.addPlayerNameEditBox.fs:GetText()
+
+    -- Format the playername. First char upper, rest lower.
+    local playerName = SoftRes.helpers:formatPlayerName(playerNameRaw)
+
+    -- Format the itemId.
+    local itemId = SoftRes.helpers:getItemIdFromLink(itemLinkRaw)
+
+    -- Check the itemId
+    if not itemId then
+        -- ERROR
+        FRAMES.addPlayerNameEditBox.fs:SetText("ERROR!\nName and/or ItemLink is wrong.\nRe-Enter!\n")
+        FRAMES.addPlayerItemEditBox:HighlightText()
+
+        return
+    end
+
+    -- Add the player
+    SoftRes.list:addSoftReservePlayer(playerName, itemId)
+
+    -- ReOrder the list.
+    SoftRes.list:reOrderPlayerList()
+
+    -- Refresh the list.
+    SoftRes.list:showFullSoftResList()
+    SoftRes.debug:print("Added player: " .. playerName)
+
+    -- close the window.
+    FRAMES.addPlayerPopupWindow:Hide()
+end)
+
+-- EditBox name
+FRAMES.addPlayerNameEditBox:SetScript("OnTabPressed", function(self)
+    FRAMES.addPlayerItemEditBox:SetFocus()
+    FRAMES.addPlayerItemEditBox:HighlightText()
+end)
+
+FRAMES.addPlayerItemEditBox:SetScript("OnTabPressed", function(self)
+    FRAMES.addPlayerNameEditBox:SetFocus()
+    FRAMES.addPlayerNameEditBox:HighlightText()
 end)

@@ -1,7 +1,7 @@
 -- Playerhandling.
 ------------------
 -- (create new player), When we first create a player, fill in the layout with blanks/defaults.
-function SoftRes.player:new(playerName, groupPosition)
+function SoftRes.player:new(playerName, groupPosition, itemId)
       -- If we get a name, use it.
       local self = {
             name = playerName,

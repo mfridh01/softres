@@ -672,7 +672,7 @@ BUTTONS.autoHideWindowCheckButton = CreateFrame("CheckButton", "AautoHideWindowC
 
 -- Custom popup window for adding player.
 FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
-      FRAMES.addPlayerPopupWindow:SetFrameStrata("DIALOG")
+      FRAMES.addPlayerPopupWindow:SetFrameStrata("TOOLTIP")
       FRAMES.addPlayerPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
       FRAMES.addPlayerPopupWindow:SetSize(300, 200)
       FRAMES.addPlayerPopupWindow:SetMovable(true)
@@ -740,17 +740,8 @@ FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAME
             BUTTONS.addPlayerPopUpCancelButton:SetHeight(20)
             BUTTONS.addPlayerPopUpCancelButton:SetText("Cancel")
 
-
-            function PlayerLink(self, button, down)
-                  if ( IsModifiedClick("CHATLINK") ) then
-                  local link = 
-                  ChatEdit_InsertLink (link)
-                  end
-                  end
-                  PlayerFrame:HookScript("OnClick", PlayerLink)
-
-
-
-            FRAMES.addPlayerItemEditBox:SetScript("OnHyperlinkClick", function(self) 
-                  print("Clicked itemlink")
-            end)
+      BUTTONS.addPlayerTargetNameButton = CreateFrame("Button", "addPlayerTargetNameButton", FRAMES.addPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.addPlayerTargetNameButton:SetPoint("LEFT", FRAMES.addPlayerNameEditBox, "RIGHT", 5, 0)
+            BUTTONS.addPlayerTargetNameButton:SetWidth(70)
+            BUTTONS.addPlayerTargetNameButton:SetHeight(20)
+            BUTTONS.addPlayerTargetNameButton:SetText("Target")
