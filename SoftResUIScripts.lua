@@ -234,9 +234,6 @@ end)
 
 -- Scan chat for softreserves.
 BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
-    -- only scan if the addon is enabled.
-    if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
-
     -- If there are no players, don't start the scanner
     if #SoftResList.players <= 1 then return end
     
@@ -687,6 +684,7 @@ end)
 -- Announce the rules and stuff to the group
 BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Rules") then return end
+    if not SoftRes.helpers:checkAlertPlayer("Scan") then return end
 
     local groupType = "/Party"
     local raid = UnitInRaid("Player")
@@ -708,4 +706,14 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
     SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
     SoftRes.announce:sendMessageToChat("Party", "|| " .. SoftResConfig.extraInformation.value)
     SoftRes.announce:sendMessageToChat("Party", "\\-------------------[By Snits]")
+
+    -- call the toggle function without a flag, to really toggle it.
+    -- First argument is wether or not we should announce the scan.
+    SoftRes.state:toggleScanForSoftRes(true, nil)
+
+    -- Toggle alert on.
+    SoftRes.state:toggleAlertPlayer(nil, "Scan")
+
+    -- redraw the list.
+    SoftRes.list:showFullSoftResList()
 end)

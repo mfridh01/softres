@@ -424,8 +424,8 @@ local function getRoll(string)
 
 
       -- Return the roll
-      if listenToRolls then -- FOR TESTING. REMOVE LATER.
-      --if listenToRolls and splitString[4] == acceptedRoll then
+      --if listenToRolls then -- FOR TESTING. REMOVE LATER.
+      if listenToRolls and splitString[4] == acceptedRoll then
             return user, value
       
       -- if it's a raidRoll, only take the rolls form the player who initiated the roll.
@@ -601,8 +601,17 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
 
       -- if it's a tie-roll and no one rolled. re-announce it.
       if #SoftRes.preparedItem.elegible >= 2 and #SoftRes.announcedItem.rolls == 0 then
+            local newRollType = "tie"
+            local newText = "Tie"
+
+            -- If we have a tie-roll but the roll was a SoftRes, we just do a softRes roll again.
+            if rollType == "softRes" then
+                  newRollType = "softRes"
+                  newText = "SoftRes-Tie"
+            end
+
             -- Call the announcement function again.
-            SoftRes.helpers:countDown("Tie", "os", tieRollers)
+            SoftRes.helpers:countDown(newText, newRollType, tieRollers)
             return
       end
 

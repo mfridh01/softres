@@ -16,8 +16,8 @@
 -- [] Add Announcements!!                    
 -- [DONE] Add a cancel announcement button. Clears all states.
 -- [Snits] Add an announcement after half the time, if a SoftRes player hasn't rolled in time.
--- [] Add decay if you win rolls.
-        -- Add to the config as well, to tweak how you want.
+-- [DONE] Add decay if you win rolls.
+        -- [DONE] Add to the config as well, to tweak how you want.
 
 -- Added functions:
     -- Shit rolls.... People who tries to "trick" the addon by rolling something else than 1-100 .. will be added to the "ShitRolls" list and have a SKULL icon AND red text.

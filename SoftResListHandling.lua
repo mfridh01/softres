@@ -306,7 +306,8 @@ end
 -- Show the SoftRessers on the second tabpage.
 ----------------------------------------------
 function SoftRes.list:showFullSoftResList()
-    local textFrame = FRAMES.listFrame.fs
+    --local textFrame = FRAMES.listFrame.fs
+    local textFrame = FRAMES.listFrame
     local text = SoftRes.state.scanForSoftRes.text
     local numGroupMembers = GetNumGroupMembers()
     local listEntries = #SoftResList.players
@@ -376,7 +377,17 @@ function SoftRes.list:showFullSoftResList()
 
     -- populate the frame with the new text.
     local infoText = "Raid: " .. offlineColor .. numOffline .. "|r/" .. raidTextColor .. numGroupMembers .. "|r || Listentries: " .. listEntryColor .. listEntries .. "|r || SoftRes: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-----------------------------------------------------------------------\n"
-    textFrame:SetText(infoText .. text)
+ 
+    local listHeight = ((12 * #SoftResList.players) + 24) - (#SoftResList.players * (UIParent:GetScale() - 0.711))-- (Textheight * listed players) + title
+    textFrame:SetSize(500, listHeight)
+    textFrame:EnableMouseWheel(true);
+    textFrame:SetScript("OnHyperlinkClick", _G.ChatFrame_OnHyperlinkShow)
+    textFrame:Clear()
+    textFrame:AddMessage(infoText .. text, 1.0, 1.0, 1.0, nil, nil)
+
+    textFrame:SetScript("OnLoad", function(self)
+        self:ScrollToTop()
+    end)
 end
 
 -- Show prepared item and softreservers on the first page.
@@ -478,7 +489,7 @@ function SoftRes.list:showPrepSoftResList()
         -- this is the last row of the rollers.
         -- We don't show it if the item is soft-reserved.
         if not SoftRes.announcedItem.softReserved then
-            text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. checkIfRollPenalty(tempRollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+            text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
         end
     end
 

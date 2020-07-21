@@ -79,7 +79,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
             state = {
                   softResEnabled = true,
                   autoShowOnLoot = true,
-                  autoHideOnLootDone = true,
+                  autoHideOnLootDone = false,
             },
             timers = {
                   softRes = {
@@ -317,7 +317,21 @@ FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRA
       FRAMES.listFrameContainer.child = CreateFrame("Frame")
       FRAMES.listFrameContainer:SetScrollChild(FRAMES.listFrameContainer.child)
 
-FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child)
+      FRAMES.listFrame = CreateFrame("ScrollingMessageFrame", "testframe", FRAMES.listFrameContainer.child) -- asdf
+            FRAMES.listFrame:SetSize(500, 24)
+            --FRAMES.listFrame:SetAllPoints(FRAMES.listFrameContainer.child)
+            FRAMES.listFrame:SetPoint("TOPLEFT", FRAMES.listFrameContainer.child, "TOPLEFT", 0, 0)
+            --FRAMES.listFrame:SetFontObject("GameFontHighlight")
+            FRAMES.listFrame:SetFont("Fonts\\FRIZQT__.ttf", 12)
+            FRAMES.listFrame:SetJustifyH("LEFT")
+            FRAMES.listFrame:SetJustifyV("TOP")
+            FRAMES.listFrame:SetMaxLines(500)
+            FRAMES.listFrame:SetFading(false)
+            FRAMES.listFrame:SetHyperlinksEnabled(true)
+            FRAMES.listFrame:SetInsertMode("BOTTOM")
+            FRAMES.listFrame:EnableMouse(true)
+
+--[[ FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child) asdf
       FRAMES.listFrame:SetAllPoints(FRAMES.listFrameContainer.child)
       FRAMES.listFrame:EnableMouse()
 
@@ -326,7 +340,7 @@ FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child)
             FRAMES.listFrame.fs:SetFont(FRAMES.listFrame.fs:GetFont(), 12)
             FRAMES.listFrame.fs:SetPoint("TOPLEFT", FRAMES.listFrame, "TOPLEFT", 0, 0)
             FRAMES.listFrame.fs:SetText("Testrad-01\nTestrad-02\nTestrad-03\nTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
-            FRAMES.listFrame.fs:SetJustifyH("Left")
+            FRAMES.listFrame.fs:SetJustifyH("Left") ]]
 
 -- Page 3
 FRAMES.tabContainer.page3 = CreateFrame("Frame", "TabPagesPage3", FRAMES.mainFrame)
