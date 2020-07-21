@@ -204,7 +204,17 @@ local function checkIfReceivedItems(name)
     -- Check to see if the player has recieved items.
     if #player.receivedItems > 0 then
         for j = 1, #player.receivedItems do
-            lootIcon = lootIcon .. SoftResConfig.icons.loot
+            local lootItem = "item:" .. player.receivedItems[j][3] .. "::::::::::::"
+            local lootIconText = SoftResConfig.icons.loot
+
+            if player.receivedItems[j][2] == "ms" then
+                lootIconText = GetItemIcon(player.receivedItems[j][3])
+                print(lootIconText)
+            else
+                lootIconText = "[OS]"
+            end
+
+            lootIcon = lootIcon .. "|H" .. lootItem .. "|h" .. lootIconText .. "|h"
         end
     end
 
