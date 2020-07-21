@@ -669,3 +669,88 @@ BUTTONS.autoHideWindowCheckButton = CreateFrame("CheckButton", "AautoHideWindowC
             BUTTONS.autoHideWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoHideWindowCheckButton, "RIGHT", 0, 0)
             BUTTONS.autoHideWindowCheckButton.fs:SetJustifyH("LEFT")
             BUTTONS.autoHideWindowCheckButton.fs:SetText("Auto-hide window when done looting.")
+
+-- Custom popup window for adding player.
+FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
+      FRAMES.addPlayerPopupWindow:SetFrameStrata("DIALOG")
+      FRAMES.addPlayerPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
+      FRAMES.addPlayerPopupWindow:SetSize(300, 200)
+      FRAMES.addPlayerPopupWindow:SetMovable(true)
+      FRAMES.addPlayerPopupWindow:EnableMouse(true)
+      FRAMES.addPlayerPopupWindow:RegisterForDrag("LeftButton")
+      FRAMES.addPlayerPopupWindow:SetScript("OnDragStart", FRAMES.addPlayerPopupWindow.StartMoving)
+      FRAMES.addPlayerPopupWindow:SetScript("OnDragStop", FRAMES.addPlayerPopupWindow.StopMovingOrSizing)
+
+      FRAMES.addPlayerPopupWindow.title = FRAMES.addPlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.addPlayerPopupWindow.title:SetFontObject("GameFontHighlight")
+            FRAMES.addPlayerPopupWindow.title:SetPoint("TOPLEFT", FRAMES.addPlayerPopupWindow.TitleBg, "TOPLEFT", 3, -3)
+            FRAMES.addPlayerPopupWindow.title:SetText("Ω SoftRes")
+      
+      FRAMES.addPlayerPopupWindow.titleCenter = FRAMES.addPlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.addPlayerPopupWindow.titleCenter:SetFontObject("GameFontHighlight")
+            FRAMES.addPlayerPopupWindow.titleCenter:SetPoint("TOP", FRAMES.addPlayerPopupWindow.TitleBg, "TOP", 0, -3)
+            FRAMES.addPlayerPopupWindow.titleCenter:SetText("Add Player")
+
+      FRAMES.addPlayerNameEditBox = CreateFrame("EditBox", "addPlayerNameEditBox", FRAMES.addPlayerPopupWindow, "InputBoxTemplate")
+            FRAMES.addPlayerNameEditBox:SetPoint("TOP", FRAMES.addPlayerPopupWindow, "TOP", 0, -100)
+            FRAMES.addPlayerNameEditBox:SetWidth(100)
+            FRAMES.addPlayerNameEditBox:SetHeight(20)
+            FRAMES.addPlayerNameEditBox:ClearFocus()
+            FRAMES.addPlayerNameEditBox:SetAutoFocus(false)
+            FRAMES.addPlayerNameEditBox:SetMaxLetters(12)
+            FRAMES.addPlayerNameEditBox:SetAltArrowKeyMode(false)
+            FRAMES.addPlayerNameEditBox:EnableMouse(true)
+            FRAMES.addPlayerNameEditBox:SetText("")
+            FRAMES.addPlayerNameEditBox:SetJustifyH("Center")
+      
+      FRAMES.addPlayerNameEditBox.fs = FRAMES.addPlayerNameEditBox:CreateFontString(nil, "OVERLAY")
+            FRAMES.addPlayerNameEditBox.fs:SetFontObject("GameFontHighlight")
+            FRAMES.addPlayerNameEditBox.fs:SetPoint("BOTTOM", FRAMES.addPlayerNameEditBox, "TOP", 0, 5)
+            FRAMES.addPlayerNameEditBox.fs:SetText("To add a new player\nsimply enter the Player name \n and (or not) the linked item.\n\nPlayer Name:")
+            FRAMES.addPlayerNameEditBox.fs:SetJustifyH("Center")
+      
+      FRAMES.addPlayerItemEditBox = CreateFrame("EditBox", "addPlayerItemEditBox", FRAMES.addPlayerPopupWindow, "InputBoxTemplate")
+            FRAMES.addPlayerItemEditBox:SetPoint("TOP", FRAMES.addPlayerNameEditBox, "BOTTOM", 0, -25)
+            FRAMES.addPlayerItemEditBox:SetWidth(200)
+            FRAMES.addPlayerItemEditBox:SetHeight(20)
+            FRAMES.addPlayerItemEditBox:ClearFocus()
+            FRAMES.addPlayerItemEditBox:SetAutoFocus(false)
+            FRAMES.addPlayerItemEditBox:SetMaxLetters(100)
+            FRAMES.addPlayerItemEditBox:SetAltArrowKeyMode(false)
+            FRAMES.addPlayerItemEditBox:EnableMouse(true)
+            FRAMES.addPlayerItemEditBox:SetHyperlinksEnabled(true)
+            FRAMES.addPlayerItemEditBox:SetText("")
+            FRAMES.addPlayerItemEditBox:SetJustifyH("Center")
+      
+            FRAMES.addPlayerItemEditBox.fs = FRAMES.addPlayerItemEditBox:CreateFontString(nil, "OVERLAY")
+                  FRAMES.addPlayerItemEditBox.fs:SetFontObject("GameFontHighlight")
+                  FRAMES.addPlayerItemEditBox.fs:SetPoint("BOTTOM", FRAMES.addPlayerItemEditBox, "TOP", 0, 5)
+                  FRAMES.addPlayerItemEditBox.fs:SetText("SoftRes item link.")
+                  FRAMES.addPlayerItemEditBox.fs:SetJustifyH("Center")
+
+      BUTTONS.addPlayerPopUpAddButton = CreateFrame("Button", "addPlayerPopUpAddButton", FRAMES.addPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.addPlayerPopUpAddButton:SetPoint("BOTTOM", FRAMES.addPlayerPopupWindow, "BOTTOM", -55, 10)
+            BUTTONS.addPlayerPopUpAddButton:SetWidth(102)
+            BUTTONS.addPlayerPopUpAddButton:SetHeight(20)
+            BUTTONS.addPlayerPopUpAddButton:SetText("Add Player")
+      
+      BUTTONS.addPlayerPopUpCancelButton = CreateFrame("Button", "addPlayerPopUpCancelButton", FRAMES.addPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.addPlayerPopUpCancelButton:SetPoint("BOTTOM", FRAMES.addPlayerPopupWindow, "BOTTOM", 55, 10)
+            BUTTONS.addPlayerPopUpCancelButton:SetWidth(102)
+            BUTTONS.addPlayerPopUpCancelButton:SetHeight(20)
+            BUTTONS.addPlayerPopUpCancelButton:SetText("Cancel")
+
+
+            function PlayerLink(self, button, down)
+                  if ( IsModifiedClick("CHATLINK") ) then
+                  local link = 
+                  ChatEdit_InsertLink (link)
+                  end
+                  end
+                  PlayerFrame:HookScript("OnClick", PlayerLink)
+
+
+
+            FRAMES.addPlayerItemEditBox:SetScript("OnHyperlinkClick", function(self) 
+                  print("Clicked itemlink")
+            end)

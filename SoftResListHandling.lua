@@ -208,8 +208,7 @@ local function checkIfReceivedItems(name)
             local lootIconText = SoftResConfig.icons.loot
 
             if player.receivedItems[j][2] == "ms" then
-                lootIconText = GetItemIcon(player.receivedItems[j][3])
-                print(lootIconText)
+                lootIconText = SoftResConfig.icons.loot
             else
                 lootIconText = "[OS]"
             end
