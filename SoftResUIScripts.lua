@@ -131,6 +131,7 @@ BUTTONS.addPlayerSoftResButton:SetScript("OnClick", function(self)
 
     -- Popup dialog for adding a player.
     FRAMES.addPlayerPopupWindow:Show()
+    FRAMES.addPlayerNameEditBox:SetFocus()
 end)
 
 -- Edit player
@@ -653,7 +654,7 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
     SoftRes.announce:sendMessageToChat("Party", "|| Timers- SoftRes: " .. SoftResConfig.timers.softRes.value .. "s. MS: "  .. SoftResConfig.timers.ms.value .. "s. OS: " .. SoftResConfig.timers.os.value .. "s.")
     SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
     SoftRes.announce:sendMessageToChat("Party", "|| " .. SoftResConfig.extraInformation.value)
-    SoftRes.announce:sendMessageToChat("Party", "\\-------------------[By Snits]")
+    SoftRes.announce:sendMessageToChat("Party", "+-------------------[By Snits]")
 
     -- call the toggle function without a flag, to really toggle it.
     -- First argument is wether or not we should announce the scan.
@@ -745,4 +746,44 @@ end)
 FRAMES.addPlayerItemEditBox:SetScript("OnTabPressed", function(self)
     FRAMES.addPlayerNameEditBox:SetFocus()
     FRAMES.addPlayerNameEditBox:HighlightText()
+end)
+
+-- HOOK ... Clear focus if you click.
+-- Can only link items into the editbox.
+FRAMES.addPlayerItemEditBox:SetScript("OnCursorChanged", function(self)
+    FRAMES.addPlayerItemEditBox:ClearFocus()
+end)
+
+FRAMES.addPlayerItemEditBox:SetScript("OnEditFocusGained", function(self)
+end)
+
+FRAMES.addPlayerPopupWindow:SetScript("OnShow", function(self)
+    local origChatFrame_OnHyperlinkShow = ChatFrame_OnHyperlinkShow
+    ChatFrame_OnHyperlinkShow = function(...)
+        local chatFrame, link, text, button = ...
+        if FRAMES.addPlayerItemEditBox:GetText() == "" and IsShiftKeyDown() then
+            local itemId = SoftRes.helpers:getItemIdFromLink(link)
+            local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+            FRAMES.addPlayerItemEditBox:SetText(itemLink)
+            return
+        end
+        return origChatFrame_OnHyperlinkShow(...) 
+    end
+
+    hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", function(self, button)
+        if IsShiftKeyDown() and button == "LeftButton" and self:GetParent():GetID() <= 5 then 
+            local _, itemLink = GetItemInfo(GetContainerItemID(self:GetParent():GetID(), self:GetID()))
+            ClearCursor()
+            FRAMES.addPlayerItemEditBox:SetText(itemLink)
+            return
+        end 
+    end)
+end)
+
+FRAMES.addPlayerPopupWindow:SetScript("OnHide", function(self)
+    FRAMES.addPlayerItemEditBox:SetText("")
+end)
+
+BUTTONS.addPlayerItemClearButton:SetScript("OnClick", function(self)
+    FRAMES.addPlayerItemEditBox:SetText("")
 end)

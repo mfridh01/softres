@@ -210,7 +210,7 @@ local function checkIfReceivedItems(name)
             if player.receivedItems[j][2] == "ms" then
                 lootIconText = SoftResConfig.icons.loot
             else
-                lootIconText = "[OS]"
+                lootIconText = SoftResConfig.icons.loot
             end
 
             lootIcon = lootIcon .. "|H" .. lootItem .. "|h" .. lootIconText .. "|h"
@@ -391,7 +391,7 @@ function SoftRes.list:showFullSoftResList()
     local listHeight = ((12 * #SoftResList.players) + 24) - (#SoftResList.players * (UIParent:GetScale() - 0.711))-- (Textheight * listed players) + title
     textFrame:SetSize(500, listHeight)
     textFrame:EnableMouseWheel(true);
-    textFrame:SetScript("OnHyperlinkClick", _G.ChatFrame_OnHyperlinkShow)
+    textFrame:SetScript("OnHyperlinkClick",_G.ChatFrame_OnHyperlinkShow)
     textFrame:Clear()
     textFrame:AddMessage(infoText .. text, 1.0, 1.0, 1.0, nil, nil)
 

@@ -680,6 +680,7 @@ FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAME
       FRAMES.addPlayerPopupWindow:RegisterForDrag("LeftButton")
       FRAMES.addPlayerPopupWindow:SetScript("OnDragStart", FRAMES.addPlayerPopupWindow.StartMoving)
       FRAMES.addPlayerPopupWindow:SetScript("OnDragStop", FRAMES.addPlayerPopupWindow.StopMovingOrSizing)
+      FRAMES.addPlayerPopupWindow:Hide()
 
       FRAMES.addPlayerPopupWindow.title = FRAMES.addPlayerPopupWindow:CreateFontString(nil, "Overlay")
             FRAMES.addPlayerPopupWindow.title:SetFontObject("GameFontHighlight")
@@ -745,3 +746,9 @@ FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAME
             BUTTONS.addPlayerTargetNameButton:SetWidth(70)
             BUTTONS.addPlayerTargetNameButton:SetHeight(20)
             BUTTONS.addPlayerTargetNameButton:SetText("Target")
+
+      BUTTONS.addPlayerItemClearButton = CreateFrame("Button", "addPlayerItemClearButton", FRAMES.addPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.addPlayerItemClearButton:SetPoint("LEFT", FRAMES.addPlayerItemEditBox, "RIGHT", 5, 0)
+            BUTTONS.addPlayerItemClearButton:SetWidth(30)
+            BUTTONS.addPlayerItemClearButton:SetHeight(20)
+            BUTTONS.addPlayerItemClearButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t")

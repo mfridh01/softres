@@ -8,8 +8,8 @@ function SoftRes.player:new(playerName, groupPosition, itemId)
             groupPosition = groupPosition,
             removedTime = nil, -- If removed, we log the time.
             softReserve = { -- Softreserved item.
-                  time = nil, -- When it was softreserved.
-                  itemId = nil, -- Ingame itemId.
+                  time = time(), -- When it was softreserved.
+                  itemId = itemId, -- Ingame itemId.
                   received = false, -- If it has been received or not. Always defaults to false.
             },
             receivedItems = {} -- Log every received item.

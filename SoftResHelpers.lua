@@ -446,6 +446,9 @@ local function getRoll(string)
             if (not isInDB) then
                   table.insert(SoftResDB.shitRollers, user)
             end
+
+            SoftRes.announce:sendMessageToChat("Party", "Wrong roll-values detected from Player: " .. user .. ".")
+            SoftRes.announce:sendMessageToChat("Party", "Roll was: " .. splitString[4] .. ". Not elegible for roll on this item.")
       end
 
 

@@ -22,7 +22,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             if (not SoftResConfig) or type(SoftResConfig) ~= "table" then
                   SoftRes.ui:createDefaultSoftResConfigList()
             else
-                  SoftRes.ui:createDefaultSoftResConfigList() -- FOR DEBUGGING PURPOSES
+                  --SoftRes.ui:createDefaultSoftResConfigList() -- FOR DEBUGGING PURPOSES
                   SoftRes.debug:print("SoftResConfig, loaded.. Do stuff.")
             end
 
