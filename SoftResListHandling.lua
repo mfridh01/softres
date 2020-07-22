@@ -570,7 +570,7 @@ end
 ----------------------------
 function SoftRes.list:addSoftReservePlayer(playerName, itemId)
     -- If we don't get a name, don't add it.
-    if (not playerName) or (not itemId) then return end
+    if (not playerName) then return end
 
     -- If the player is not in the list already.
     for i = 1, #SoftResList.players do
@@ -578,6 +578,11 @@ function SoftRes.list:addSoftReservePlayer(playerName, itemId)
             SoftRes.debug:print(playerName .. " is already on the list.")
             return
         end
+    end
+
+    -- if we don't have an ItemId then we simply set it to nil.
+    if (not itemId) then
+        itemId = nil
     end
 
     -- We add the new player to the last spot on the list.

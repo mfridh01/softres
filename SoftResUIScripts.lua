@@ -138,58 +138,7 @@ end)
 BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Edit") then return end
 
-    local editPlayer = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
-
-    -- If there is no player to edit. Then don't.
-    if not editPlayer then return end
-
-    local editPlayerItem = SoftRes.helpers:getItemLinkFromId(editPlayer.softReserve.itemId)
-    if not editPlayerItem then editPlayerItem = "" end
-
-
-    -- Popup dialog for editing a player.
-    StaticPopupDialogs["SOFTRES_EDIT_PLAYER"] = {
-        text = "Deleting " .. editPlayer.name .. ".\n\nType 'delete' and press the 'delete' button, to remove the softres.",
-        button1 = "DELETE",
-        button2 = "Cancel",
-        timeout = 0,
-        whileDead = true,
-        hideOnEscape = true,
-        hasEditBox = true,
-        editBoxWidth = 250,
-        OnShow = function(self)
-            self.button1:Disable()
-        end,
-        OnAccept = function()
-            -- Delete the player
-            SoftRes.list:removeSoftReserve(editPlayer.name)
-
-            -- ReOrder the list
-            SoftRes.list:reOrderPlayerList()
-
-            -- ReDraw the list.
-            SoftRes.list:showFullSoftResList()
-
-            -- Re-Initiate the dropdown list.
-            BUTTONS.editPlayerDropDownInit()
-            SoftRes.debug:print("Deleted player: " .. editPlayer.name)
-        end,
-        OnCancel = function (_,reason)
-            -- Cancel.
-            SoftRes.debug:print("Canceled deleting player")
-        end,
-        EditBoxOnTextChanged = function (self, data)
-            if self:GetText() == "delete" then
-                self:GetParent().button1:Enable()
-            else
-                self:GetParent().button1:Disable()
-            end
-        end,
-    }
-
-    if editPlayer ~= "" or editPlayer ~= "Edit" then
-        StaticPopup_Show ("SOFTRES_EDIT_PLAYER")
-    end
+    FRAMES.deletePlayerPopupWindow:Show()
 end)
 
 -- Scan chat for softreserves.
@@ -715,16 +664,13 @@ BUTTONS.addPlayerPopUpAddButton:SetScript("OnClick", function(self)
     local itemId = SoftRes.helpers:getItemIdFromLink(itemLinkRaw)
 
     -- Check the itemId
-    if not itemId then
-        -- ERROR
-        FRAMES.addPlayerNameEditBox.fs:SetText("ERROR!\nName and/or ItemLink is wrong.\nRe-Enter!\n")
-        FRAMES.addPlayerItemEditBox:HighlightText()
-
-        return
+    if not itemId or itemId == "" then
+        -- Add the player without the item.
+        SoftRes.list:addSoftReservePlayer(playerName)
+    else
+        -- Add the player
+        SoftRes.list:addSoftReservePlayer(playerName, itemId)
     end
-
-    -- Add the player
-    SoftRes.list:addSoftReservePlayer(playerName, itemId)
 
     -- ReOrder the list.
     SoftRes.list:reOrderPlayerList()
@@ -758,6 +704,15 @@ FRAMES.addPlayerItemEditBox:SetScript("OnEditFocusGained", function(self)
 end)
 
 FRAMES.addPlayerPopupWindow:SetScript("OnShow", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Add")
+
+    -- Clear the editboxes.
+    FRAMES.addPlayerNameEditBox:SetText("")
+
+    -- Set the text.
+    FRAMES.addPlayerNameEditBox.fs:SetText("To add a new player\nsimply enter the Player name \n and (or not) the linked item.\n\nPlayer Name:")
+
     local origChatFrame_OnHyperlinkShow = ChatFrame_OnHyperlinkShow
     ChatFrame_OnHyperlinkShow = function(...)
         local chatFrame, link, text, button = ...
@@ -781,9 +736,64 @@ FRAMES.addPlayerPopupWindow:SetScript("OnShow", function(self)
 end)
 
 FRAMES.addPlayerPopupWindow:SetScript("OnHide", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(false)
+    
+    -- Clear the editboxes.
+    FRAMES.addPlayerNameEditBox:SetText("")
     FRAMES.addPlayerItemEditBox:SetText("")
 end)
 
 BUTTONS.addPlayerItemClearButton:SetScript("OnClick", function(self)
     FRAMES.addPlayerItemEditBox:SetText("")
+end)
+
+FRAMES.deletePlayerEditBox:SetScript("OnTextChanged", function(self)
+    if self:GetText() == "delete" then
+        BUTTONS.deletePlayerPopUpDeleteButton:Show()
+    else
+        BUTTONS.deletePlayerPopUpDeleteButton:Hide()
+    end
+end)
+
+BUTTONS.deletePlayerPopUpDeleteButton:SetScript("OnClick", function(self)
+    local editPlayer = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
+
+    -- If there is no player to edit. Then don't.
+    if not editPlayer then return end
+
+    local editPlayerItem = SoftRes.helpers:getItemLinkFromId(editPlayer.softReserve.itemId)
+    if not editPlayerItem then editPlayerItem = "" end
+
+    -- Delete the player
+    SoftRes.list:removeSoftReserve(editPlayer.name)
+
+    -- ReOrder the list
+    SoftRes.list:reOrderPlayerList()
+
+    -- ReDraw the list.
+    SoftRes.list:showFullSoftResList()
+
+    -- Re-Initiate the dropdown list.
+    BUTTONS.editPlayerDropDownInit()
+    SoftRes.debug:print("Deleted player: " .. editPlayer.name)
+
+    BUTTONS.deletePlayerPopUpDeleteButton:Hide()
+    FRAMES.deletePlayerPopupWindow:Hide()
+end)
+
+BUTTONS.deletePlayerPopUpCancelButton:SetScript("OnClick", function(self)
+    FRAMES.deletePlayerEditBox:SetText("")
+    BUTTONS.deletePlayerPopUpDeleteButton:Hide()
+    FRAMES.deletePlayerPopupWindow:Hide()
+end)
+
+FRAMES.deletePlayerPopupWindow:SetScript("OnShow", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Del")
+end)
+
+FRAMES.deletePlayerPopupWindow:SetScript("OnHide", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(false)
 end)

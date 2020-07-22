@@ -620,18 +620,11 @@ BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton",
       BUTTONS.addPlayerSoftResButton:SetHeight(20)
       BUTTONS.addPlayerSoftResButton:SetText("Add Player")
 
-BUTTONS.editPlayerDropDown = CreateFrame("Button", "EditPlayerDropDown", FRAMES.tabContainer.page2, "UIDropDownMenuTemplate")
-      BUTTONS.editPlayerDropDown:SetPoint("LEFT", BUTTONS.announceRulesButton, "RIGHT", -12, -2)
-            
-      UIDropDownMenu_SetWidth(BUTTONS.editPlayerDropDown, 83)
-      UIDropDownMenu_SetButtonWidth(BUTTONS.editPlayerDropDown, 102)
-      UIDropDownMenu_JustifyText(BUTTONS.editPlayerDropDown, "LEFT")  
-
 BUTTONS.editPlayerButton = CreateFrame("Button", "EditPlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.editPlayerButton:SetPoint("TOP", BUTTONS.addPlayerSoftResButton, "BOTTOM", 0, -5)
       BUTTONS.editPlayerButton:SetWidth(102)
       BUTTONS.editPlayerButton:SetHeight(20)
-      BUTTONS.editPlayerButton:SetText("<-Delete Player")
+      BUTTONS.editPlayerButton:SetText("Delete Player")
 
 -- Buttons Page 3
 BUTTONS.enableSoftResAddon = CreateFrame("CheckButton", "EnableSoftResAddon", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
@@ -726,7 +719,7 @@ FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAME
             FRAMES.addPlayerItemEditBox.fs = FRAMES.addPlayerItemEditBox:CreateFontString(nil, "OVERLAY")
                   FRAMES.addPlayerItemEditBox.fs:SetFontObject("GameFontHighlight")
                   FRAMES.addPlayerItemEditBox.fs:SetPoint("BOTTOM", FRAMES.addPlayerItemEditBox, "TOP", 0, 5)
-                  FRAMES.addPlayerItemEditBox.fs:SetText("SoftRes item link.")
+                  FRAMES.addPlayerItemEditBox.fs:SetText("Hold SHIFT and click an itemLink to add it.")
                   FRAMES.addPlayerItemEditBox.fs:SetJustifyH("Center")
 
       BUTTONS.addPlayerPopUpAddButton = CreateFrame("Button", "addPlayerPopUpAddButton", FRAMES.addPlayerPopupWindow, "UIPanelButtonGrayTemplate")
@@ -752,3 +745,69 @@ FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAME
             BUTTONS.addPlayerItemClearButton:SetWidth(30)
             BUTTONS.addPlayerItemClearButton:SetHeight(20)
             BUTTONS.addPlayerItemClearButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t")
+
+-- Custom popup window for deleteing a player.
+FRAMES.deletePlayerPopupWindow = CreateFrame("Frame", "deletePlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
+      FRAMES.deletePlayerPopupWindow:SetFrameStrata("FULLSCREEN")
+      FRAMES.deletePlayerPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
+      FRAMES.deletePlayerPopupWindow:SetSize(300, 200)
+      FRAMES.deletePlayerPopupWindow:SetMovable(true)
+      FRAMES.deletePlayerPopupWindow:EnableMouse(true)
+      FRAMES.deletePlayerPopupWindow:RegisterForDrag("LeftButton")
+      FRAMES.deletePlayerPopupWindow:SetScript("OnDragStart", FRAMES.deletePlayerPopupWindow.StartMoving)
+      FRAMES.deletePlayerPopupWindow:SetScript("OnDragStop", FRAMES.deletePlayerPopupWindow.StopMovingOrSizing)
+      FRAMES.deletePlayerPopupWindow:Hide()
+
+      FRAMES.deletePlayerPopupWindow.title = FRAMES.deletePlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.deletePlayerPopupWindow.title:SetFontObject("GameFontHighlight")
+            FRAMES.deletePlayerPopupWindow.title:SetPoint("TOPLEFT", FRAMES.deletePlayerPopupWindow.TitleBg, "TOPLEFT", 3, -3)
+            FRAMES.deletePlayerPopupWindow.title:SetText("Ω SoftRes")
+      
+      FRAMES.deletePlayerPopupWindow.titleCenter = FRAMES.deletePlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.deletePlayerPopupWindow.titleCenter:SetFontObject("GameFontHighlight")
+            FRAMES.deletePlayerPopupWindow.titleCenter:SetPoint("TOP", FRAMES.deletePlayerPopupWindow.TitleBg, "TOP", 0, -3)
+            FRAMES.deletePlayerPopupWindow.titleCenter:SetText("Delete Player")
+    
+      BUTTONS.editPlayerDropDown = CreateFrame("Button", "EditPlayerDropDown", FRAMES.deletePlayerPopupWindow, "UIDropDownMenuTemplate")
+            BUTTONS.editPlayerDropDown:SetPoint("TOP", FRAMES.deletePlayerPopupWindow, "TOP", 0, -75)
+                  
+            UIDropDownMenu_SetWidth(BUTTONS.editPlayerDropDown, 83)
+            UIDropDownMenu_SetButtonWidth(BUTTONS.editPlayerDropDown, 102)
+            UIDropDownMenu_JustifyText(BUTTONS.editPlayerDropDown, "LEFT")
+
+      BUTTONS.editPlayerDropDown.fs = BUTTONS.editPlayerDropDown:CreateFontString(nil, "OVERLAY")
+            BUTTONS.editPlayerDropDown.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.editPlayerDropDown.fs:SetPoint("TOP", FRAMES.deletePlayerPopupWindow, "TOP", 0, -40)
+            BUTTONS.editPlayerDropDown.fs:SetText("To delete a player, just choose it in the drop-down.\nThen write 'delete' in the editBox.")
+            BUTTONS.editPlayerDropDown.fs:SetJustifyH("Center")
+
+      FRAMES.deletePlayerEditBox = CreateFrame("EditBox", "deletePlayerEditBox", FRAMES.deletePlayerPopupWindow, "InputBoxTemplate")
+            FRAMES.deletePlayerEditBox:SetPoint("TOP", BUTTONS.editPlayerDropDown, "BOTTOM", 0, -25)
+            FRAMES.deletePlayerEditBox:SetWidth(150)
+            FRAMES.deletePlayerEditBox:SetHeight(20)
+            FRAMES.deletePlayerEditBox:ClearFocus()
+            FRAMES.deletePlayerEditBox:SetAutoFocus(false)
+            FRAMES.deletePlayerEditBox:SetMaxLetters(6)
+            FRAMES.deletePlayerEditBox:SetAltArrowKeyMode(false)
+            FRAMES.deletePlayerEditBox:EnableMouse(true)
+            FRAMES.deletePlayerEditBox:SetText("")
+            FRAMES.deletePlayerEditBox:SetJustifyH("Center")
+      
+            FRAMES.deletePlayerEditBox.fs = FRAMES.deletePlayerEditBox:CreateFontString(nil, "OVERLAY")
+                  FRAMES.deletePlayerEditBox.fs:SetFontObject("GameFontHighlight")
+                  FRAMES.deletePlayerEditBox.fs:SetPoint("BOTTOM", FRAMES.deletePlayerEditBox, "TOP", 0, 5)
+                  FRAMES.deletePlayerEditBox.fs:SetText("Write 'delete' to continue.")
+                  FRAMES.deletePlayerEditBox.fs:SetJustifyH("Center")
+
+      BUTTONS.deletePlayerPopUpDeleteButton = CreateFrame("Button", "deletePlayerPopUpDeleteButton", FRAMES.deletePlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.deletePlayerPopUpDeleteButton:SetPoint("BOTTOM", FRAMES.deletePlayerPopupWindow, "BOTTOM", -55, 10)
+            BUTTONS.deletePlayerPopUpDeleteButton:SetWidth(102)
+            BUTTONS.deletePlayerPopUpDeleteButton:SetHeight(20)
+            BUTTONS.deletePlayerPopUpDeleteButton:SetText("Delete Player")
+            BUTTONS.deletePlayerPopUpDeleteButton:Hide()
+      
+      BUTTONS.deletePlayerPopUpCancelButton = CreateFrame("Button", "deletePlayerPopUpCancelButton", FRAMES.deletePlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.deletePlayerPopUpCancelButton:SetPoint("BOTTOM", FRAMES.deletePlayerPopupWindow, "BOTTOM", 55, 10)
+            BUTTONS.deletePlayerPopUpCancelButton:SetWidth(102)
+            BUTTONS.deletePlayerPopUpCancelButton:SetHeight(20)
+            BUTTONS.deletePlayerPopUpCancelButton:SetText("Cancel")

@@ -141,6 +141,8 @@ function SoftRes.helpers:showPopupWindow(text)
       elseif alertText == "Prep" then alertText = "An item is prepared for distribution."
       elseif alertText == "Anno" then alertText = "Announced an item and still taking rolls.\nDistribution not yet finnished."
       elseif alertText == "Loot" then alertText = "The lootwindow is still opened."
+      elseif alertText == "Add" then alertText = "Adding a new player."
+      elseif alertText == "Del" then alertText = "Deleteing a player."
       end
 
 
