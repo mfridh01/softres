@@ -28,3 +28,8 @@
 --[Snits] Config, add "sliders" for timers. Softres, MS, OS, FFA
 
 -- [] Add mouse-over on icons for information about won items.
+
+
+
+
+-- ADD a FORCE announce winner, on SoftReserves, if someone doesn't roll that is.

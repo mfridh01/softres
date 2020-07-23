@@ -397,9 +397,11 @@ function SoftRes.helpers:handleWinner(name, roll, rollType, itemId)
 
       if rollType == "softRes" then
             player.softReserve.received = true
+            table.insert(SoftResList.waitingForItems, {name, itemId})
       else
             -- Set the values.
             table.insert(player.receivedItems, {time(), rollType, itemId, roll})
+            table.insert(SoftResList.waitingForItems, {name, itemId})
       end
 end
 
@@ -449,8 +451,10 @@ local function getRoll(string)
                   table.insert(SoftResDB.shitRollers, user)
             end
 
-            SoftRes.announce:sendMessageToChat("Party", "Wrong roll-values detected from Player: " .. user .. ".")
-            SoftRes.announce:sendMessageToChat("Party", "Roll was: " .. splitString[4] .. ". Not elegible for roll on this item.")
+            if SoftRes.rollType ~= "raidRoll" then
+                  SoftRes.announce:sendMessageToChat("Party", "Wrong roll-values detected from Player: " .. user .. ".")
+                  SoftRes.announce:sendMessageToChat("Party", "Roll was: " .. splitString[4] .. ". Please only roll (1-100)")
+            end
       end
 
 
@@ -788,6 +792,8 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
                   local highestRoller = SoftRes.announcedItem.rolls[1]
 
                   -- Clear all rollers except the winner.
+                  -- Copy the rollers to another list.
+                  SoftRes.announcedItem.restRollers = SoftRes.announcedItem.rolls
                   SoftRes.announcedItem.rolls = {}
                   table.insert(SoftRes.announcedItem.rolls, highestRoller)
 
@@ -838,6 +844,8 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
       -- No rollers?`
       if SoftRes.state.announcedResult and #SoftRes.preparedItem.elegible == 0 and #SoftRes.announcedItem.rolls == 0 then
             SoftRes.announce:sendMessageToChat("Party_Leader", "No one wanted the item.")
+
+            SoftRes.list:handleRollButtons()
       else
 
             -- We only have one SoftRes.
@@ -851,4 +859,41 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
       -- Re-draw the list.
       SoftRes.list:showPrepSoftResList()
       
+end
+
+-- Takes a string and a receiver.
+-- Used to announce that the item that the player has won, is handed to the player.
+function SoftRes.helpers:handleLoot(string, receiver)
+      -- we can only handle loot from an actual loot / receiver.
+      if not string then return end
+
+      local splitString = SoftRes.helpers:stringSplit(string)
+      local user = splitString[1]
+      local type = splitString[2]
+      local itemId = SoftRes.helpers:getItemIdFromLink(string)
+      local waitingIndex = 0
+   
+      if user == "You" then user = GetUnitName("Player", false) end
+   
+      -- Check to see if the user has received the item or not.
+      -- But we only check for items in the 'waiting' list.
+      if type == "receive" or type == "receives" and itemId then
+            if user == receiver then
+
+                  -- Search in waiting list.
+                  for i = 1, #SoftResList.waitingForItems do
+                        local listedPlayer = SoftResList.waitingForItems[i]
+      
+                        -- found? nice, announce that the item is received.
+                        if listedPlayer[1] == user and listedPlayer[2] == itemId then
+                              SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " has been handed to " .. user .. ".")
+                              waitingIndex = i
+                              break
+                        end
+                  end
+
+                  -- Delete from the list.
+                  table.remove(SoftResList.waitingForItems, waitingIndex)
+            end
+      end
 end

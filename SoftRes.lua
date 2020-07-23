@@ -48,6 +48,8 @@ aceTimer = LibStub("AceAddon-3.0"):NewAddon("SoftRes", "AceTimer-3.0")
 -- SoftRes functions and tables.
 --------------------------------
 SoftRes = {}
+      SoftRes.enabled = false -- Is the addon enabled or not?
+      SoftRes.rollType = ""
       SoftRes.debug = {}
             SoftRes.debug.__index = SoftRes.debug
             SoftRes.debug.enabled = false -------------------- DEBUG
@@ -88,6 +90,10 @@ SoftRes = {}
       
       SoftRes.skippedItem = 0
 
+      SoftRes.trade = {
+            tradeWith = "",
+      }
+
       SoftRes.announcedItem = {
             state = false,
             itemId = nil,
@@ -99,7 +105,7 @@ SoftRes = {}
             shitRolls = {},
             manyRolls = {},
             notElegibleRolls = {},
-            
+            restRollers = {},            
       }
       SoftRes.preparedItem = {
             itemId = nil,
@@ -200,6 +206,16 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
             if announce == true then
                   SoftRes.announce:sendMessageToChat("Party","+----------------------------+")
                   SoftRes.announce:sendMessageToChat("Party_Leader","|| No more reservations taken. GL HF.")
+            end
+
+            local function myChatEventHandler(self,event,arg1,...)
+                  local filterFuncList = ChatFrame_GetMessageEventFilters(event)
+                        print(arg1)
+                        if newarg1 then
+                              arg1 = newarg
+                              -- you should actually probably do this for all of arg2..arg11 since that's what framexml does
+                        end
+                  -- whoop de do, not filtered, go about our business and display etc
             end
       else
             if announce == true then
@@ -345,5 +361,5 @@ function SoftRes.announce:rollPenalty(rollUser, rollValue, rollPenalty)
 
       -- Send the announcement to chat, we're using ChatThrottle for this.
       SoftRes.announce:sendMessageToChat("Party", "Roll-Penalty detected on " .. rollUser .. ".")
-      SoftRes.announce:sendMessageToChat("Party", "Roll = " .. rollValue .. ", Penalty = " .. rollPenalty .. ". New roll = " .. rollValue - rollPenalty .. ".")
+      SoftRes.announce:sendMessageToChat("Party", "Roll = " .. rollValue .. ", Penalty = " .. rollPenalty .. ". New roll value = " .. rollValue - rollPenalty .. ".")
 end

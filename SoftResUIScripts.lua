@@ -30,8 +30,10 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
     -- Show AddonEnabled indicator.
     if BUTTONS.enableSoftResAddon:GetChecked() == true then
         FRAMES.addonIndicator.texture:SetTexture("Interface\\COMMON\\Indicator-Green")
+        SoftRes.enabled = true
     else
         FRAMES.addonIndicator.texture:SetTexture("Interface\\COMMON\\Indicator-Red")
+        SoftRes.enabled = false
     end
 
     -----------------------------
@@ -143,8 +145,8 @@ end)
 
 -- Scan chat for softreserves.
 BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
-    -- If there are no players, don't start the scanner
-    if #SoftResList.players <= 1 then return end
+    -- If there are no players, don't start the scanner or if you're not in a group
+    if #SoftResList.players <= 1 or (not IsInGroup("Player")) then return end
     
     -- Check to see if we already are alerting the player with anything.
     if not SoftRes.helpers:checkAlertPlayer("Scan") then return end
@@ -204,6 +206,9 @@ BUTTONS.announcedItemButton:SetScript("OnClick", function(_, button)
         end
 
         SoftRes.helpers:unPrepareItem()
+
+        -- Cancel all active timers.
+        aceTimer:CancelAllTimers()
     elseif button == "LeftButton" and GetCursorInfo() then
         handleDraggedItem()
     end
@@ -266,6 +271,14 @@ FRAMES.softResRollTimerEditBox:SetScript("OnTabPressed", function(self)
     FRAMES.msRollTimerEditBox:HighlightText()
 end)
 
+FRAMES.softResRollTimerEditBox:SetScript("OnEditFocusLost", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.softRes.minValue, SoftResConfig.timers.softRes.maxValue), SoftResConfig.timers.softRes.value)
+    SoftResConfig.timers.softRes.value = text
+    FRAMES.msRollTimerEditBox:SetFocus()
+    FRAMES.msRollTimerEditBox:HighlightText()
+end)
+
 -- MS roll timer.
 FRAMES.msRollTimerEditBox:SetScript("OnTextChanged", function(self)
     -- Convert the text to number.
@@ -286,6 +299,14 @@ FRAMES.msRollTimerEditBox:SetScript("OnEnterPressed", function(self)
 end)
 
 FRAMES.msRollTimerEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ms.minValue, SoftResConfig.timers.ms.maxValue), SoftResConfig.timers.ms.value)
+    SoftResConfig.timers.ms.value = text
+    FRAMES.osRollTimerEditBox:SetFocus()
+    FRAMES.osRollTimerEditBox:HighlightText()
+end)
+
+FRAMES.msRollTimerEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ms.minValue, SoftResConfig.timers.ms.maxValue), SoftResConfig.timers.ms.value)
     SoftResConfig.timers.ms.value = text
@@ -320,6 +341,14 @@ FRAMES.osRollTimerEditBox:SetScript("OnTabPressed", function(self)
     FRAMES.itemRarityEditBox:HighlightText()
 end)
 
+FRAMES.osRollTimerEditBox:SetScript("OnEditFocusLost", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
+    SoftResConfig.timers.os.value = text
+    FRAMES.itemRarityEditBox:SetFocus()
+    FRAMES.itemRarityEditBox:HighlightText()
+end)
+
 -- Itemrarity editbox
 FRAMES.itemRarityEditBox:SetScript("OnTextChanged", function(self)
     -- Convert the text to number.
@@ -340,6 +369,14 @@ FRAMES.itemRarityEditBox:SetScript("OnEnterPressed", function(self)
 end)
 
 FRAMES.itemRarityEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.itemRarity.minValue, SoftResConfig.itemRarity.maxValue), SoftResConfig.itemRarity.value)
+    SoftResConfig.itemRarity.value = text
+    FRAMES.msDropDecayEditBox:SetFocus()
+    FRAMES.msDropDecayEditBox:HighlightText()
+end)
+
+FRAMES.itemRarityEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.itemRarity.minValue, SoftResConfig.itemRarity.maxValue), SoftResConfig.itemRarity.value)
     SoftResConfig.itemRarity.value = text
@@ -374,6 +411,14 @@ FRAMES.msDropDecayEditBox:SetScript("OnTabPressed", function(self)
     FRAMES.osDropDecayEditBox:HighlightText()
 end)
 
+FRAMES.msDropDecayEditBox:SetScript("OnEditFocusLost", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.ms.minValue, SoftResConfig.dropDecay.ms.maxValue), SoftResConfig.dropDecay.ms.value)
+    SoftResConfig.dropDecay.ms.value = text
+    FRAMES.osDropDecayEditBox:SetFocus()
+    FRAMES.osDropDecayEditBox:HighlightText()
+end)
+
 -- OS Roll decay.
 FRAMES.osDropDecayEditBox:SetScript("OnTextChanged", function(self)
     -- Convert the text to number.
@@ -394,6 +439,14 @@ FRAMES.osDropDecayEditBox:SetScript("OnEnterPressed", function(self)
 end)
 
 FRAMES.osDropDecayEditBox:SetScript("OnTabPressed", function(self)
+    self:ClearFocus()
+    local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.os.minValue, SoftResConfig.dropDecay.os.maxValue), SoftResConfig.dropDecay.os.value)
+    SoftResConfig.dropDecay.os.value = text
+    FRAMES.softResRollTimerEditBox:SetFocus()
+    FRAMES.softResRollTimerEditBox:HighlightText()
+end)
+
+FRAMES.osDropDecayEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.os.minValue, SoftResConfig.dropDecay.os.maxValue), SoftResConfig.dropDecay.os.value)
     SoftResConfig.dropDecay.os.value = text
@@ -436,6 +489,9 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     -- Switch the listening state on.
     SoftRes.state:toggleListenToRolls(true)
 
+    -- Set the rollType to nothing
+    SoftRes.rollType = ""
+
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
 
@@ -463,6 +519,9 @@ BUTTONS.msRollButton:SetScript("OnClick", function(self)
     -- Announce the item.
     SoftRes.state:toggleAnnouncedItem(true)
 
+    -- Set the rollType to nothing
+    SoftRes.rollType = ""
+
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
 
@@ -485,6 +544,9 @@ BUTTONS.osRollButton:SetScript("OnClick", function(self)
     -- Announce the item.
     SoftRes.state:toggleAnnouncedItem(true)
 
+    -- Set the rollType to nothing
+    SoftRes.rollType = ""
+
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
 
@@ -504,6 +566,9 @@ BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
 
     -- Announce the item.
     SoftRes.state:toggleAnnouncedItem(true)
+
+    -- Set the rollType to nothing
+    SoftRes.rollType = ""
 
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
@@ -528,6 +593,9 @@ BUTTONS.raidRollButton:SetScript("OnClick", function(self)
 
     -- Cancel all active timers.
     aceTimer:CancelAllTimers()
+
+    -- Set the rollType to raidRoll
+    SoftRes.rollType = "raidRoll"
 
     -- Switch the listening state on.
     SoftRes.state:toggleListenToRaidRolls(true)
@@ -598,7 +666,6 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
     SoftRes.announce:sendMessageToChat("Party_Leader", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
     SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon]--------------+")
     SoftRes.announce:sendMessageToChat("Party", "|| Everyone will SoftReserve one item.")
-    SoftRes.announce:sendMessageToChat("Party", "|| When prompted, link that item in " .. groupType .. ".")
     SoftRes.announce:sendMessageToChat("Party", "|| Drops except SoftReserved = MS>OS")
     SoftRes.announce:sendMessageToChat("Party", "|| Timers- SoftRes: " .. SoftResConfig.timers.softRes.value .. "s. MS: "  .. SoftResConfig.timers.ms.value .. "s. OS: " .. SoftResConfig.timers.os.value .. "s.")
     SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
@@ -795,5 +862,6 @@ end)
 
 FRAMES.deletePlayerPopupWindow:SetScript("OnHide", function(self)
     -- Alert the player.
+    FRAMES.deletePlayerEditBox:SetText("")
     SoftRes.state:toggleAlertPlayer(false)
 end)

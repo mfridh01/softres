@@ -11,6 +11,7 @@ function SoftRes.list:createNewSoftResList()
           drops = {},
           shitRolls = {},
           onHold = {},
+          waitingForItems = {},
     }
 
     -- If we're scanning. We toggle it off.
@@ -196,8 +197,6 @@ local function checkIfReceivedItems(name)
             -- Found player.
             player = SoftResList.players[i]
             break
-        else
-            return ""
         end
     end
 
@@ -291,12 +290,12 @@ end
 local function checkIfRollPenalty(roll, rollPenalty)
 
     -- If we don't have a penalty, we just return an empty string.
-    if rollPenalty == 0 then return "" end
+    if rollPenalty == 0 or (not roll) then return "" end
 
     local iconDice = SoftResConfig.icons.dice
     local iconLoot = SoftResConfig.icons.loot
 
-    return "(" .. iconDice .. roll .. " - " .. iconLoot .. rollPenalty ..")"    
+    return "(-" .. iconLoot .. rollPenalty ..")"    
 end
 
 -- local function for return an icon if received the softReserved item.
@@ -326,6 +325,7 @@ function SoftRes.list:showFullSoftResList()
     local colorGreen = SoftResConfig.colors.green
     local colorRed = SoftResConfig.colors.red
     local colorYellow = SoftResConfig.colors.yellow
+    local colorGray = "|cFF777777"
 
     local entryText = colorRed
     local raidTextColor = colorYellow
@@ -343,6 +343,8 @@ function SoftRes.list:showFullSoftResList()
         local groupPosition = SoftResList.players[i].groupPosition
         local showItem = ""
         local icon = ""
+        local _, _, _, _, _, _, _, isOnline, _, _, _ = GetRaidRosterInfo(groupPosition)
+        local changeOfflineColor = ""
 
         -- Check to se if the player has linked an item.
         if not itemId then 
@@ -362,8 +364,9 @@ function SoftRes.list:showFullSoftResList()
         
         -- if there still is no item, we set it to ""
         if not showItem then showItem = "" end
+        if not isOnline then changeOfflineColor = colorGray end
 
-        text = text .. icon .. groupPosition .. "-" .. name .. checkIfShitRoller(name) .. checkIfReceivedItems(name) .. checkIfReceveidSoftRes(name) .. " " .. showItem .. "\n"
+        text = text .. changeOfflineColor .. icon .. groupPosition .. "-" .. name .. "|r" .. checkIfShitRoller(name) .. checkIfReceivedItems(name) .. checkIfReceveidSoftRes(name) .. " " .. showItem .. "\n"
     end
 
     -- Check for offline players
@@ -407,6 +410,7 @@ function SoftRes.list:showPrepSoftResList()
     local text = ""
     local textTitle = ""
     local rollIcon = SoftResConfig.icons.dice
+    local winner = false
 
     -- Set the tile accordingly.
     if SoftRes.announcedItem.softReserved then
@@ -430,7 +434,8 @@ function SoftRes.list:showPrepSoftResList()
     -- If we have a winner, we override the title.
     -- If there is only 1 person left for the elgible rollers, that means that player is the winner.
     if #SoftRes.preparedItem.elegible == 1 then
-        textTitle = "The winner is:\n-----------------------------------------------------------------------\n"
+        textTitle = "Winner: "
+        winner = true
     end
 
     -- If we have announced the winner, but don't have any rolls.
@@ -516,6 +521,25 @@ function SoftRes.list:showPrepSoftResList()
         highRollersText = highRollersText .. "----------------------------------------------------------------------\n"
     end
 
+    -- We show the rest of the rollers, but under.
+    if winner and #SoftRes.announcedItem.restRollers > 1 then
+        text = text .. "----------------------------------------------------------------------\n"
+        for i = 2, #SoftRes.announcedItem.restRollers do
+                    -- add penalty to the rollValue
+            rollUser = SoftRes.announcedItem.restRollers[i][1]
+            tempRollValue = SoftRes.announcedItem.restRollers[i][2]
+            rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value)
+            rollValue = tempRollValue + rollPenalty
+
+            -- no rolls, insta winner. then 
+            local rollerCheck = checkIfRolled(rollUser)
+            if not rollerCheck then tempRollValue = "SoftRes" end
+
+
+            text = text .. "(" .. tempRollValue .. ") " .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+        end
+    end
+
     textFrame:SetText(textTitle .. highRollersText .. text)
 end
 
@@ -537,6 +561,11 @@ function SoftRes.list:getSoftReserves(arg1, arg2)
         if itemId and user == name then
             SoftResList.players[i].softReserve.time = time()
             SoftResList.players[i].softReserve.itemId = itemId
+
+            -- Send message ot the player.
+            local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+            local whisperText = "Your SoftReserve of " .. tostring(itemLink) .. " is confirmed. GL HF"
+            ChatThrottleLib:SendChatMessage("NORMAL", "SoftResRollAnnounce", whisperText, "WHISPER", nil, name, nil, nil, nil)
         end
     end
 end
@@ -596,7 +625,8 @@ end
 ---------------------------------------------------------
 function SoftRes.list:populateDroppedItems()
     local numberOfItems = GetNumLootItems()
- 
+    local isToBeHandledBySoftRes = false
+
     -- If there are no items dropped.
     if numberOfItems == 0 then return nil end
     SoftRes.debug:print("Number of items to loot: " .. tostring(numberOfItems))
@@ -608,6 +638,9 @@ function SoftRes.list:populateDroppedItems()
        local itemId = SoftRes.helpers:getItemIdFromLink(itemLink)
        local itemRarity = SoftRes.helpers:getItemRarityFromId(itemId)
        
+       -- check if we are to handle any item in the loot or not.
+       if itemRarity and itemRarity >= SoftResConfig.itemRarity.value then isToBeHandledBySoftRes = true end
+       
        -- If the dropped item is lower than the type of items handled by SoftRes then just don't add it.
        if itemRarity and itemRarity >= SoftResConfig.itemRarity.value then
           table.insert(SoftRes.droppedItems, itemId)
@@ -615,6 +648,7 @@ function SoftRes.list:populateDroppedItems()
     end
 
     BUTTONS.prepareItemButton:Show()
+    if isToBeHandledBySoftRes then return true else return false end
 end
 
 -- We will change the states of the roll-buttons according to the drops and reserves.

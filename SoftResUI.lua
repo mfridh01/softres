@@ -118,7 +118,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
             itemRarity = {
                   minValue = 0, -- gray
                   maxValue = 5, -- legendary
-                  value = 0, -- 0 = gray, 1 = white, 2 = green, 3 = blue, 4 = purple, 5 = orange
+                  value = 2, -- 0 = gray, 1 = white, 2 = green, 3 = blue, 4 = purple, 5 = orange
                   default = 2,
             },
             extraInformation = {
@@ -151,6 +151,9 @@ function SoftRes.ui:useSavedConfigValues()
       BUTTONS.enableSoftResAddon:SetChecked(CONFIG_STATE.softResEnabled)
       BUTTONS.autoShowWindowCheckButton:SetChecked(CONFIG_STATE.autoShowOnLoot)
       BUTTONS.autoHideWindowCheckButton:SetChecked(CONFIG_STATE.autoHideOnLootDone)
+
+      -- Enabled or not?
+      SoftRes.enabled = CONFIG_STATE.softResEnabled
 
       FRAMES.softResRollTimerEditBox:SetText(CONFIG_TIMERS.softRes.value)
       FRAMES.msRollTimerEditBox:SetText(CONFIG_TIMERS.ms.value)
@@ -279,7 +282,7 @@ FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.ta
       FRAMES.announcedItemFrame.fs = FRAMES.announcedItemFrame:CreateFontString(nil, "OVERLAY")
             FRAMES.announcedItemFrame.fs:SetFontObject("GameFontHighlightSmall")
             FRAMES.announcedItemFrame.fs:SetPoint("CENTER", FRAMES.announcedItemFrame, "CENTER", 0, 0)
-            FRAMES.announcedItemFrame.fs:SetText("")
+            FRAMES.announcedItemFrame.fs:SetText("Drag an item here, or loot too start.")
 
 -- PAGE 2
 FRAMES.tabContainer.page2 = CreateFrame("Frame", "TabPagesPage2", FRAMES.mainFrame)
@@ -613,6 +616,13 @@ BUTTONS.scanForSoftResButton = CreateFrame("Button", "ScanForSoftResButton", FRA
       BUTTONS.scanForSoftResButton.normalText = "Scan SoftRes"
       BUTTONS.scanForSoftResButton.activeText = "Scanning"
       BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
+
+BUTTONS.historyButton = CreateFrame("Button", "HistoryButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.historyButton:SetPoint("TOP", BUTTONS.scanForSoftResButton, "BOTTOM", 0, -5)
+      BUTTONS.historyButton:SetWidth(102)
+      BUTTONS.historyButton:SetHeight(20)
+      BUTTONS.historyButton:SetText("History")
+      BUTTONS.historyButton:Hide() -- Not implemented yet, so we hide it.
 
 BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.addPlayerSoftResButton:SetPoint("LEFT", BUTTONS.scanForSoftResButton, "RIGHT", 4, 0)
