@@ -123,6 +123,9 @@ SoftRes = {}
             SoftRes.timers.__index = SoftRes.timers
             SoftRes.timers.timers.countDownTimer = nil
             SoftRes.timers.timers.raidRollTimer = nil
+      
+      SoftRes.editPlayer = false
+      SoftRes.addPlayer = false
 --------------------------------------------------------------------
 
 -- SoftResDB, a table with saved values that will be kept forever.

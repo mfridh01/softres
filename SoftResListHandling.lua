@@ -493,7 +493,7 @@ function SoftRes.list:showPrepSoftResList()
         local playerColor = ""
         local shitRollersIcon = ""
         local manyRollersIcon = ""
-        local rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value)
+        local rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value, rollType)
 
         -- add penalty to the rollValue
         rollValue = tempRollValue + rollPenalty
@@ -586,9 +586,12 @@ function SoftRes.list:getSoftReserves(arg1, arg2)
     -- Separate the username from the servername.
     local user = string.sub(arg2, 1, string.find(arg2, "-")-1)
     local itemId = nil
+    local isIn = false
+    local itemLink = nil
 
     -- We get an itemlink from arg1 and returns the id.
     itemId = SoftRes.helpers:getItemIdFromLink(arg1)
+    itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
 
     -- add the item to the list.
     for i = 1, #SoftResList.players do
@@ -597,15 +600,23 @@ function SoftRes.list:getSoftReserves(arg1, arg2)
         if itemId and user == name then
             SoftResList.players[i].softReserve.time = time()
             SoftResList.players[i].softReserve.itemId = itemId
-
-            -- Send message ot the player.
-            local itemLink = SoftRes.helpers:getItemLinkFromId(SoftResList.players[i].softReserve.itemId)
-            if (not itemLink) then return end
-
-            local whisperText = "Your SoftReserve of " .. tostring(itemLink) .. " is confirmed. GL HF"
-            ChatThrottleLib:SendChatMessage("NORMAL", "SoftResRollAnnounce", whisperText, "WHISPER", nil, name, nil, nil, nil)
+            isIn = true
         end
     end
+
+    if (not itemLink) then return end
+
+    -- If the player is not On the list, we add him
+    if (not isIn) then
+        SoftRes.list:addSoftReservePlayer(user, itemId)
+    end
+    
+    -- Send message ot the player.        
+    local whisperText = "Your SoftReserve of " .. tostring(itemLink) .. " is confirmed. GL HF"
+--    ChatThrottleLib:SendChatMessage("NORMAL", "SoftResRollAnnounce", whisperText, "WHISPER", nil, user, nil, nil, nil)
+
+    -- update the list.
+    SoftRes.list:reOrderPlayerList()
 end
 
 -- Remove the selected player.

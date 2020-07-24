@@ -625,13 +625,13 @@ BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton",
       BUTTONS.addPlayerSoftResButton:SetPoint("TOPLEFT", BUTTONS.newListButton, "BOTTOMLEFT", 0, -5)
       BUTTONS.addPlayerSoftResButton:SetWidth(102)
       BUTTONS.addPlayerSoftResButton:SetHeight(20)
-      BUTTONS.addPlayerSoftResButton:SetText("Add Player")
+      BUTTONS.addPlayerSoftResButton:SetText("Edit Player")
 
 BUTTONS.editPlayerButton = CreateFrame("Button", "EditPlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.editPlayerButton:SetPoint("LEFT", BUTTONS.addPlayerSoftResButton, "RIGHT", 4, 0)
       BUTTONS.editPlayerButton:SetWidth(102)
       BUTTONS.editPlayerButton:SetHeight(20)
-      BUTTONS.editPlayerButton:SetText("Remove Penalty")
+      BUTTONS.editPlayerButton:SetText("Edit Loot")
       BUTTONS.editPlayerButton:Show()
 
 BUTTONS.deletePlayerButton = CreateFrame("Button", "DeletePlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
@@ -678,29 +678,46 @@ BUTTONS.autoHideWindowCheckButton = CreateFrame("CheckButton", "AautoHideWindowC
             BUTTONS.autoHideWindowCheckButton.fs:SetText("Auto-hide window when done looting.")
 
 -- Custom popup window for adding player.
-FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
-      FRAMES.addPlayerPopupWindow:SetFrameStrata("TOOLTIP")
-      FRAMES.addPlayerPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
-      FRAMES.addPlayerPopupWindow:SetSize(300, 200)
-      FRAMES.addPlayerPopupWindow:SetMovable(true)
-      FRAMES.addPlayerPopupWindow:EnableMouse(true)
-      FRAMES.addPlayerPopupWindow:RegisterForDrag("LeftButton")
-      FRAMES.addPlayerPopupWindow:SetScript("OnDragStart", FRAMES.addPlayerPopupWindow.StartMoving)
-      FRAMES.addPlayerPopupWindow:SetScript("OnDragStop", FRAMES.addPlayerPopupWindow.StopMovingOrSizing)
-      FRAMES.addPlayerPopupWindow:Hide()
+FRAMES.editPlayerAddPlayerPopupWindow = CreateFrame("Frame", "editPlayerAddPlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
+      FRAMES.editPlayerAddPlayerPopupWindow:SetFrameStrata("FULLSCREEN")
+      FRAMES.editPlayerAddPlayerPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
+      FRAMES.editPlayerAddPlayerPopupWindow:SetSize(300, 250)
+      FRAMES.editPlayerAddPlayerPopupWindow:SetMovable(true)
+      FRAMES.editPlayerAddPlayerPopupWindow:EnableMouse(true)
+      FRAMES.editPlayerAddPlayerPopupWindow:RegisterForDrag("LeftButton")
+      FRAMES.editPlayerAddPlayerPopupWindow:SetScript("OnDragStart", FRAMES.editPlayerAddPlayerPopupWindow.StartMoving)
+      FRAMES.editPlayerAddPlayerPopupWindow:SetScript("OnDragStop", FRAMES.editPlayerAddPlayerPopupWindow.StopMovingOrSizing)
+      FRAMES.editPlayerAddPlayerPopupWindow:Hide()
 
-      FRAMES.addPlayerPopupWindow.title = FRAMES.addPlayerPopupWindow:CreateFontString(nil, "Overlay")
-            FRAMES.addPlayerPopupWindow.title:SetFontObject("GameFontHighlight")
-            FRAMES.addPlayerPopupWindow.title:SetPoint("TOPLEFT", FRAMES.addPlayerPopupWindow.TitleBg, "TOPLEFT", 3, -3)
-            FRAMES.addPlayerPopupWindow.title:SetText("Ω SoftRes")
+      FRAMES.editPlayerAddPlayerPopupWindow.title = FRAMES.editPlayerAddPlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.editPlayerAddPlayerPopupWindow.title:SetFontObject("GameFontHighlight")
+            FRAMES.editPlayerAddPlayerPopupWindow.title:SetPoint("TOPLEFT", FRAMES.editPlayerAddPlayerPopupWindow.TitleBg, "TOPLEFT", 3, -3)
+            FRAMES.editPlayerAddPlayerPopupWindow.title:SetText("Ω SoftRes")
       
-      FRAMES.addPlayerPopupWindow.titleCenter = FRAMES.addPlayerPopupWindow:CreateFontString(nil, "Overlay")
-            FRAMES.addPlayerPopupWindow.titleCenter:SetFontObject("GameFontHighlight")
-            FRAMES.addPlayerPopupWindow.titleCenter:SetPoint("TOP", FRAMES.addPlayerPopupWindow.TitleBg, "TOP", 0, -3)
-            FRAMES.addPlayerPopupWindow.titleCenter:SetText("Add Player")
+      FRAMES.editPlayerAddPlayerPopupWindow.titleCenter = FRAMES.editPlayerAddPlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.editPlayerAddPlayerPopupWindow.titleCenter:SetFontObject("GameFontHighlight")
+            FRAMES.editPlayerAddPlayerPopupWindow.titleCenter:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow.TitleBg, "TOP", 0, -3)
+            FRAMES.editPlayerAddPlayerPopupWindow.titleCenter:SetText("Edit Player")
+
+      BUTTONS.editPlayerPopUpEditPlayerButton = CreateFrame("Button", "editPlayerPopUpAddPlayerButton", FRAMES.editPlayerAddPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerPopUpEditPlayerButton:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow, "TOP", 55, -30)
+            BUTTONS.editPlayerPopUpEditPlayerButton:SetWidth(102)
+            BUTTONS.editPlayerPopUpEditPlayerButton:SetHeight(20)
+            BUTTONS.editPlayerPopUpEditPlayerButton:SetText("Edit Player")
+
+      BUTTONS.editPlayerPopUpAddPlayerButton = CreateFrame("Button", "editPlayerPopUpAddPlayerButton", FRAMES.editPlayerAddPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerPopUpAddPlayerButton:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow, "TOP", -55, -30)
+            BUTTONS.editPlayerPopUpAddPlayerButton:SetWidth(102)
+            BUTTONS.editPlayerPopUpAddPlayerButton:SetHeight(20)
+            BUTTONS.editPlayerPopUpAddPlayerButton:SetText("Add Player")
+
+      FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAMES.editPlayerAddPlayerPopupWindow)
+            FRAMES.addPlayerPopupWindow:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow, "TOP", 0, -50)
+            FRAMES.addPlayerPopupWindow:SetSize(300, 200)
+            FRAMES.addPlayerPopupWindow:Hide()
 
       FRAMES.addPlayerNameEditBox = CreateFrame("EditBox", "addPlayerNameEditBox", FRAMES.addPlayerPopupWindow, "InputBoxTemplate")
-            FRAMES.addPlayerNameEditBox:SetPoint("TOP", FRAMES.addPlayerPopupWindow, "TOP", 0, -100)
+            FRAMES.addPlayerNameEditBox:SetPoint("TOP", FRAMES.addPlayerPopupWindow, "TOP", 0, -75)
             FRAMES.addPlayerNameEditBox:SetWidth(100)
             FRAMES.addPlayerNameEditBox:SetHeight(20)
             FRAMES.addPlayerNameEditBox:ClearFocus()
@@ -718,7 +735,7 @@ FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAME
             FRAMES.addPlayerNameEditBox.fs:SetJustifyH("Center")
       
       FRAMES.addPlayerItemEditBox = CreateFrame("EditBox", "addPlayerItemEditBox", FRAMES.addPlayerPopupWindow, "InputBoxTemplate")
-            FRAMES.addPlayerItemEditBox:SetPoint("TOP", FRAMES.addPlayerNameEditBox, "BOTTOM", 0, -25)
+            FRAMES.addPlayerItemEditBox:SetPoint("TOP", FRAMES.addPlayerNameEditBox, "BOTTOM", 0, -37)
             FRAMES.addPlayerItemEditBox:SetWidth(200)
             FRAMES.addPlayerItemEditBox:SetHeight(20)
             FRAMES.addPlayerItemEditBox:ClearFocus()
@@ -759,6 +776,63 @@ FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAME
             BUTTONS.addPlayerItemClearButton:SetWidth(30)
             BUTTONS.addPlayerItemClearButton:SetHeight(20)
             BUTTONS.addPlayerItemClearButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t")
+
+      -- EDIT
+      FRAMES.editPlayerEditPopupWindow = CreateFrame("Frame", "editPlayerEditPopupWindow", FRAMES.editPlayerAddPlayerPopupWindow)
+            FRAMES.editPlayerEditPopupWindow:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow, "TOP", 0, -50)
+            FRAMES.editPlayerEditPopupWindow:SetSize(300, 200)
+            FRAMES.editPlayerEditPopupWindow:Hide()
+
+      BUTTONS.editPlayerEditDropDown = CreateFrame("Button", "editPlayerEditDropDown", FRAMES.editPlayerEditPopupWindow, "UIDropDownMenuTemplate")
+            BUTTONS.editPlayerEditDropDown:SetPoint("TOP", FRAMES.editPlayerEditPopupWindow, "TOP", 0, -75)
+                  
+            UIDropDownMenu_SetWidth(BUTTONS.editPlayerEditDropDown, 83)
+            UIDropDownMenu_SetButtonWidth(BUTTONS.editPlayerEditDropDown, 102)
+            UIDropDownMenu_JustifyText(BUTTONS.editPlayerEditDropDown, "LEFT")
+      
+      BUTTONS.editPlayerEditDropDown.fs = BUTTONS.editPlayerEditDropDown:CreateFontString(nil, "OVERLAY")
+            BUTTONS.editPlayerEditDropDown.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.editPlayerEditDropDown.fs:SetPoint("BOTTOM", BUTTONS.editPlayerEditDropDown, "TOP", 0, 5)
+            BUTTONS.editPlayerEditDropDown.fs:SetText("Choose the player to edit.")
+            BUTTONS.editPlayerEditDropDown.fs:SetJustifyH("Center")
+      
+      FRAMES.editPlayerEditItemEditBox = CreateFrame("EditBox", "editPlayerEditItemEditBox", FRAMES.editPlayerEditPopupWindow, "InputBoxTemplate")
+            FRAMES.editPlayerEditItemEditBox:SetPoint("TOP", BUTTONS.editPlayerEditDropDown, "BOTTOM", 0, -25)
+            FRAMES.editPlayerEditItemEditBox:SetWidth(200)
+            FRAMES.editPlayerEditItemEditBox:SetHeight(20)
+            FRAMES.editPlayerEditItemEditBox:ClearFocus()
+            FRAMES.editPlayerEditItemEditBox:SetAutoFocus(false)
+            FRAMES.editPlayerEditItemEditBox:SetMaxLetters(100)
+            FRAMES.editPlayerEditItemEditBox:SetAltArrowKeyMode(false)
+            FRAMES.editPlayerEditItemEditBox:EnableMouse(true)
+            FRAMES.editPlayerEditItemEditBox:SetHyperlinksEnabled(true)
+            FRAMES.editPlayerEditItemEditBox:SetText("")
+            FRAMES.editPlayerEditItemEditBox:SetJustifyH("Center")
+      
+            FRAMES.editPlayerEditItemEditBox.fs = FRAMES.editPlayerEditItemEditBox:CreateFontString(nil, "OVERLAY")
+                  FRAMES.editPlayerEditItemEditBox.fs:SetFontObject("GameFontHighlight")
+                  FRAMES.editPlayerEditItemEditBox.fs:SetPoint("BOTTOM", FRAMES.editPlayerEditItemEditBox, "TOP", 0, 5)
+                  FRAMES.editPlayerEditItemEditBox.fs:SetText("Hold SHIFT and click an itemLink to add it.")
+                  FRAMES.editPlayerEditItemEditBox.fs:SetJustifyH("Center")
+
+      BUTTONS.editPlayerPopUpEditButton = CreateFrame("Button", "editPlayerPopUpEditButton", FRAMES.editPlayerEditPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerPopUpEditButton:SetPoint("BOTTOM", FRAMES.editPlayerEditPopupWindow, "BOTTOM", -55, 10)
+            BUTTONS.editPlayerPopUpEditButton:SetWidth(102)
+            BUTTONS.editPlayerPopUpEditButton:SetHeight(20)
+            BUTTONS.editPlayerPopUpEditButton:SetText("Edit Player")
+            BUTTONS.editPlayerPopUpEditButton:Hide()
+      
+      BUTTONS.editPlayerEditPopUpCancelButton = CreateFrame("Button", "editPlayerEditPopUpCancelButton", FRAMES.editPlayerEditPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerEditPopUpCancelButton:SetPoint("BOTTOM", FRAMES.editPlayerEditPopupWindow, "BOTTOM", 55, 10)
+            BUTTONS.editPlayerEditPopUpCancelButton:SetWidth(102)
+            BUTTONS.editPlayerEditPopUpCancelButton:SetHeight(20)
+            BUTTONS.editPlayerEditPopUpCancelButton:SetText("Cancel")
+
+      BUTTONS.editPlayerEditItemClearButton = CreateFrame("Button", "editPlayerEditItemClearButton", FRAMES.editPlayerEditPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerEditItemClearButton:SetPoint("LEFT", FRAMES.editPlayerEditItemEditBox, "RIGHT", 5, 0)
+            BUTTONS.editPlayerEditItemClearButton:SetWidth(30)
+            BUTTONS.editPlayerEditItemClearButton:SetHeight(20)
+            BUTTONS.editPlayerEditItemClearButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t")
 
 -- Custom popup window for deleteing a player.
 FRAMES.deletePlayerPopupWindow = CreateFrame("Frame", "deletePlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
@@ -826,7 +900,7 @@ FRAMES.deletePlayerPopupWindow = CreateFrame("Frame", "deletePlayerPopupWindow",
             BUTTONS.deletePlayerPopUpCancelButton:SetHeight(20)
             BUTTONS.deletePlayerPopUpCancelButton:SetText("Cancel")
 
--- Custom popup window for editing a player.
+-- Custom popup window for editing a player item.
 FRAMES.editPlayerPopupWindow = CreateFrame("Frame", "editPlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
       FRAMES.editPlayerPopupWindow:SetFrameStrata("FULLSCREEN")
       FRAMES.editPlayerPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
@@ -874,18 +948,18 @@ FRAMES.editPlayerPopupWindow = CreateFrame("Frame", "editPlayerPopupWindow", FRA
             BUTTONS.editPlayerItemDropDown.fs:SetText("Choose an item.")
             BUTTONS.editPlayerItemDropDown.fs:SetJustifyH("Center")
 
-      BUTTONS.rollTypeDropDown = CreateFrame("Button", "EollTypeDropDown", FRAMES.editPlayerPopupWindow, "UIDropDownMenuTemplate")
+      BUTTONS.rollTypeDropDown = CreateFrame("Button", "RollTypeDropDown", FRAMES.editPlayerPopupWindow, "UIDropDownMenuTemplate")
             BUTTONS.rollTypeDropDown:SetPoint("TOP", BUTTONS.editPlayerDropDown, "BOTTOM", 0, -25)
                   
             UIDropDownMenu_SetWidth(BUTTONS.rollTypeDropDown, 83)
             UIDropDownMenu_SetButtonWidth(BUTTONS.rollTypeDropDown, 102)
             UIDropDownMenu_JustifyText(BUTTONS.rollTypeDropDown, "LEFT")
 
-            BUTTONS.rollTypeDropDown.fs = BUTTONS.rollTypeDropDown:CreateFontString(nil, "OVERLAY")
-                  BUTTONS.rollTypeDropDown.fs:SetFontObject("GameFontHighlight")
-                  BUTTONS.rollTypeDropDown.fs:SetPoint("BOTTOM", BUTTONS.rollTypeDropDown, "TOP", 0, 5)
-                  BUTTONS.rollTypeDropDown.fs:SetText("Set the rollType")
-                  BUTTONS.rollTypeDropDown.fs:SetJustifyH("Center")
+      BUTTONS.rollTypeDropDown.fs = BUTTONS.rollTypeDropDown:CreateFontString(nil, "OVERLAY")
+            BUTTONS.rollTypeDropDown.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.rollTypeDropDown.fs:SetPoint("BOTTOM", BUTTONS.rollTypeDropDown, "TOP", 0, 5)
+            BUTTONS.rollTypeDropDown.fs:SetText("Set the rollType")
+            BUTTONS.rollTypeDropDown.fs:SetJustifyH("Center")
       
 
       BUTTONS.editPenaltyButton = CreateFrame("CheckButton", "editPenaltyButton", FRAMES.editPlayerPopupWindow, "UICheckButtonTemplate")

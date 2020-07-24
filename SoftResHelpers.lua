@@ -381,17 +381,18 @@ end
 
 -- local function for return an icon per item won.
 -- Takes a player, returns 1 loot icon per item won.
-function SoftRes.helpers:getRollPenalty(playerName, msPenalty, osPenalty, rollType)
+function SoftRes.helpers:getRollPenalty(playerName, msPenalty, osPenalty)
       local wonMS = 0
       local wonOS = 0
       local player = SoftRes.helpers:getPlayerFromName(playerName)
+      local rollType = ""
 
       -- Check to see if the player has recieved items.
       if #player.receivedItems > 0 then
-            for i = 1, #player.receivedItems do
+            for i = 1, #player.receivedItems, 1 do
 
                   -- get the rollType.
-                  local rollType = player.receivedItems[i][2]
+                  rollType = player.receivedItems[i][2]
                   local penaltyActive = player.receivedItems[i][5]
 
                   -- just add to the corresponding type
@@ -424,7 +425,7 @@ function SoftRes.helpers:handleWinner(name, roll, rollType, itemId)
       local player = SoftRes.helpers:getPlayerFromName(name)
       local penalty = SoftResConfig.state.addPenalty
 
-      if rollType == "ffa" then penalty = false end
+      if rollType == "ffa" or rollType == "raidRoll" then penalty = false end
 
       if rollType == "softRes" then
             player.softReserve.received = true
@@ -607,6 +608,8 @@ function SoftRes.helpers:rollForItem(arg1)
             local rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value, SoftRes.rollType)
             local rollValueIncPenalty = rollValue - rollPenalty
 
+            print(rollValueIncPenalty)
+
             -- if not penalty state then.
             -- If we don't add penalty, we shouldn't count penalty either.
             if (not SoftResConfig.state.addPenalty) then
@@ -620,7 +623,7 @@ function SoftRes.helpers:rollForItem(arg1)
             tinsert(SoftRes.announcedItem.rolls, {rollUser, rollValueIncPenalty})
           
             -- if we have a roll penalty, we announce it in chat.
-            if rollPenalty > 0 and SoftRes.rollType ~= "softRes"  and SoftRes.rollType ~= "ffa" then
+            if rollPenalty > 0 and SoftRes.rollType ~= "softRes" then
                   SoftRes.announce:rollPenalty(rollUser, rollValue, rollPenalty)
             end
       end
@@ -658,11 +661,22 @@ function SoftRes.helpers:raidRollForItem()
 
       -- Get the rollWinner from the raid list.
       if not rollValue then return end
-      name, rank, subgroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(rollValue)
+
+      -- Inititate.
+      local playerName = nil
+
+      -- Get the user who had the correct position
+      for i = 1, #SoftResList.players do
+            print(SoftResList.players[i].name, SoftResList.players[i].groupPosition)
+            if SoftResList.players[i].groupPosition == tonumber(rollValue) then
+                  playerName = SoftResList.players[i].name
+                  break
+            end
+      end
 
       -- Add the winner to the elegible list and the rolls list.
-      table.insert(SoftRes.preparedItem.elegible, name)
-      table.insert(SoftRes.announcedItem.rolls, {name, rollValue})
+      table.insert(SoftRes.preparedItem.elegible, playerName)
+      table.insert(SoftRes.announcedItem.rolls, {playerName, rollValue})
 end
 
 function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
