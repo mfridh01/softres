@@ -218,7 +218,6 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
 
             local function myChatEventHandler(self,event,arg1,...)
                   local filterFuncList = ChatFrame_GetMessageEventFilters(event)
-                        print(arg1)
                         if newarg1 then
                               arg1 = newarg
                               -- you should actually probably do this for all of arg2..arg11 since that's what framexml does
@@ -232,7 +231,7 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
             end
 
             SoftRes.state.scanForSoftRes.state = true
-            SoftRes.state.scanForSoftRes.text = "Scanning chat for SoftReserves.\n\n"
+            --SoftRes.state.scanForSoftRes.text = "Scanning chat for SoftReserves.\n\n"
             BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.activeText)
       end
 end

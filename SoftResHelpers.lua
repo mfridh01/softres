@@ -328,7 +328,6 @@ function SoftRes.helpers:removeHandledItem()
       for i = 1, #SoftRes.droppedItems do
             if SoftRes.droppedItems[i] == SoftRes.skippedItem then
                   table.remove(SoftRes.droppedItems, i)
-                  print("Removed " .. SoftRes.helpers:getItemLinkFromId(i))
                   break
             end
       end
@@ -608,8 +607,6 @@ function SoftRes.helpers:rollForItem(arg1)
             local rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value, SoftRes.rollType)
             local rollValueIncPenalty = rollValue - rollPenalty
 
-            print(rollValueIncPenalty)
-
             -- if not penalty state then.
             -- If we don't add penalty, we shouldn't count penalty either.
             if (not SoftResConfig.state.addPenalty) then
@@ -667,7 +664,6 @@ function SoftRes.helpers:raidRollForItem()
 
       -- Get the user who had the correct position
       for i = 1, #SoftResList.players do
-            print(SoftResList.players[i].name, SoftResList.players[i].groupPosition)
             if SoftResList.players[i].groupPosition == tonumber(rollValue) then
                   playerName = SoftResList.players[i].name
                   break

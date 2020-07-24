@@ -141,7 +141,9 @@ end)
 BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Edit") then return end
 
-    FRAMES.editPlayerPopupWindow:Show()
+    FRAMES.editPlayerEditItemPopupWindow:Show()
+    FRAMES.editPlayerPopupWindow:Hide()
+
 end)
 
 -- Delete player
@@ -848,7 +850,6 @@ end)
 
 FRAMES.addPlayerPopupWindow:SetScript("OnHide", function(self)
     -- Alert the player.
-    SoftRes.state:toggleAlertPlayer(false)
     SoftRes.addPlayer = false
     
     -- Clear the editboxes.
@@ -921,17 +922,19 @@ function BUTTONS.editPlayerDropDown_Initialize(self)
 
     for i = 1, #SoftResList.players do
         if not SoftResList.players[i] then break end
+        if #SoftResList.players[i].receivedItems > 0 then
 
-        local info = UIDropDownMenu_CreateInfo()
-        info.hasArrow = false
-        info.notCheckable = true
-        info.text = SoftResList.players[i].name
-        info.value = SoftResList.players[i].name
-        info.func = function()
-            UIDropDownMenu_SetText(self, SoftResList.players[i].name)
-            UIDropDownMenu_Initialize(BUTTONS.editPlayerItemDropDown, BUTTONS.editPlayerItemDropDown_Initialize)
+            local info = UIDropDownMenu_CreateInfo()
+            info.hasArrow = false
+            info.notCheckable = true
+            info.text = SoftResList.players[i].name
+            info.value = SoftResList.players[i].name
+            info.func = function()
+                UIDropDownMenu_SetText(self, SoftResList.players[i].name)
+                UIDropDownMenu_Initialize(BUTTONS.editPlayerItemDropDown, BUTTONS.editPlayerItemDropDown_Initialize)
+            end
+            UIDropDownMenu_AddButton(info)
         end
-        UIDropDownMenu_AddButton(info)
     end
 end
 
@@ -1025,7 +1028,7 @@ BUTTONS.editPlayerPopUpDeleteButton:SetScript("OnClick", function(self)
     local deleteItemText = FRAMES.deletePlayerItemEditBox:GetText()
 
     -- If there is no player to edit. Then don't.
-    if (not playerName) or (not playerItem) or (not playerRollType) then
+    if (not playerName) or (not playerItem) then
         return
     end
 
@@ -1061,6 +1064,7 @@ BUTTONS.editPlayerPopUpDeleteButton:SetScript("OnClick", function(self)
     SoftRes.debug:print("Edited player: " .. player.name)
 
     BUTTONS.editPlayerPopUpDeleteButton:Hide()
+    FRAMES.editPlayerPopupWindow:Hide()
 end)
 
 BUTTONS.editPlayerPopUpCancelButton:SetScript("OnClick", function(self)
@@ -1069,30 +1073,38 @@ BUTTONS.editPlayerPopUpCancelButton:SetScript("OnClick", function(self)
 end)
 
 FRAMES.editPlayerPopupWindow:SetScript("OnShow", function(self)
-    -- Alert the player.
-    SoftRes.state:toggleAlertPlayer(true, "Edit")
-
     BUTTONS.editPlayerItemDropDown:Hide()
     BUTTONS.rollTypeDropDown:Hide()
     BUTTONS.editPenaltyButton:Hide()
     FRAMES.deletePlayerItemEditBox:Hide()
+    BUTTONS.editPlayerDropDownInit()
 end)
 
 FRAMES.editPlayerPopupWindow:SetScript("OnHide", function(self)
-    -- Alert the player.
-    SoftRes.state:toggleAlertPlayer(false)
+
 end)
 
 -- Add / Edit players, softres.
 FRAMES.editPlayerAddPlayerPopupWindow:SetScript("OnShow", function(self)
+    -- Alert the player.
     SoftRes.state:toggleAlertPlayer(true, "Add")
+
+    -- Set framevisibility.
     FRAMES.addPlayerPopupWindow:Hide()
     FRAMES.editPlayerEditPopupWindow:Hide()
+end)
+
+FRAMES.editPlayerAddPlayerPopupWindow:SetScript("OnHide", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(false)
 end)
 
 FRAMES.editPlayerEditPopupWindow:SetScript("OnShow", function(self)
     SoftRes.editPlayer = true
     BUTTONS.editPlayerPopUpEditButton:Hide()
+    FRAMES.editPlayerEditItemEditBox:Hide()
+    BUTTONS.editPlayerEditItemClearButton:Hide()
+    BUTTONS.editPlayerEditSoftResButton:Hide()
 
     local origChatFrame_OnHyperlinkShow = ChatFrame_OnHyperlinkShow
     ChatFrame_OnHyperlinkShow = function(...)
@@ -1100,7 +1112,7 @@ FRAMES.editPlayerEditPopupWindow:SetScript("OnShow", function(self)
         if FRAMES.editPlayerEditItemEditBox:GetText() == "" and IsShiftKeyDown() then
             local itemId = SoftRes.helpers:getItemIdFromLink(link)
             local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
-            FRAMES.addPlayerItemEditBox:SetText("-")
+            FRAMES.addPlayerItemEditBox:SetText("")
             FRAMES.editPlayerEditItemEditBox:SetText(itemLink)
             return
         end
@@ -1143,6 +1155,10 @@ BUTTONS.editPlayerEditItemClearButton:SetScript("OnClick", function(self)
     FRAMES.editPlayerEditItemEditBox:SetText("")
 end)
 
+FRAMES.editPlayerEditItemEditBox:SetScript("OnCursorChanged", function(self)
+    FRAMES.editPlayerEditItemEditBox:ClearFocus()
+end)
+
 function BUTTONS.editPlayerEditDropDown_Initialize(self)
     -- If there are no players, don't initialize the list.
     if #SoftResList.players <= 1 then return end
@@ -1155,6 +1171,7 @@ function BUTTONS.editPlayerEditDropDown_Initialize(self)
 
         local itemId = SoftResList.players[i].softReserve.itemId
         local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+        local receivedSoftReserve = SoftResList.players[i].softReserve.received
 
         if not itemLink then itemLink = "" end
 
@@ -1167,6 +1184,10 @@ function BUTTONS.editPlayerEditDropDown_Initialize(self)
             UIDropDownMenu_SetText(self, SoftResList.players[i].name)
             FRAMES.editPlayerEditItemEditBox:SetText(itemLink)
             BUTTONS.editPlayerPopUpEditButton:Show()
+            BUTTONS.editPlayerEditSoftResButton:Show()
+            BUTTONS.editPlayerEditSoftResButton:SetChecked(receivedSoftReserve)
+            FRAMES.editPlayerEditItemEditBox:Show()
+            BUTTONS.editPlayerEditItemClearButton:Show()
         end
         UIDropDownMenu_AddButton(info)
     end
@@ -1189,10 +1210,170 @@ BUTTONS.editPlayerPopUpEditButton:SetScript("OnClick", function(self)
 
     local itemId = FRAMES.editPlayerEditItemEditBox:GetText()
     local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+    local receivedSoftReserve = BUTTONS.editPlayerEditSoftResButton:GetChecked()
 
     -- set the value.
     player.softReserve.itemId = itemId
+    player.softReserve.received = receivedSoftReserve
 
     -- close the window.
     editPlayerEditPopupWindow:Hide()
+end)
+
+BUTTONS.editPlayerPopUpEditItemButton:SetScript("OnClick", function(self)
+    FRAMES.editPlayerPopupWindow:Show()
+    FRAMES.editPlayerAddItemPopupWindow:Hide()
+end)
+
+FRAMES.editPlayerEditItemPopupWindow:SetScript("OnShow", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Edit")
+
+    FRAMES.editPlayerPopupWindow:Hide()
+    FRAMES.editPlayerAddItemPopupWindow:Hide()
+end)
+
+FRAMES.editPlayerEditItemPopupWindow:SetScript("OnHide", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(false)
+end)
+
+FRAMES.editPlayerAddItemPopupWindow:SetScript("OnShow", function(self)
+    -- Set and hide stuffs.
+    FRAMES.editPlayerAddItemEditBox:SetText("")
+    FRAMES.editPlayerAddItemEditBox:Hide()
+    BUTTONS.editPlayerAddItemClearButton:Hide()
+    BUTTONS.editPlayerAddItemRollTypeDropDown:Hide()
+    UIDropDownMenu_Initialize(BUTTONS.editPlayerAddItemRollTypeDropDown, BUTTONS.editPlayerAddItemRollTypeDropDown_Initialize)
+    BUTTONS.editPlayerAddItemPenaltyButton:Hide()
+    BUTTONS.editPlayerAddItemAddButton:Hide()
+
+    -- Hook for getting hyperlinks on shift+click
+    local origChatFrame_OnHyperlinkShow = ChatFrame_OnHyperlinkShow
+    ChatFrame_OnHyperlinkShow = function(...)
+        local chatFrame, link, text, button = ...
+        if FRAMES.editPlayerAddItemEditBox:GetText() == "" and IsShiftKeyDown() then
+            local itemId = SoftRes.helpers:getItemIdFromLink(link)
+            local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+            FRAMES.editPlayerAddItemEditBox:SetText(itemLink)
+            return
+        end
+        return origChatFrame_OnHyperlinkShow(...)
+    end
+
+    hooksecurefunc("ContainerFrameItemButton_OnModifiedClick", function(self, button)
+        if IsShiftKeyDown() and button == "LeftButton" and self:GetParent():GetID() <= 5 then 
+            local _, itemLink = GetItemInfo(GetContainerItemID(self:GetParent():GetID(), self:GetID()))
+            ClearCursor()
+            FRAMES.editPlayerAddItemEditBox:SetText(itemLink)
+            return
+        end 
+    end)
+end)
+
+BUTTONS.editPlayerPopUpAddItemButton:SetScript("OnClick", function(self)
+    FRAMES.editPlayerAddItemPopupWindow:Show()
+    FRAMES.editPlayerPopupWindow:Hide()
+    BUTTONS.editPlayerAddItemDropDownInit()
+end)
+
+function BUTTONS.editPlayerAddItemDropDown_Initialize(self)
+    -- If there are no players, don't initialize the list.
+    if #SoftResList.players <= 1 then return end
+
+    -- Clear the text.
+    UIDropDownMenu_SetText(self, "")
+
+    for i = 1, #SoftResList.players do
+        if not SoftResList.players[i] then break end
+
+        local info = UIDropDownMenu_CreateInfo()
+        info.hasArrow = false
+        info.notCheckable = true
+        info.text = SoftResList.players[i].name
+        info.value = SoftResList.players[i].name
+        info.func = function()
+            UIDropDownMenu_SetText(self, SoftResList.players[i].name)
+            FRAMES.editPlayerAddItemEditBox:Show()
+            BUTTONS.editPlayerAddItemClearButton:Show()
+            BUTTONS.editPlayerAddItemRollTypeDropDown:Show()
+            BUTTONS.editPlayerAddItemPenaltyButton:Show()
+            BUTTONS.editPlayerAddItemPenaltyButton:SetChecked(true)
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+end
+
+function BUTTONS.editPlayerAddItemDropDownInit()
+    if #SoftResList.players <= 1 then return end
+
+    UIDropDownMenu_Initialize(BUTTONS.editPlayerAddItemDropDown, BUTTONS.editPlayerAddItemDropDown_Initialize)
+end
+
+BUTTONS.editPlayerAddItemClearButton:SetScript("OnClick", function(self)
+    FRAMES.editPlayerAddItemEditBox:SetText("")
+    BUTTONS.editPlayerAddItemAddButton:Hide()
+end)
+
+FRAMES.editPlayerAddItemEditBox:SetScript("OnCursorChanged", function(self)
+    FRAMES.editPlayerAddItemEditBox:ClearFocus()
+end)
+
+function BUTTONS.editPlayerAddItemRollTypeDropDown_Initialize(self)
+    -- If there are no players, don't initialize the list.
+    if #SoftResList.players <= 1 then return end
+
+    -- Set the rollTypes.
+    local rollTypes = {
+        "ms",
+        "os",
+        "ffa"
+    }
+
+    -- Set default to MS.
+    UIDropDownMenu_SetText(self, rollTypes[1])
+
+    -- Then we check for the type
+    for i = 1, #rollTypes do
+        local info = UIDropDownMenu_CreateInfo()
+        info.hasArrow = false
+        info.notCheckable = true
+        info.text = rollTypes[i]
+        info.value = rollTypes[i]
+        info.func = function()
+            UIDropDownMenu_SetText(self, rollTypes[i])
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+end
+
+FRAMES.editPlayerAddItemEditBox:SetScript("OnTextChanged", function(self)
+    if #self:GetText() > 0 then
+        BUTTONS.editPlayerAddItemAddButton:Show()
+    end
+end)
+
+BUTTONS.editPlayerAddItemCancelButton:SetScript("OnClick", function(self) 
+    FRAMES.editPlayerAddItemPopupWindow:Hide()
+end)
+
+BUTTONS.editPlayerAddItemAddButton:SetScript("OnClick", function(self)
+    -- If there are no players, don't initialize the list.
+    if #SoftResList.players <= 1 then return end
+
+    -- Get the player from the name.
+    local player = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerAddItemDropDown))
+    if not player then return end
+
+    local itemId = SoftRes.helpers:getItemIdFromLink(FRAMES.editPlayerAddItemEditBox:GetText())
+    local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+
+    local rollType = UIDropDownMenu_GetText(BUTTONS.editPlayerAddItemRollTypeDropDown)
+    local penalty = BUTTONS.editPlayerAddItemPenaltyButton:GetChecked()
+
+    -- Add it to the received items list.
+    table.insert(player.receivedItems, {time(), rollType, itemId, 0, penalty})
+
+    -- close the window.
+    editPlayerAddItemPopupWindow:Hide()
 end)
