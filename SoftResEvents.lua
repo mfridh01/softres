@@ -45,6 +45,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                   SoftRes.list:showFullSoftResList()
 
                   -- set the dropdown menu
+                  BUTTONS.deletePlayerDropDownInit()
                   BUTTONS.editPlayerDropDownInit()
                   SoftRes.debug:print("SoftResList, loaded. Do stuff!!")
             end
@@ -91,13 +92,6 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- Always show the prepare button.
             BUTTONS.prepareItemButton:Show()
             
-            -- Show skip-button.
-            if #SoftRes.droppedItems > 1 then
-                  BUTTONS.skipItemButton:Show()
-            else
-                  BUTTONS.skipItemButton:Hide()
-            end
-
       elseif event == "LOOT_SLOT_CLEARED" and SoftRes.enabled then
 
             SoftRes.debug:print("Looted something")
@@ -110,13 +104,6 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
 
             -- Always show prepare button.
             BUTTONS.prepareItemButton:Show()
-
-            -- Show skip-button.
-            if #SoftRes.droppedItems > 1 then
-                  BUTTONS.skipItemButton:Show()
-            else
-                  BUTTONS.skipItemButton:Hide()
-            end
 
       elseif event == "LOOT_CLOSED" and SoftRes.enabled then
 

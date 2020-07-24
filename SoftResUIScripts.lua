@@ -55,7 +55,7 @@ for i = 1, #BUTTONS.tabButtonPage do
     end)
 end
 
-function BUTTONS.editPlayerDropDown_Initialize(self)
+function BUTTONS.deletePlayerDropDown_Initialize(self)
     -- If there are no players, don't initialize the list.
     if #SoftResList.players <= 1 then return end
 
@@ -74,11 +74,11 @@ function BUTTONS.editPlayerDropDown_Initialize(self)
     end
 end
 
-function BUTTONS.editPlayerDropDownInit()
+function BUTTONS.deletePlayerDropDownInit()
     if #SoftResList.players <= 1 then return end
 
-    UIDropDownMenu_Initialize(BUTTONS.editPlayerDropDown, BUTTONS.editPlayerDropDown_Initialize)
-    UIDropDownMenu_SetText(BUTTONS.editPlayerDropDown, SoftResList.players[1].name)
+    UIDropDownMenu_Initialize(BUTTONS.deletePlayerDropDown, BUTTONS.deletePlayerDropDown_Initialize)
+    UIDropDownMenu_SetText(BUTTONS.deletePlayerDropDown, SoftResList.players[1].name)
 end
 
 -- New List
@@ -101,6 +101,7 @@ BUTTONS.newListButton:SetScript("OnClick", function(self)
             SoftRes.list:showFullSoftResList()
 
             -- Initiate the drop-down list.
+            BUTTONS.deletePlayerDropDownInit()
             BUTTONS.editPlayerDropDownInit()
             SoftRes.debug:print("Generating a new list.")
         end,
@@ -139,6 +140,13 @@ end)
 -- Edit player
 BUTTONS.editPlayerButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Edit") then return end
+
+    FRAMES.editPlayerPopupWindow:Show()
+end)
+
+-- Delete player
+BUTTONS.deletePlayerButton:SetScript("OnClick", function(self)
+    if not SoftRes.helpers:checkAlertPlayer("Del") then return end
 
     FRAMES.deletePlayerPopupWindow:Show()
 end)
@@ -217,7 +225,7 @@ end)
 -- Config
 BUTTONS.enableSoftResAddon:SetScript("OnClick", function(self)
     SoftResConfig.state.softResEnabled = self:GetChecked()
- end)
+end)
 
 BUTTONS.autoShowWindowCheckButton:SetScript("OnClick", function(self)
    SoftResConfig.state.autoShowOnLoot = self:GetChecked()
@@ -225,7 +233,23 @@ end)
 
 BUTTONS.autoHideWindowCheckButton:SetScript("OnClick", function(self)
     SoftResConfig.state.autoHideOnLootDone = self:GetChecked()
- end)
+end)
+
+BUTTONS.addPenaltyButton:SetScript("OnClick", function(self)
+    SoftResConfig.state.addPenalty = self:GetChecked()
+end)
+
+BUTTONS.addPenaltyButton:SetScript("OnShow", function(self)
+    -- we only show it if we have any penalties
+    if SoftResConfig.dropDecay.ms.value == 0 and SoftResConfig.dropDecay.os.value == 0 then
+        SoftResConfig.state.addPenalty = false
+        self:SetChecked(false)
+        self:Hide()
+    else
+        SoftResConfig.state.addPenalty = true
+        self:SetChecked(true)
+    end
+end)
 
 -- Config, roll timers.
 -- Takes an editbox, text string and a store-variable.
@@ -275,8 +299,6 @@ FRAMES.softResRollTimerEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.softRes.minValue, SoftResConfig.timers.softRes.maxValue), SoftResConfig.timers.softRes.value)
     SoftResConfig.timers.softRes.value = text
-    FRAMES.msRollTimerEditBox:SetFocus()
-    FRAMES.msRollTimerEditBox:HighlightText()
 end)
 
 -- MS roll timer.
@@ -310,8 +332,6 @@ FRAMES.msRollTimerEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.ms.minValue, SoftResConfig.timers.ms.maxValue), SoftResConfig.timers.ms.value)
     SoftResConfig.timers.ms.value = text
-    FRAMES.osRollTimerEditBox:SetFocus()
-    FRAMES.osRollTimerEditBox:HighlightText()
 end)
 
 -- OS roll timer.
@@ -345,8 +365,6 @@ FRAMES.osRollTimerEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.timers.os.minValue, SoftResConfig.timers.os.maxValue), SoftResConfig.timers.os.value)
     SoftResConfig.timers.os.value = text
-    FRAMES.itemRarityEditBox:SetFocus()
-    FRAMES.itemRarityEditBox:HighlightText()
 end)
 
 -- Itemrarity editbox
@@ -380,8 +398,6 @@ FRAMES.itemRarityEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.itemRarity.minValue, SoftResConfig.itemRarity.maxValue), SoftResConfig.itemRarity.value)
     SoftResConfig.itemRarity.value = text
-    FRAMES.msDropDecayEditBox:SetFocus()
-    FRAMES.msDropDecayEditBox:HighlightText()
 end)
 
 -- MS Roll decay.
@@ -415,8 +431,6 @@ FRAMES.msDropDecayEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.ms.minValue, SoftResConfig.dropDecay.ms.maxValue), SoftResConfig.dropDecay.ms.value)
     SoftResConfig.dropDecay.ms.value = text
-    FRAMES.osDropDecayEditBox:SetFocus()
-    FRAMES.osDropDecayEditBox:HighlightText()
 end)
 
 -- OS Roll decay.
@@ -450,8 +464,6 @@ FRAMES.osDropDecayEditBox:SetScript("OnEditFocusLost", function(self)
     self:ClearFocus()
     local text = setEditBoxValue(self, SoftRes.helpers:returnMinBetweenOrMax(self:GetText(), SoftResConfig.dropDecay.os.minValue, SoftResConfig.dropDecay.os.maxValue), SoftResConfig.dropDecay.os.value)
     SoftResConfig.dropDecay.os.value = text
-    FRAMES.softResRollTimerEditBox:SetFocus()
-    FRAMES.softResRollTimerEditBox:HighlightText()
 end)
 
 -- Extra information
@@ -479,6 +491,13 @@ BUTTONS.prepareItemButton:SetScript("OnClick", function(self)
     -- We check the first item, then prepare it for loot.
     local preparedItemId = SoftRes.droppedItems[1]
     SoftRes.helpers:prepareItem(preparedItemId)
+
+    -- Show skip-button.
+    if #SoftRes.droppedItems > 1 then
+        BUTTONS.skipItemButton:Show()
+    else
+        BUTTONS.skipItemButton:Hide()
+    end
 end)
 
 -- SoftRes Roll.
@@ -490,7 +509,7 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
     SoftRes.state:toggleListenToRolls(true)
 
     -- Set the rollType to nothing
-    SoftRes.rollType = ""
+    SoftRes.rollType = "softRes"
 
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
@@ -519,8 +538,8 @@ BUTTONS.msRollButton:SetScript("OnClick", function(self)
     -- Announce the item.
     SoftRes.state:toggleAnnouncedItem(true)
 
-    -- Set the rollType to nothing
-    SoftRes.rollType = ""
+    -- Set the rollType to ms
+    SoftRes.rollType = "ms"
 
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
@@ -545,7 +564,7 @@ BUTTONS.osRollButton:SetScript("OnClick", function(self)
     SoftRes.state:toggleAnnouncedItem(true)
 
     -- Set the rollType to nothing
-    SoftRes.rollType = ""
+    SoftRes.rollType = "os"
 
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
@@ -568,7 +587,7 @@ BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
     SoftRes.state:toggleAnnouncedItem(true)
 
     -- Set the rollType to nothing
-    SoftRes.rollType = ""
+    SoftRes.rollType = "ffa"
 
     -- Rolling for loot
     SoftRes.state:toggleRollingForLoot(true)
@@ -580,7 +599,7 @@ BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
     SoftRes.helpers:hideAllRollButtons(true)
 
     -- Active the timer.
-    SoftRes.helpers:countDown("FFA", "os", nil)
+    SoftRes.helpers:countDown("FFA", "ffa", nil)
 end)
 
 BUTTONS.raidRollButton:SetScript("OnClick", function(self)
@@ -618,7 +637,12 @@ end)
 
 BUTTONS.announceRollsButton:SetScript("OnClick", function(self)
     -- handle the announcement.
-    SoftRes.helpers:announceResult()
+    -- if we have forced it (while we're doing a soft-res roll)
+    if SoftRes.state.announcedItem and SoftRes.rollType == "softRes" then
+        SoftRes.state.forced = true
+    else
+        SoftRes.helpers:announceResult(nil, nil, false)
+    end
 end)
 
 -- If we want to cancel stuff, we do it here.
@@ -629,6 +653,11 @@ BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
         button1 = "Yes",
         button2 = "No",
         OnAccept = function()
+            -- If rolling, then announce before canceling.
+            if #SoftRes.announcedItem.rolls > 0 then
+                SoftRes.announce:sendMessageToChat("Party_Leader", "The rolls for this item are canceled.")
+            end
+
             -- Canceling stuff.
             SoftRes.helpers:unPrepareItem()
 
@@ -824,7 +853,7 @@ FRAMES.deletePlayerEditBox:SetScript("OnTextChanged", function(self)
 end)
 
 BUTTONS.deletePlayerPopUpDeleteButton:SetScript("OnClick", function(self)
-    local editPlayer = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
+    local editPlayer = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.deletePlayerDropDown))
 
     -- If there is no player to edit. Then don't.
     if not editPlayer then return end
@@ -842,7 +871,7 @@ BUTTONS.deletePlayerPopUpDeleteButton:SetScript("OnClick", function(self)
     SoftRes.list:showFullSoftResList()
 
     -- Re-Initiate the dropdown list.
-    BUTTONS.editPlayerDropDownInit()
+    BUTTONS.deletePlayerDropDownInit()
     SoftRes.debug:print("Deleted player: " .. editPlayer.name)
 
     BUTTONS.deletePlayerPopUpDeleteButton:Hide()
@@ -863,5 +892,177 @@ end)
 FRAMES.deletePlayerPopupWindow:SetScript("OnHide", function(self)
     -- Alert the player.
     FRAMES.deletePlayerEditBox:SetText("")
+    SoftRes.state:toggleAlertPlayer(false)
+end)
+
+-- Edit
+function BUTTONS.editPlayerDropDown_Initialize(self)
+    -- If there are no players, don't initialize the list.
+    if #SoftResList.players <= 1 then return end
+
+    -- Clear the text.
+    UIDropDownMenu_SetText(self, "")
+
+    for i = 1, #SoftResList.players do
+        if not SoftResList.players[i] then break end
+
+        local info = UIDropDownMenu_CreateInfo()
+        info.hasArrow = false
+        info.notCheckable = true
+        info.text = SoftResList.players[i].name
+        info.value = SoftResList.players[i].name
+        info.func = function()
+            UIDropDownMenu_SetText(self, SoftResList.players[i].name)
+            UIDropDownMenu_Initialize(BUTTONS.editPlayerItemDropDown, BUTTONS.editPlayerItemDropDown_Initialize)
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+end
+
+function BUTTONS.editPlayerDropDownInit()
+    if #SoftResList.players <= 1 then return end
+
+    UIDropDownMenu_Initialize(BUTTONS.editPlayerDropDown, BUTTONS.editPlayerDropDown_Initialize)
+end
+
+function BUTTONS.editPlayerItemDropDown_Initialize(self)
+    -- If there are no players, don't initialize the list.
+    if #SoftResList.players <= 1 then return end
+
+    -- Get the player from the name.
+    local player = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
+    if not player then return end
+
+    -- Clear the text.
+    UIDropDownMenu_SetText(self, "")
+    self:Show()
+
+    -- Then we check for the items.
+    for i = 1, #player.receivedItems do
+        if not player.receivedItems[i] then break end
+
+        local itemLink = SoftRes.helpers:getItemLinkFromId(player.receivedItems[i][3])
+        local itemIndex = i
+
+        local info = UIDropDownMenu_CreateInfo()
+        info.hasArrow = false
+        info.notCheckable = true
+        info.text = itemLink
+        info.value = i
+        info.func = function()
+            UIDropDownMenu_SetSelectedValue(self, i)
+            UIDropDownMenu_SetText(self, itemLink)
+            UIDropDownMenu_Initialize(BUTTONS.rollTypeDropDown, BUTTONS.rollTypeDropDown_Initialize)
+            UIDropDownMenu_SetText(BUTTONS.rollTypeDropDown, player.receivedItems[i][2])
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+end
+
+function BUTTONS.rollTypeDropDown_Initialize(self)
+    -- If there are no players, don't initialize the list.
+    if #SoftResList.players <= 1 then return end
+
+    -- Get the player from the name.
+    local player = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
+    local itemIndex = UIDropDownMenu_GetSelectedValue(BUTTONS.editPlayerItemDropDown)
+
+    if (not player) or (not itemIndex) then return end
+
+    -- Set the default value.
+    local rollType = player.receivedItems[itemIndex][2]
+    local penalty = player.receivedItems[itemIndex][5]
+    self:Show()
+    BUTTONS.editPenaltyButton:Show()
+    BUTTONS.editPenaltyButton:SetChecked(penalty)
+    FRAMES.deletePlayerItemEditBox:Show()
+    BUTTONS.editPlayerPopUpDeleteButton:Show()
+
+    -- Set the rollTypes.
+    local rollTypes = {
+        "ms",
+        "os",
+        "ffa"
+    }
+
+    -- Then we check for the type
+    for i = 1, #rollTypes do
+        local info = UIDropDownMenu_CreateInfo()
+        info.hasArrow = false
+        info.notCheckable = true
+        info.text = rollTypes[i]
+        info.value = rollTypes[i]
+        info.func = function()
+            UIDropDownMenu_SetText(self, rollTypes[i])
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+end
+
+BUTTONS.editPlayerPopUpDeleteButton:SetScript("OnClick", function(self)
+    local player = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown))
+    local playerName = UIDropDownMenu_GetText(BUTTONS.editPlayerDropDown)
+    local playerItem = SoftRes.helpers:getItemIdFromLink(UIDropDownMenu_GetText(BUTTONS.editPlayerItemDropDown))
+    local playerItemIndex = UIDropDownMenu_GetSelectedValue(BUTTONS.editPlayerItemDropDown)
+    local playerRollType = UIDropDownMenu_GetText(BUTTONS.rollTypeDropDown)
+    local playerPenalty = BUTTONS.editPenaltyButton:GetChecked()
+    local deleteItemText = FRAMES.deletePlayerItemEditBox:GetText()
+
+    -- If there is no player to edit. Then don't.
+    if (not playerName) or (not playerItem) or (not playerRollType) then
+        return
+    end
+
+    -- removal code
+    -- Set the new values.
+    if deleteItemText == "delete" then
+        table.remove(player.receivedItems, playerItemIndex)
+    else
+        if tonumber(playerItem) == tonumber(player.receivedItems[playerItemIndex][3]) then
+            player.receivedItems[playerItemIndex][2] = playerRollType
+            player.receivedItems[playerItemIndex][5] = playerPenalty
+        end
+    end
+
+    -- ReOrder the list
+    SoftRes.list:reOrderPlayerList()
+
+    -- ReDraw the list.
+    SoftRes.list:showFullSoftResList()
+
+    -- Re-Initiate the dropdown list.
+    UIDropDownMenu_SetText(BUTTONS.editPlayerItemDropDown, "")
+    UIDropDownMenu_SetText(BUTTONS.rollTypeDropDown, "")
+    UIDropDownMenu_Initialize(BUTTONS.editPlayerDropDown, BUTTONS.editPlayerDropDown_Initialize)
+    FRAMES.deletePlayerItemEditBox:SetText("")
+
+    -- Hide the buttons again.
+    BUTTONS.editPlayerItemDropDown:Hide()
+    BUTTONS.rollTypeDropDown:Hide()
+    BUTTONS.editPenaltyButton:Hide()
+    FRAMES.deletePlayerItemEditBox:Hide()
+    
+    SoftRes.debug:print("Edited player: " .. player.name)
+
+    BUTTONS.editPlayerPopUpDeleteButton:Hide()
+end)
+
+BUTTONS.editPlayerPopUpCancelButton:SetScript("OnClick", function(self)
+    BUTTONS.editPlayerPopUpDeleteButton:Hide()
+    FRAMES.editPlayerPopupWindow:Hide()
+end)
+
+FRAMES.editPlayerPopupWindow:SetScript("OnShow", function(self)
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Edit")
+
+    BUTTONS.editPlayerItemDropDown:Hide()
+    BUTTONS.rollTypeDropDown:Hide()
+    BUTTONS.editPenaltyButton:Hide()
+    FRAMES.deletePlayerItemEditBox:Hide()
+end)
+
+FRAMES.editPlayerPopupWindow:SetScript("OnHide", function(self)
+    -- Alert the player.
     SoftRes.state:toggleAlertPlayer(false)
 end)

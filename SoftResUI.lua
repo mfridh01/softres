@@ -80,6 +80,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   softResEnabled = true,
                   autoShowOnLoot = true,
                   autoHideOnLootDone = false,
+                  addPenalty = true,
             },
             timers = {
                   softRes = {
@@ -151,6 +152,9 @@ function SoftRes.ui:useSavedConfigValues()
       BUTTONS.enableSoftResAddon:SetChecked(CONFIG_STATE.softResEnabled)
       BUTTONS.autoShowWindowCheckButton:SetChecked(CONFIG_STATE.autoShowOnLoot)
       BUTTONS.autoHideWindowCheckButton:SetChecked(CONFIG_STATE.autoHideOnLootDone)
+      
+      -- Shoud we add the penalty or not?
+      BUTTONS.addPenaltyButton:SetChecked(CONFIG_STATE.addPenalty)
 
       -- Enabled or not?
       SoftRes.enabled = CONFIG_STATE.softResEnabled
@@ -230,7 +234,7 @@ FRAMES.tabContainer.page1 = CreateFrame("Frame", "TabPagesPage1", FRAMES.mainFra
                   edgeSize = 10,
                   insets   = { left = 2, right = 2, top = 2, bottom = 2 }
             })
-            FRAMES.tabContainer.page1:Show()
+            FRAMES.tabContainer.page1:Hide()
 
 FRAMES.rollFrameContainer = CreateFrame("ScrollFrame", "RollFrameContainer", FRAMES.tabContainer.page1, "UIPanelScrollFrameTemplate")
       FRAMES.rollFrameContainer:SetPoint("TOPLEFT", FRAMES.tabContainer.page1, "TOPLEFT", 5, -5)
@@ -296,7 +300,7 @@ FRAMES.tabContainer.page2 = CreateFrame("Frame", "TabPagesPage2", FRAMES.mainFra
             edgeSize = 10,
             insets   = { left = 2, right = 2, top = 2, bottom = 2 }
       })
-      FRAMES.tabContainer.page2:Hide()
+      FRAMES.tabContainer.page2:Show()
 
 FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRAMES.tabContainer.page2, "UIPanelScrollFrameTemplate")
       FRAMES.listFrameContainer:SetPoint("TOPLEFT", FRAMES.tabContainer.page2, "TOPLEFT", 5, -5)
@@ -322,9 +326,7 @@ FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRA
 
       FRAMES.listFrame = CreateFrame("ScrollingMessageFrame", "testframe", FRAMES.listFrameContainer.child) -- asdf
             FRAMES.listFrame:SetSize(500, 24)
-            --FRAMES.listFrame:SetAllPoints(FRAMES.listFrameContainer.child)
             FRAMES.listFrame:SetPoint("TOPLEFT", FRAMES.listFrameContainer.child, "TOPLEFT", 0, 0)
-            --FRAMES.listFrame:SetFontObject("GameFontHighlight")
             FRAMES.listFrame:SetFont("Fonts\\FRIZQT__.ttf", 12)
             FRAMES.listFrame:SetJustifyH("LEFT")
             FRAMES.listFrame:SetJustifyV("TOP")
@@ -333,17 +335,6 @@ FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRA
             FRAMES.listFrame:SetHyperlinksEnabled(true)
             FRAMES.listFrame:SetInsertMode("BOTTOM")
             FRAMES.listFrame:EnableMouse(true)
-
---[[ FRAMES.listFrame = CreateFrame("Frame", nil, FRAMES.listFrameContainer.child) asdf
-      FRAMES.listFrame:SetAllPoints(FRAMES.listFrameContainer.child)
-      FRAMES.listFrame:EnableMouse()
-
-      FRAMES.listFrame.fs = FRAMES.listFrame:CreateFontString(nil, "OVERLAY") -- This is the main list FontString. Populate this one.
-            FRAMES.listFrame.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.listFrame.fs:SetFont(FRAMES.listFrame.fs:GetFont(), 12)
-            FRAMES.listFrame.fs:SetPoint("TOPLEFT", FRAMES.listFrame, "TOPLEFT", 0, 0)
-            FRAMES.listFrame.fs:SetText("Testrad-01\nTestrad-02\nTestrad-03\nTestrad-04\nTestrad-05\nTestrad-06\nTestrad-07\nTestrad-08\nTestrad-09\nTestrad-10\nTestrad-11\nTestrad-12")
-            FRAMES.listFrame.fs:SetJustifyH("Left") ]]
 
 -- Page 3
 FRAMES.tabContainer.page3 = CreateFrame("Frame", "TabPagesPage3", FRAMES.mainFrame)
@@ -487,24 +478,24 @@ FRAMES.extraInfoEditBox = CreateFrame("EditBox", "ExtraInfoEditBox", FRAMES.tabC
 -----------
 BUTTONS.tabButtonPage = {}
 
-BUTTONS.tabButtonPage[1] = CreateFrame("Button", "TabButtonPage1", FRAMES.mainFrame, "TabButtonTemplate")
-      BUTTONS.tabButtonPage[1].active = true
-      BUTTONS.tabButtonPage[1]:SetFrameLevel(3)
-      BUTTONS.tabButtonPage[1]:SetPoint("BOTTOMLEFT", FRAMES.tabContainer, "TOPLEFT", 15, -3)
-      BUTTONS.tabButtonPage[1]:SetSize(100, 20)
-      BUTTONS.tabButtonPage[1]:SetText("Items / rolls")
-
 BUTTONS.tabButtonPage[2] = CreateFrame("Button", "TabButtonPage2", FRAMES.mainFrame, "TabButtonTemplate")
-      BUTTONS.tabButtonPage[2].active = false
-      BUTTONS.tabButtonPage[2]:SetFrameLevel(2)
-      BUTTONS.tabButtonPage[2]:SetPoint("LEFT", BUTTONS.tabButtonPage[1], "RIGHT", 2, 0)
+      BUTTONS.tabButtonPage[2].active = true
+      BUTTONS.tabButtonPage[2]:SetFrameLevel(3)
+      BUTTONS.tabButtonPage[2]:SetPoint("BOTTOMLEFT", FRAMES.tabContainer, "TOPLEFT", 15, -3)
       BUTTONS.tabButtonPage[2]:SetSize(100, 20)
       BUTTONS.tabButtonPage[2]:SetText("SoftRes List")
+
+BUTTONS.tabButtonPage[1] = CreateFrame("Button", "TabButtonPage1", FRAMES.mainFrame, "TabButtonTemplate")
+      BUTTONS.tabButtonPage[1].active = false
+      BUTTONS.tabButtonPage[1]:SetFrameLevel(2)
+      BUTTONS.tabButtonPage[1]:SetPoint("LEFT", BUTTONS.tabButtonPage[2], "RIGHT", 2, 0)
+      BUTTONS.tabButtonPage[1]:SetSize(100, 20)
+      BUTTONS.tabButtonPage[1]:SetText("Items / rolls")
 
 BUTTONS.tabButtonPage[3] = CreateFrame("Button", "TabButtonPage3", FRAMES.mainFrame, "TabButtonTemplate")
       BUTTONS.tabButtonPage[3].active = false
       BUTTONS.tabButtonPage[3]:SetFrameLevel(2)
-      BUTTONS.tabButtonPage[3]:SetPoint("LEFT", BUTTONS.tabButtonPage[2], "RIGHT", 2, 0)
+      BUTTONS.tabButtonPage[3]:SetPoint("LEFT", BUTTONS.tabButtonPage[1], "RIGHT", 2, 0)
       BUTTONS.tabButtonPage[3]:SetSize(100, 20)
       BUTTONS.tabButtonPage[3]:SetText("Config")
 
@@ -541,13 +532,6 @@ BUTTONS.prepareItemButton = CreateFrame("Button", "PrepareItemButton", FRAMES.ta
       BUTTONS.prepareItemButton:Hide()
       BUTTONS.prepareItemButton:SetText("Prepare Item")
       
-BUTTONS.raidRollButton = CreateFrame("Button", "RaidRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
-      BUTTONS.raidRollButton:SetPoint("TOPLEFT", BUTTONS.announcedItemButton, "BOTTOMLEFT", -1, -24)
-      BUTTONS.raidRollButton:SetWidth(102)
-      BUTTONS.raidRollButton:SetHeight(20)
-      BUTTONS.raidRollButton:Hide()
-      BUTTONS.raidRollButton:SetText("Raid Roll")
-
 BUTTONS.softResRollButton = CreateFrame("Button", "SoftResRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
       BUTTONS.softResRollButton:SetPoint("LEFT", BUTTONS.prepareItemButton, "RIGHT", 3, 0)
       BUTTONS.softResRollButton:SetWidth(102)
@@ -555,8 +539,15 @@ BUTTONS.softResRollButton = CreateFrame("Button", "SoftResRollButton", FRAMES.ta
       BUTTONS.softResRollButton:Hide()
       BUTTONS.softResRollButton:SetText("SoftRes Roll")
 
+      BUTTONS.raidRollButton = CreateFrame("Button", "RaidRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
+      BUTTONS.raidRollButton:SetPoint("TOPLEFT", BUTTONS.softResRollButton, "BOTTOMLEFT", 0, -2)
+      BUTTONS.raidRollButton:SetWidth(102)
+      BUTTONS.raidRollButton:SetHeight(20)
+      BUTTONS.raidRollButton:Hide()
+      BUTTONS.raidRollButton:SetText("Raid Roll")
+
 BUTTONS.osRollButton = CreateFrame("Button", "OSRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
-      BUTTONS.osRollButton:SetPoint("TOP", BUTTONS.softResRollButton, "BOTTOM", 0, -2)
+      BUTTONS.osRollButton:SetPoint("TOP", BUTTONS.prepareItemButton, "BOTTOM", 0, -2)
       BUTTONS.osRollButton:SetWidth(30)
       BUTTONS.osRollButton:SetHeight(20)
       BUTTONS.osRollButton:Hide()
@@ -596,6 +587,19 @@ BUTTONS.skipItemButton = CreateFrame("Button", "RaidRollButton", FRAMES.tabConta
       BUTTONS.skipItemButton:Hide()
       BUTTONS.skipItemButton:SetText("Next Item")
 
+BUTTONS.addPenaltyButton = CreateFrame("CheckButton", "addPenaltyButton", FRAMES.tabContainer.page1, "UICheckButtonTemplate")
+      BUTTONS.addPenaltyButton:SetPoint("LEFT", BUTTONS.prepareItemButton, "LEFT", 0, 0)
+      BUTTONS.addPenaltyButton:SetWidth(20)
+      BUTTONS.addPenaltyButton:SetHeight(20)
+      BUTTONS.addPenaltyButton:SetChecked(true)
+      BUTTONS.addPenaltyButton:Hide()
+
+      BUTTONS.addPenaltyButton.fs = BUTTONS.addPenaltyButton:CreateFontString(nil, "OVERLAY")
+            BUTTONS.addPenaltyButton.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.addPenaltyButton.fs:SetPoint("LEFT", BUTTONS.addPenaltyButton, "RIGHT", 0, 0)
+            BUTTONS.addPenaltyButton.fs:SetJustifyH("LEFT")
+            BUTTONS.addPenaltyButton.fs:SetText("Add penalty (MS/OS)")
+
 -- Buttons page 2.
 BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.newListButton:SetPoint("TOPLEFT", FRAMES.listFrameContainer, "BOTTOMLEFT", -5, -5)
@@ -604,37 +608,37 @@ BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContain
       BUTTONS.newListButton:SetText("New List")
 
 BUTTONS.announceRulesButton = CreateFrame("Button", "AnnounceRulesButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.announceRulesButton:SetPoint("TOPLEFT", BUTTONS.newListButton, "BOTTOMLEFT", 0, -5)
+      BUTTONS.announceRulesButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
       BUTTONS.announceRulesButton:SetWidth(102)
       BUTTONS.announceRulesButton:SetHeight(20)
       BUTTONS.announceRulesButton:SetText("Announce Rules")
 
 BUTTONS.scanForSoftResButton = CreateFrame("Button", "ScanForSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.scanForSoftResButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
+      BUTTONS.scanForSoftResButton:SetPoint("LEFT", BUTTONS.announceRulesButton, "RIGHT", 4, 0)
       BUTTONS.scanForSoftResButton:SetWidth(102)
       BUTTONS.scanForSoftResButton:SetHeight(20)
       BUTTONS.scanForSoftResButton.normalText = "Scan SoftRes"
       BUTTONS.scanForSoftResButton.activeText = "Scanning"
       BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
 
-BUTTONS.historyButton = CreateFrame("Button", "HistoryButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.historyButton:SetPoint("TOP", BUTTONS.scanForSoftResButton, "BOTTOM", 0, -5)
-      BUTTONS.historyButton:SetWidth(102)
-      BUTTONS.historyButton:SetHeight(20)
-      BUTTONS.historyButton:SetText("History")
-      BUTTONS.historyButton:Hide() -- Not implemented yet, so we hide it.
-
 BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.addPlayerSoftResButton:SetPoint("LEFT", BUTTONS.scanForSoftResButton, "RIGHT", 4, 0)
+      BUTTONS.addPlayerSoftResButton:SetPoint("TOPLEFT", BUTTONS.newListButton, "BOTTOMLEFT", 0, -5)
       BUTTONS.addPlayerSoftResButton:SetWidth(102)
       BUTTONS.addPlayerSoftResButton:SetHeight(20)
       BUTTONS.addPlayerSoftResButton:SetText("Add Player")
 
 BUTTONS.editPlayerButton = CreateFrame("Button", "EditPlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.editPlayerButton:SetPoint("TOP", BUTTONS.addPlayerSoftResButton, "BOTTOM", 0, -5)
+      BUTTONS.editPlayerButton:SetPoint("LEFT", BUTTONS.addPlayerSoftResButton, "RIGHT", 4, 0)
       BUTTONS.editPlayerButton:SetWidth(102)
       BUTTONS.editPlayerButton:SetHeight(20)
-      BUTTONS.editPlayerButton:SetText("Delete Player")
+      BUTTONS.editPlayerButton:SetText("Remove Penalty")
+      BUTTONS.editPlayerButton:Show()
+
+BUTTONS.deletePlayerButton = CreateFrame("Button", "DeletePlayerButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.deletePlayerButton:SetPoint("LEFT", BUTTONS.editPlayerButton, "RIGHT", 4, 0)
+      BUTTONS.deletePlayerButton:SetWidth(102)
+      BUTTONS.deletePlayerButton:SetHeight(20)
+      BUTTONS.deletePlayerButton:SetText("Delete Player")
 
 -- Buttons Page 3
 BUTTONS.enableSoftResAddon = CreateFrame("CheckButton", "EnableSoftResAddon", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
@@ -778,21 +782,21 @@ FRAMES.deletePlayerPopupWindow = CreateFrame("Frame", "deletePlayerPopupWindow",
             FRAMES.deletePlayerPopupWindow.titleCenter:SetPoint("TOP", FRAMES.deletePlayerPopupWindow.TitleBg, "TOP", 0, -3)
             FRAMES.deletePlayerPopupWindow.titleCenter:SetText("Delete Player")
     
-      BUTTONS.editPlayerDropDown = CreateFrame("Button", "EditPlayerDropDown", FRAMES.deletePlayerPopupWindow, "UIDropDownMenuTemplate")
-            BUTTONS.editPlayerDropDown:SetPoint("TOP", FRAMES.deletePlayerPopupWindow, "TOP", 0, -75)
+      BUTTONS.deletePlayerDropDown = CreateFrame("Button", "DeletePlayerDropDown", FRAMES.deletePlayerPopupWindow, "UIDropDownMenuTemplate")
+            BUTTONS.deletePlayerDropDown:SetPoint("TOP", FRAMES.deletePlayerPopupWindow, "TOP", 0, -75)
                   
-            UIDropDownMenu_SetWidth(BUTTONS.editPlayerDropDown, 83)
-            UIDropDownMenu_SetButtonWidth(BUTTONS.editPlayerDropDown, 102)
-            UIDropDownMenu_JustifyText(BUTTONS.editPlayerDropDown, "LEFT")
+            UIDropDownMenu_SetWidth(BUTTONS.deletePlayerDropDown, 83)
+            UIDropDownMenu_SetButtonWidth(BUTTONS.deletePlayerDropDown, 102)
+            UIDropDownMenu_JustifyText(BUTTONS.deletePlayerDropDown, "LEFT")
 
-      BUTTONS.editPlayerDropDown.fs = BUTTONS.editPlayerDropDown:CreateFontString(nil, "OVERLAY")
-            BUTTONS.editPlayerDropDown.fs:SetFontObject("GameFontHighlight")
-            BUTTONS.editPlayerDropDown.fs:SetPoint("TOP", FRAMES.deletePlayerPopupWindow, "TOP", 0, -40)
-            BUTTONS.editPlayerDropDown.fs:SetText("To delete a player, just choose it in the drop-down.\nThen write 'delete' in the editBox.")
-            BUTTONS.editPlayerDropDown.fs:SetJustifyH("Center")
+      BUTTONS.deletePlayerDropDown.fs = BUTTONS.deletePlayerDropDown:CreateFontString(nil, "OVERLAY")
+            BUTTONS.deletePlayerDropDown.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.deletePlayerDropDown.fs:SetPoint("TOP", FRAMES.deletePlayerPopupWindow, "TOP", 0, -40)
+            BUTTONS.deletePlayerDropDown.fs:SetText("To delete a player, just choose it in the drop-down.\nThen write 'delete' in the editBox.")
+            BUTTONS.deletePlayerDropDown.fs:SetJustifyH("Center")
 
       FRAMES.deletePlayerEditBox = CreateFrame("EditBox", "deletePlayerEditBox", FRAMES.deletePlayerPopupWindow, "InputBoxTemplate")
-            FRAMES.deletePlayerEditBox:SetPoint("TOP", BUTTONS.editPlayerDropDown, "BOTTOM", 0, -25)
+            FRAMES.deletePlayerEditBox:SetPoint("TOP", BUTTONS.deletePlayerDropDown, "BOTTOM", 0, -25)
             FRAMES.deletePlayerEditBox:SetWidth(150)
             FRAMES.deletePlayerEditBox:SetHeight(20)
             FRAMES.deletePlayerEditBox:ClearFocus()
@@ -821,3 +825,109 @@ FRAMES.deletePlayerPopupWindow = CreateFrame("Frame", "deletePlayerPopupWindow",
             BUTTONS.deletePlayerPopUpCancelButton:SetWidth(102)
             BUTTONS.deletePlayerPopUpCancelButton:SetHeight(20)
             BUTTONS.deletePlayerPopUpCancelButton:SetText("Cancel")
+
+-- Custom popup window for editing a player.
+FRAMES.editPlayerPopupWindow = CreateFrame("Frame", "editPlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
+      FRAMES.editPlayerPopupWindow:SetFrameStrata("FULLSCREEN")
+      FRAMES.editPlayerPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
+      FRAMES.editPlayerPopupWindow:SetSize(300, 250)
+      FRAMES.editPlayerPopupWindow:SetMovable(true)
+      FRAMES.editPlayerPopupWindow:EnableMouse(true)
+      FRAMES.editPlayerPopupWindow:RegisterForDrag("LeftButton")
+      FRAMES.editPlayerPopupWindow:SetScript("OnDragStart", FRAMES.editPlayerPopupWindow.StartMoving)
+      FRAMES.editPlayerPopupWindow:SetScript("OnDragStop", FRAMES.editPlayerPopupWindow.StopMovingOrSizing)
+      FRAMES.editPlayerPopupWindow:Hide()
+
+      FRAMES.editPlayerPopupWindow.title = FRAMES.editPlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.editPlayerPopupWindow.title:SetFontObject("GameFontHighlight")
+            FRAMES.editPlayerPopupWindow.title:SetPoint("TOPLEFT", FRAMES.editPlayerPopupWindow.TitleBg, "TOPLEFT", 3, -3)
+            FRAMES.editPlayerPopupWindow.title:SetText("Ω SoftRes")
+      
+      FRAMES.editPlayerPopupWindow.titleCenter = FRAMES.editPlayerPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.editPlayerPopupWindow.titleCenter:SetFontObject("GameFontHighlight")
+            FRAMES.editPlayerPopupWindow.titleCenter:SetPoint("TOP", FRAMES.editPlayerPopupWindow.TitleBg, "TOP", 0, -3)
+            FRAMES.editPlayerPopupWindow.titleCenter:SetText("Remove Penalty")
+    
+      BUTTONS.editPlayerDropDown = CreateFrame("Button", "EditPlayerDropDown", FRAMES.editPlayerPopupWindow, "UIDropDownMenuTemplate")
+            BUTTONS.editPlayerDropDown:SetPoint("TOP", FRAMES.editPlayerPopupWindow, "TOP", -75, -50)
+                  
+            UIDropDownMenu_SetWidth(BUTTONS.editPlayerDropDown, 83)
+            UIDropDownMenu_SetButtonWidth(BUTTONS.editPlayerDropDown, 102)
+            UIDropDownMenu_JustifyText(BUTTONS.editPlayerDropDown, "LEFT")
+
+      BUTTONS.editPlayerDropDown.fs = BUTTONS.editPlayerDropDown:CreateFontString(nil, "OVERLAY")
+            BUTTONS.editPlayerDropDown.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.editPlayerDropDown.fs:SetPoint("BOTTOM", BUTTONS.editPlayerDropDown, "TOP", 0, 5)
+            BUTTONS.editPlayerDropDown.fs:SetText("Choose a player.")
+            BUTTONS.editPlayerDropDown.fs:SetJustifyH("Center")
+
+      BUTTONS.editPlayerItemDropDown = CreateFrame("Button", "EditPlayerItemDropDown", FRAMES.editPlayerPopupWindow, "UIDropDownMenuTemplate")
+            BUTTONS.editPlayerItemDropDown:SetPoint("LEFT", BUTTONS.editPlayerDropDown, "RIGHT", 20, 0)
+                  
+            UIDropDownMenu_SetWidth(BUTTONS.editPlayerItemDropDown, 83)
+            UIDropDownMenu_SetButtonWidth(BUTTONS.editPlayerItemDropDown, 102)
+            UIDropDownMenu_JustifyText(BUTTONS.editPlayerItemDropDown, "LEFT")
+
+      BUTTONS.editPlayerItemDropDown.fs = BUTTONS.editPlayerItemDropDown:CreateFontString(nil, "OVERLAY")
+            BUTTONS.editPlayerItemDropDown.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.editPlayerItemDropDown.fs:SetPoint("BOTTOM", BUTTONS.editPlayerItemDropDown, "TOP", 0, 5)
+            BUTTONS.editPlayerItemDropDown.fs:SetText("Choose an item.")
+            BUTTONS.editPlayerItemDropDown.fs:SetJustifyH("Center")
+
+      BUTTONS.rollTypeDropDown = CreateFrame("Button", "EollTypeDropDown", FRAMES.editPlayerPopupWindow, "UIDropDownMenuTemplate")
+            BUTTONS.rollTypeDropDown:SetPoint("TOP", BUTTONS.editPlayerDropDown, "BOTTOM", 0, -25)
+                  
+            UIDropDownMenu_SetWidth(BUTTONS.rollTypeDropDown, 83)
+            UIDropDownMenu_SetButtonWidth(BUTTONS.rollTypeDropDown, 102)
+            UIDropDownMenu_JustifyText(BUTTONS.rollTypeDropDown, "LEFT")
+
+            BUTTONS.rollTypeDropDown.fs = BUTTONS.rollTypeDropDown:CreateFontString(nil, "OVERLAY")
+                  BUTTONS.rollTypeDropDown.fs:SetFontObject("GameFontHighlight")
+                  BUTTONS.rollTypeDropDown.fs:SetPoint("BOTTOM", BUTTONS.rollTypeDropDown, "TOP", 0, 5)
+                  BUTTONS.rollTypeDropDown.fs:SetText("Set the rollType")
+                  BUTTONS.rollTypeDropDown.fs:SetJustifyH("Center")
+      
+
+      BUTTONS.editPenaltyButton = CreateFrame("CheckButton", "editPenaltyButton", FRAMES.editPlayerPopupWindow, "UICheckButtonTemplate")
+            BUTTONS.editPenaltyButton:SetPoint("LEFT", BUTTONS.rollTypeDropDown, "RIGHT", 5, 0)
+            BUTTONS.editPenaltyButton:SetWidth(20)
+            BUTTONS.editPenaltyButton:SetHeight(20)
+            BUTTONS.editPenaltyButton:SetChecked(true)
+            BUTTONS.editPenaltyButton:Show()
+      
+            BUTTONS.editPenaltyButton.fs = BUTTONS.editPenaltyButton:CreateFontString(nil, "OVERLAY")
+                  BUTTONS.editPenaltyButton.fs:SetFontObject("GameFontHighlight")
+                  BUTTONS.editPenaltyButton.fs:SetPoint("LEFT", BUTTONS.editPenaltyButton, "RIGHT", 5, 0)
+                  BUTTONS.editPenaltyButton.fs:SetJustifyH("LEFT")
+                  BUTTONS.editPenaltyButton.fs:SetText("Add Penalty")
+
+      FRAMES.deletePlayerItemEditBox = CreateFrame("EditBox", "deletePlayerItemEditBox", FRAMES.editPlayerPopupWindow, "InputBoxTemplate")
+            FRAMES.deletePlayerItemEditBox:SetPoint("BOTTOM", FRAMES.editPlayerPopupWindow, "BOTTOM", 0, 40)
+            FRAMES.deletePlayerItemEditBox:SetWidth(150)
+            FRAMES.deletePlayerItemEditBox:SetHeight(20)
+            FRAMES.deletePlayerItemEditBox:ClearFocus()
+            FRAMES.deletePlayerItemEditBox:SetAutoFocus(false)
+            FRAMES.deletePlayerItemEditBox:SetMaxLetters(6)
+            FRAMES.deletePlayerItemEditBox:SetAltArrowKeyMode(false)
+            FRAMES.deletePlayerItemEditBox:EnableMouse(true)
+            FRAMES.deletePlayerItemEditBox:SetText("")
+            FRAMES.deletePlayerItemEditBox:SetJustifyH("Center")
+
+            FRAMES.deletePlayerItemEditBox.fs = FRAMES.deletePlayerItemEditBox:CreateFontString(nil, "OVERLAY")
+                  FRAMES.deletePlayerItemEditBox.fs:SetFontObject("GameFontHighlight")
+                  FRAMES.deletePlayerItemEditBox.fs:SetPoint("BOTTOM", FRAMES.deletePlayerItemEditBox, "TOP", 0, 5)
+                  FRAMES.deletePlayerItemEditBox.fs:SetText("To delete the item from the player\nWrite 'delete' in the editbox then\npress 'Edit Item'.\nWarning! This action is irreversible.")
+                  FRAMES.deletePlayerItemEditBox.fs:SetJustifyH("Center")
+
+      BUTTONS.editPlayerPopUpDeleteButton = CreateFrame("Button", "editPlayerPopUpDeleteButton", FRAMES.editPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerPopUpDeleteButton:SetPoint("BOTTOM", FRAMES.editPlayerPopupWindow, "BOTTOM", -55, 10)
+            BUTTONS.editPlayerPopUpDeleteButton:SetWidth(102)
+            BUTTONS.editPlayerPopUpDeleteButton:SetHeight(20)
+            BUTTONS.editPlayerPopUpDeleteButton:SetText("Edit Item")
+            BUTTONS.editPlayerPopUpDeleteButton:Hide()
+      
+      BUTTONS.editPlayerPopUpCancelButton = CreateFrame("Button", "editPlayerPopUpCancelButton", FRAMES.editPlayerPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerPopUpCancelButton:SetPoint("BOTTOM", FRAMES.editPlayerPopupWindow, "BOTTOM", 55, 10)
+            BUTTONS.editPlayerPopUpCancelButton:SetWidth(102)
+            BUTTONS.editPlayerPopUpCancelButton:SetHeight(20)
+            BUTTONS.editPlayerPopUpCancelButton:SetText("Done")

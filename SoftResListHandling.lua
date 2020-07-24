@@ -203,13 +203,14 @@ local function checkIfReceivedItems(name)
     -- Check to see if the player has recieved items.
     if #player.receivedItems > 0 then
         for j = 1, #player.receivedItems do
+            local penaltyOnItem = player.receivedItems[j][5]
             local lootItem = "item:" .. player.receivedItems[j][3] .. "::::::::::::"
-            local lootIconText = SoftResConfig.icons.loot
+            local lootIconText = SoftResConfig.icons.noLoot
 
-            if player.receivedItems[j][2] == "ms" then
-                lootIconText = SoftResConfig.icons.loot
-            else
-                lootIconText = SoftResConfig.icons.loot
+            if player.receivedItems[j][2] == "ms" or player.receivedItems[j][2] == "os" then
+                if penaltyOnItem then
+                    lootIconText = SoftResConfig.icons.loot
+                end
             end
 
             lootIcon = lootIcon .. "|H" .. lootItem .. "|h" .. lootIconText .. "|h"
@@ -285,6 +286,38 @@ local function checkIfPlayerIsOffline(player)
     return ""
 end
 
+-- local function for getting the penalty value.
+-- Takes a player table (not only the name), returns ms and os penalties.
+local function getRollPenaltyPlayer(player)
+    if player then
+        
+        local msDecay = SoftResConfig.dropDecay.ms.value
+        local osDecay = SoftResConfig.dropDecay.os.value
+        local msText = ""
+        local osText = ""
+        local text = ""
+        local separator = ""
+
+        if msDecay > 0 then
+            msText = "MS-" .. msDecay
+        end
+        
+        if osDecay > 0 then
+            osText = "OS-" .. osDecay
+        end
+
+        if msDecay > 0 and osDecay > 0 then
+            separator = ", "
+        end
+
+        if msDecay > 0 or osDecay > 0 then
+            text = "(" .. msText .. separator .. osText .. ")"
+        end
+
+        return text
+    end
+end
+
 -- local function for getting roll and penalty.
 -- Takes a roll and a penalty. Returns formated information about the roll.
 local function checkIfRollPenalty(roll, rollPenalty)
@@ -295,7 +328,7 @@ local function checkIfRollPenalty(roll, rollPenalty)
     local iconDice = SoftResConfig.icons.dice
     local iconLoot = SoftResConfig.icons.loot
 
-    return "(-" .. iconLoot .. rollPenalty ..")"    
+    return "(-" .. rollPenalty ..")"    
 end
 
 -- local function for return an icon if received the softReserved item.
@@ -338,6 +371,7 @@ function SoftRes.list:showFullSoftResList()
     FRAMES.mainFrame.titleCenter:SetText(SoftResList.date)
 
     for i = 1, #SoftResList.players do
+        local player = SoftResList.players[i]
         local name = SoftResList.players[i].name
         local itemId = SoftResList.players[i].softReserve.itemId
         local groupPosition = SoftResList.players[i].groupPosition
@@ -394,7 +428,7 @@ function SoftRes.list:showFullSoftResList()
     local listHeight = ((12 * #SoftResList.players) + 24) - (#SoftResList.players * (UIParent:GetScale() - 0.711))-- (Textheight * listed players) + title
     textFrame:SetSize(500, listHeight)
     textFrame:EnableMouseWheel(true);
-    textFrame:SetScript("OnHyperlinkClick",_G.ChatFrame_OnHyperlinkShow)
+    textFrame:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow)
     textFrame:Clear()
     textFrame:AddMessage(infoText .. text, 1.0, 1.0, 1.0, nil, nil)
 
@@ -504,7 +538,8 @@ function SoftRes.list:showPrepSoftResList()
         -- this is the last row of the rollers.
         -- We don't show it if the item is soft-reserved.
         if not SoftRes.announcedItem.softReserved then
-            text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+            --text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+            text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
         end
     end
 
@@ -536,7 +571,8 @@ function SoftRes.list:showPrepSoftResList()
             if not rollerCheck then tempRollValue = "SoftRes" end
 
 
-            text = text .. "(" .. tempRollValue .. ") " .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+            --text = text .. "(" .. tempRollValue .. ") " .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+            text = text .. "(" .. tempRollValue .. ") " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
         end
     end
 
@@ -563,7 +599,9 @@ function SoftRes.list:getSoftReserves(arg1, arg2)
             SoftResList.players[i].softReserve.itemId = itemId
 
             -- Send message ot the player.
-            local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+            local itemLink = SoftRes.helpers:getItemLinkFromId(SoftResList.players[i].softReserve.itemId)
+            if (not itemLink) then return end
+
             local whisperText = "Your SoftReserve of " .. tostring(itemLink) .. " is confirmed. GL HF"
             ChatThrottleLib:SendChatMessage("NORMAL", "SoftResRollAnnounce", whisperText, "WHISPER", nil, name, nil, nil, nil)
         end
@@ -666,6 +704,14 @@ function SoftRes.list:handleRollButtons()
         BUTTONS.raidRollButton:Show()
         BUTTONS.osRollButton:Show()
         BUTTONS.msRollButton:Show()
+        BUTTONS.addPenaltyButton:Show()
         BUTTONS.ffaRollButton:Show()
+    end
+
+    -- Show skip-button.
+    if #SoftRes.droppedItems > 1 then
+        BUTTONS.skipItemButton:Show()
+    else
+        BUTTONS.skipItemButton:Hide()
     end
 end

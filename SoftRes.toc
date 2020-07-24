@@ -11,9 +11,9 @@ libs\AceAddon-3.0.lua
 libs\AceTimer-3.0.lua
 
 SoftRes.lua
+SoftResUI.lua
 SoftResHelpers.lua
 SoftResListHandling.lua
 SoftResPlayerHandling.lua
-SoftResUI.lua
 SoftResUIScripts.lua
 SoftResEvents.lua

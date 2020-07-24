@@ -70,6 +70,7 @@ SoftRes = {}
       
       SoftRes.state = {}
             SoftRes.state.__index = SoftRes.state
+            SoftRes.state.forced = false
             SoftRes.state.lootOpened = false
             SoftRes.state.announcedItem = false
             SoftRes.state.listeningToRolls = false
@@ -105,7 +106,7 @@ SoftRes = {}
             shitRolls = {},
             manyRolls = {},
             notElegibleRolls = {},
-            restRollers = {},            
+            restRollers = {},
       }
       SoftRes.preparedItem = {
             itemId = nil,
@@ -134,8 +135,12 @@ SoftResDB = {
 -- SoftRes Debugging.
 ---------------------
 -- For debugging. We use this to print text.
-function SoftRes.debug:print(text)
-      if SoftRes.debug.enabled then print(text) end
+function SoftRes.debug:print(text, chat)
+      if chat then
+            DEFAULT_CHAT_FRAME:AddMessage(text)
+      elseif SoftRes.debug.enabled then
+            print(text)
+      end
 end
 --------------------------------------------------------------------
 -- Send message, using ChatThrottleLib.
