@@ -1208,7 +1208,7 @@ BUTTONS.editPlayerPopUpEditButton:SetScript("OnClick", function(self)
     local player = SoftRes.player:getPlayerFromPlayerName(UIDropDownMenu_GetText(BUTTONS.editPlayerEditDropDown))
     if not player then return end
 
-    local itemId = FRAMES.editPlayerEditItemEditBox:GetText()
+    local itemId = SoftRes.helpers:getItemIdFromLink(FRAMES.editPlayerEditItemEditBox:GetText())
     local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
     local receivedSoftReserve = BUTTONS.editPlayerEditSoftResButton:GetChecked()
 

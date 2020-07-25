@@ -87,7 +87,7 @@ SoftRes = {}
             }
       
       SoftRes.droppedItems = {}
-            SoftRes.droppedItems.__index = SoftRes.droppedItems
+            --SoftRes.droppedItems.__index = SoftRes.droppedItems
       
       SoftRes.skippedItem = 0
 
@@ -126,6 +126,12 @@ SoftRes = {}
       
       SoftRes.editPlayer = false
       SoftRes.addPlayer = false
+
+      SoftRes.onyxiaFix = {
+            onyxia = {18422, 18423},
+            nefarian = {19002, 19003},
+      }
+            --SoftRes.onyxiaFix.__index = SoftRes.onyxiaFix
 --------------------------------------------------------------------
 
 -- SoftResDB, a table with saved values that will be kept forever.

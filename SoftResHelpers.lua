@@ -132,6 +132,28 @@ function SoftRes.helpers:findStringInTable(table, string)
       return false
 end
 
+-- Onyxia fix (all fixes).
+-- Onyxia head have two versions. We make them both the same.
+-- Takes a dropped ItemId and a SoftReserved itemId. Returns same number of both.
+function SoftRes.helpers:onyxiaFix(dropId, reserveId)
+      local itemId = nil
+      local reservedItemId = nil
+
+      -- Go through the items with same names, but still different. IE Onyxia head.
+      for k, v in pairs(SoftRes.onyxiaFix) do
+            if tonumber(dropId) == v[1] or tonumber(dropId) == v[2] then
+                  if tonumber(reserveId) == v[1] or tonumber(reserveId) == v[2] then
+                        itemId = v[1]
+                        reservedItemId = v[1]
+                        return itemId, reservedItemId
+                  end
+            end
+      end
+
+      -- If we don't find the onyxa reserve, we simply return the passed values.
+      return dropId, reserveId
+end
+
 -- Takes a rollType and returns true or false if that rollType has a penalty for it or not.
 -- Checks for the value of the corresponding rolltype and if it's checked or not.
 function SoftRes.helpers:getPenaltyStatus(rollType)
@@ -203,6 +225,10 @@ function SoftRes.helpers:getSoftReservers(itemId)
 
       local softReservers = {}
       for i = 1, #SoftResList.players do
+
+            -- Onyxia head fix.
+            -- Since there are two versions of the Onyxia Head, we have to check for both of them.
+            itemId, SoftResList.players[i].softReserve.itemId = SoftRes.helpers:onyxiaFix(itemId, SoftResList.players[i].softReserve.itemId)
 
             -- We search for the player(s) who has SoftReserved this item.
             if tonumber(SoftResList.players[i].softReserve.itemId) == tonumber(itemId) then
