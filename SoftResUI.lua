@@ -184,6 +184,7 @@ FRAMES.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFram
       FRAMES.mainFrame:RegisterForDrag("LeftButton")
       FRAMES.mainFrame:SetScript("OnDragStart", FRAMES.mainFrame.StartMoving)
       FRAMES.mainFrame:SetScript("OnDragStop", FRAMES.mainFrame.StopMovingOrSizing)
+      FRAMES.mainFrame:Hide()
 
       FRAMES.mainFrame.title = FRAMES.mainFrame:CreateFontString(nil, "Overlay")
             FRAMES.mainFrame.title:SetFontObject("GameFontHighlight")
