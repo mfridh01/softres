@@ -2,15 +2,15 @@
 ### A SoftReservation addon for WoW Classic.
 
 ## Who made SoftRes and why?
-**SoftRes** is made by Mikael "Snits" Fridh. (Snits-NoggenfoggerEU)
-This is my first addon (well second, since I first made **SoftRes** then re-wrote it due to many bugs)
+**SoftRes** is made by Mikael "Snits" Fridh. (Snits-NoggenfoggerEU)  
+This is my first addon (well second, since I first made **SoftRes** then re-wrote it due to many bugs)  
 
-When I joined the guild <OMEGA> on NoggenfoggerEU, I had no prior experience in raiding.
+When I joined the guild _OMEGA_ on NoggenfoggerEU, I had no prior experience in raiding.
 The first ZG run I joined, I noticed how messy everything was and all players had to keep track on their own stuff and the ML had to check lists and stuff.
 I decided to create an addon to help with that. A **SoftRes** run should go smoothly, wether it's PUG or guild.
 
 ## Thanks to:
-Thanks to <OMEGA> for supporting me in the creation of **SoftRes** and testing it on our Guild-Runs.
+Thanks to _OMEGA_ for supporting me in the creation of **SoftRes** and testing it on our Guild-Runs.
 Extra shoutout to Vadfangördu, Velina and everyone who has whispered me while the addon was used.
 
 ## What is SoftRes?
@@ -20,32 +20,32 @@ Extra shoutout to Vadfangördu, Velina and everyone who has whispered me while t
 * Will count roll-penalties (if configured)
 
 ## No more Google sheets.
-**SoftRes** takes away the need of having sheets with reservations.
-No more checking who reserved what.
-No more "Speak up if your reserved item drops".
+**SoftRes** takes away the need of having sheets with reservations.  
+No more checking who reserved what.  
+No more "Speak up if your reserved item drops".  
 The players can now focus on doing the killing and the ML can easily see who reserved what and won what.
 
 ## What is SoftRes, NOT?
-**SoftRes** is a tool for **HELPING** the ML with keeping track of the **SoftRes**erved items.
+**SoftRes** is a tool for **HELPING** the ML with keeping track of the **SoftRes**erved items.  
 It will NOT automatically distribute items. It will only Announce Roll-winners and won items, roll-penalties and such.
-The ML will still have to manually distribute items and can do whatever he wants, even if **SoftRes** shows one thing, the ML can do another.
-**SoftRes** does not automatically switch between loot types. So if the ML wants the trash loot too be rolled for normally, that will have to be switched manually.
+The ML will still have to manually distribute items and can do whatever he wants, even if **SoftRes** shows one thing, the ML can do another.  
+**SoftRes** does not automatically switch between loot types. So if the ML wants the trash loot too be rolled for normally, that will have to be switched manually.  
     * Don't forget to put ML back again before bosses ... *cough*
 
 ## What's so good about SoftRes?
 With **SoftRes**, only the Master Looter needs to have the addon. Everything is done so that everyone can see.
-It announces winners and who has **SoftRes**erved what item when it drops.
+It announces winners and who has **SoftRes**erved what item when it drops.  
 No more Google sheets.
 
 ## What's bad about SoftRes?
-**SoftRes** assumes that you can link an item in chat.
+**SoftRes** assumes that you can link an item in chat.  
 But really? Who doesn't have an addon that shows drops in dungeons?
 
-## Whait! It announces and writes in chat in stuff. Doesn't that get messy?
-There will be some spamming in chat, yes.
-But that would happen even without **SoftRes** AND the ML would have to do it manually.
-**SoftRes** uses a library called "ChatThrottle" to make sure that the spams are kept in an acceptable pace.
-    * The user will NOT be thrown out of the game for spamming.
+## Whait! It announces and writes in chat and stuff. Doesn't that get messy?
+There will be some spamming in chat, yes.  
+But that would happen even without **SoftRes** AND the ML would have to do it manually.  
+**SoftRes** uses a library called "ChatThrottle" to make sure that the spams are kept in an acceptable pace.  
+    * The user will NOT be thrown out of the game for spamming.  
 **SoftRes** uses another library called "AceTimers" for handling the timers.
 
 ## How do you actually use **SoftRes**?
@@ -56,8 +56,8 @@ Step-by-step:
 1. The ML will go through the configurations and make sure they are as he wants them, or what's agreed upon.
     1. You can configure loot-timers, loot-penalties..
     1. There is an extra box for custom information.
-        1. Ony-Head is reserved for guild.
-        1. Need on all coins and bijous are.
+        1. I.e. "Ony-Head is reserved for guild."
+        1. I.e. "Need on all coins and bijous."
 1. He will then announce the rules.
     1. **SoftRes** will post them in /raid.
     1. **SoftRes** will also, at this stage, start the scanner of **SoftRes**ervations.
@@ -69,9 +69,9 @@ Step-by-step:
 1. When an item drops, the ML makes his choice on roll-type.
 
 ## Someone joined late, can we add that player?
-YES! The user of **SoftRes** can manually Add/Edit/Remove players from the list.
-YES! The user of **SoftRes** can manually Add/Edit/Remove won items.
-YES! The user of **SoftRes** can manually ..... you can do it all.
+YES! The user of **SoftRes** can manually Add/Edit/Remove players from the list.  
+YES! The user of **SoftRes** can manually Add/Edit/Remove won items.  
+YES! The user of **SoftRes** can manually ..... you can do it all.  
 
 ## What are the roll-rules?
 In **SoftRes** you can configure some loot rules.
