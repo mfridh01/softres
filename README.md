@@ -92,24 +92,26 @@ If the item is NOT **SoftRes**erved the choices are then: MS-roll, OS-roll, FFA-
 * OS-Roll = **SoftRes** will announce an Off Spec roll.
     * If no one rolled for that OS roll, then the ML does whatever is agreed on, with the item.
 * FFA-Roll = **SoftRes** will announce a Free for all roll.
-    * This roll gives no penalty, even if you chose to put it there.
+    * This roll gives no penalty, even if the Penalty checkbox is enabled.
     * An FFA-roll is meant to give every player the opportunity to roll on an item.
 * Raid-Roll = **SoftRes** will announce a Raid-Roll.
     * **SoftRes** will make the ML roll between (1- amount of members in raid). The one on the roll-position will be announced as the winner.
     * It counts from Group1 position 1 = **1**, Group2 position 1 = **6**. and so on.
 
 If the item is **SoftRes**erved, the only choice you can make is to **SoftRes**-roll the item.
-* **SoftRes** will announce who are elegible for rolls and will announce (once every xxx-seconds*) who has not rolled for the item.
+* **SoftRes** will announce who are elegible for rolls and will announce (once every ##-seconds*) who has not rolled for the item.
     * When everyone has rolled, it announces the winner.
     * **SoftRes**erved item wins, does **NOT** give a penalty on rolls.
-* If the ML decides that the roll has been waiting for a player, for too long (ie, that player is offline or whatever) the ML can force-announce the winner.
+* If the ML decides that the roll has been waiting for a player, for too long (ie, that player is offline or whatever) the ML can force-announce the winner. (By pressing the "Announce" button.)
     * The winner will then be the one with the highest roll.
+
+*##-seconds* = Configurable.
 
 ## It reads the rolls? But what if someone "cheats"?
 Let's face it. We know that sometimes things goes really fast and it's easy to miss what people do.
 People are people and there are always some who will try and cheat.
 * Let's say that someone tries to /roll 100-100.
-    * **SoftRes** will catch that and write in chat, that that type of roll is not supported and give them a chance to re-roll.
+    * **SoftRes** will catch that and write in chat, that this type of roll is not supported and give them a chance to re-roll.
 
 ## Some configs that makes sense.
 Some MLs prefers to have a loot-system that deals with a player winning an item, has lower prio than players who has not won an item.
