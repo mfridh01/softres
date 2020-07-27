@@ -708,15 +708,29 @@ function SoftRes.list:handleRollButtons()
 
     -- We check if there are softreservers for the current item.
     if #SoftRes.preparedItem.elegible == 1 then
+
+        -- Move the announce button
+        BUTTONS.announceRollsButton:SetPoint("LEFT", BUTTONS.softResRollButton, "LEFT", 0, 0)
         BUTTONS.announceRollsButton:Show()
+        BUTTONS.announceRollsButton:SetText("SoftRes Roll")
+
     elseif #SoftRes.preparedItem.elegible > 1 and SoftRes.announcedItem.softReserved then
         BUTTONS.softResRollButton:Show()
+
+        BUTTONS.announceRollsButton:SetPoint("LEFT", BUTTONS.softResRollButton, "RIGHT", 3, 0)
+        BUTTONS.announceRollsButton:Hide()
+        BUTTONS.announceRollsButton:SetText("Announce Result")
+
     else
         BUTTONS.raidRollButton:Show()
         BUTTONS.osRollButton:Show()
         BUTTONS.msRollButton:Show()
         BUTTONS.addPenaltyButton:Show()
         BUTTONS.ffaRollButton:Show()
+
+        BUTTONS.announceRollsButton:SetPoint("LEFT", BUTTONS.softResRollButton, "RIGHT", 3, 0)
+        BUTTONS.announceRollsButton:Hide()
+        BUTTONS.announceRollsButton:SetText("Announce Result")
     end
 
     -- Show skip-button.

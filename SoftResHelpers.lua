@@ -472,6 +472,9 @@ local function getRoll(string)
       local listenToRolls = SoftRes.state.listeningToRolls
       local listenToRaidRolls = SoftRes.state.listeningToRaidRolls
 
+      -- If we want to get the raid-rolls, but someone else is rolling, just ignore that roll.
+      if listenToRaidRolls and user ~= GetUnitName("Player") then return end
+
       -- if it's not a roll we're listning to.
       if splitString[2] ~= "rolls" then return nil end
 
@@ -538,13 +541,12 @@ local function getRoll(string)
 
 
       -- Return the roll
-      --if listenToRolls then -- FOR TESTING. REMOVE LATER.
-      if listenToRolls and splitString[4] == acceptedRoll then
+      -- if it's a raidRoll, only take the rolls form the player who initiated the roll.
+      if listenToRaidRolls and user == GetUnitName("Player") then
             return user, value
       
-      -- if it's a raidRoll, only take the rolls form the player who initiated the roll.
-      elseif listenToRaidRolls and user == GetUnitName("Player") then
-         return user, value
+      elseif listenToRolls and splitString[4] == acceptedRoll then
+            return user, value      
       end
 end
 
@@ -702,6 +704,7 @@ function SoftRes.helpers:raidRollForItem()
 end
 
 function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
+      if not rollType then return end
       -- if we FFA roll, we get the OS timer, but keep the rolltype.
       local realRollType = rollType
 
@@ -720,7 +723,7 @@ function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
             penaltyText = "No Penalty"
       end
 
-      SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " " .. beginningText .. "-roll (" .. penaltyText .. ".)")
+      SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " " .. beginningText .. " Roll NOW! (" .. penaltyText .. ".)")
       SoftRes.announce:sendMessageToChat("Party", "+-[" .. beginningText .. "-rolls start]----------+")
 
       -- Listen to rolls again.
@@ -802,7 +805,7 @@ function SoftRes.helpers:softResCountDown(players, rolls)
       SoftRes.rollType = "softRes"
 
       if SoftRes.state.announcedItem == false then
-            SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " SoftRes-roll")
+            SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " SoftRes Roll NOW!")
             SoftRes.announce:sendMessageToChat("Party_Leader", playerNames)
             SoftRes.announce:sendMessageToChat("Party", "+-[SoftRes-rolls start]----------+")
 
@@ -982,6 +985,7 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
             local announceText = "One SoftRes. Grats: " .. winnerName .. "."
             local linkedItem = SoftRes.helpers:getItemLinkFromId(SoftRes.preparedItem.itemId)
 
+            -- Announce winner
             SoftRes.helpers:handleWinner(winnerName, _, "softRes", _)
             SoftRes.announce:sendMessageToChat("Party_Leader", linkedItem)
             SoftRes.announce:sendMessageToChat("Party_Leader", announceText)
