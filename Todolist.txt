@@ -33,3 +33,10 @@
 
 
 -- ADD a FORCE announce winner, on SoftReserves, if someone doesn't roll that is.
+
+
+
+
+
+Tell ppl when the addon is public:
+    Narxs

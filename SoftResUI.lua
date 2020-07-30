@@ -216,7 +216,7 @@ FRAMES.tabContainer = CreateFrame("Frame", "TabContainer", FRAMES.mainFrame, "In
       })
 
 FRAMES.addonIndicator = CreateFrame("Frame", "AddonIndicatorFrame", FRAMES.mainFrame)
-      FRAMES.addonIndicator:SetPoint("TOPRIGHT", FRAMES.mainFrame, "TOPRIGHT", -7, -25)
+      FRAMES.addonIndicator:SetPoint("TOPRIGHT", FRAMES.mainFrame, "TOPRIGHT", -20, 0)
       FRAMES.addonIndicator:SetSize(25,25)
       FRAMES.addonIndicator.texture = FRAMES.addonIndicator:CreateTexture("AddonIndicatorFrameTexture", "OVERLAY")
       FRAMES.addonIndicator.texture:SetAllPoints(true)
@@ -506,6 +506,17 @@ BUTTONS.tabButtonPage[3] = CreateFrame("Button", "TabButtonPage3", FRAMES.mainFr
       end
 
 -- Buttons page 1.
+BUTTONS.masterLooterCheckButton = CreateFrame("CheckButton", "masterLooterCheckButton", FRAMES.mainFrame, "UICheckButtonTemplate")
+      BUTTONS.masterLooterCheckButton:SetPoint("TOPRIGHT", FRAMES.mainFrame, "TOPRIGHT", -7, -30)
+      BUTTONS.masterLooterCheckButton:SetWidth(20)
+      BUTTONS.masterLooterCheckButton:SetHeight(20)
+      BUTTONS.masterLooterCheckButton:SetChecked(false)
+
+      BUTTONS.masterLooterCheckButton.fs = BUTTONS.masterLooterCheckButton:CreateFontString(nil, "OVERLAY")
+            BUTTONS.masterLooterCheckButton.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.masterLooterCheckButton.fs:SetPoint("RIGHT", BUTTONS.masterLooterCheckButton, "LEFT", 0, 0)
+            BUTTONS.masterLooterCheckButton.fs:SetText("ML:")
+
 BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAMES.tabContainer.page1)
       BUTTONS.announcedItemButton:SetSize(32, 32)
       BUTTONS.announcedItemButton:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", -3, -8)

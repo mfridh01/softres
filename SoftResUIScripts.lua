@@ -7,6 +7,7 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
   self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed;
   
   if (self.timeSinceLastUpdate > FRAMES.mainFrame.updateInterval) then
+
     -- If we're scanning for softresses.
     -- Show an indicator on the top right, so it's shown.
     if SoftRes.state.alertPlayer.state then
@@ -36,9 +37,18 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
         SoftRes.enabled = false
     end
 
+    -- Update the MasterLooter checkbox.
+    lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod()
+
+    if lootmethod == "master" then
+        BUTTONS.masterLooterCheckButton:SetChecked(true) 
+    else
+        BUTTONS.masterLooterCheckButton:SetChecked(false) 
+    end
+
     -----------------------------
     self.timeSinceLastUpdate = 0;
-  end
+end
 end)
 
 -- TabButtons
@@ -1376,4 +1386,50 @@ BUTTONS.editPlayerAddItemAddButton:SetScript("OnClick", function(self)
 
     -- close the window.
     editPlayerAddItemPopupWindow:Hide()
+end)
+
+-- Switch lootType between GroupLoot and Masterloot.
+local function setMasterLooter(flag)
+    
+    -- Get the current lootmethod.
+    lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod()
+ 
+    -- If we want it to be master-looter and it isn't already.
+    -- Make it masterlooter.
+    if flag and lootmethod ~= "master" then
+        SetLootMethod("master", GetUnitName("Player"))
+    elseif not flag or lootmethod == "master" then
+        SetLootMethod("group")
+    end
+end
+
+-- Master Looter
+BUTTONS.masterLooterCheckButton:SetScript("OnClick", function(self)
+    local isIn = false
+    local rank = 0
+    
+    -- Get loot method.
+    lootmethod, masterlooterPartyID, masterlooterRaidID = GetLootMethod()
+
+    -- Get the player raidNumber
+    for i = 1, GetNumGroupMembers(), 1 do
+        local name = ""
+        
+        name, rank = GetRaidRosterInfo(i)
+
+        -- IF we find the user
+        if name == GetUnitName("Player") then
+            isIn = true
+            break
+        end
+    end
+
+    -- If we are of the correct rank (leader) to be able to change the Loot type.
+    if isIn and rank == 2 then
+        if self:GetChecked(true) then
+            setMasterLooter(true)
+        else
+            setMasterLooter(false)
+        end
+    end
 end)
