@@ -51,6 +51,7 @@ But that would happen even without **SoftRes** AND the ML would have to do it ma
 ## How do you actually use **SoftRes**?
 As stated, only the ML needs the addon (which makes it perfect for pugs.)
 Step-by-step:
+1. Writing /softres show, will bring up the addon.
 1. The ML will create a new list.
     1. **SoftRes** will automatically fill the **SoftRes**ervations list with all the player in the raid (or party if 5-man).
 1. The ML will go through the configurations and make sure they are as he wants them, or what's agreed upon.
