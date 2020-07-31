@@ -1,5 +1,5 @@
 ## Interface: 11305
-## Author: Snits, Velina
+## Author: Snits
 ## Version: 0.0.1-beta
 ## SavedVariables: SoftResList, SoftResConfig, SoftResDB
 ## Title: SoftRes |cFF6EA5DC(Soft-reserve helper)|r
