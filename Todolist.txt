@@ -1,15 +1,9 @@
 -- TODO
--- Fix the "Edit player" function,
---      Need to create a new window for this, with an editbox that is able to get linked items.
 
-
-
--- Anchor to loot window on open?
-
---DONE [Snits] Add functionality to scan the list for soft-reserves.
---DONE [Snits] Add Prep item functionality.
---DONE [Snits] Add dropscanner. --
---DONE [Snits] Add Roll scanner and announce-Winner function.
+-- DONE [Snits] Add functionality to scan the list for soft-reserves.
+-- DONE [Snits] Add Prep item functionality.
+-- DONE [Snits] Add dropscanner.
+-- DONE [Snits] Add Roll scanner and announce-Winner function.
                     Tie-Rolls are working as well.
 
 -- [DONE] Add Functionality with all rolls-buttons.
@@ -32,7 +26,7 @@
 
 
 
--- ADD a FORCE announce winner, on SoftReserves, if someone doesn't roll that is.
+-- [DONE] ADD a FORCE announce winner, on SoftReserves, if someone doesn't roll that is.
 
 
 

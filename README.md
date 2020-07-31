@@ -40,9 +40,10 @@ The ML will still have to manually distribute items and can do whatever he wants
         * There is a 0.5 second delay on the update so it can seem a bit laggy, but that's intentional.
 
 ## What's so good about SoftRes?
-With **SoftRes**, only the Master Looter needs to have the addon. Everything is done so that everyone can see.
-It announces winners and who has **SoftRes**erved what item when it drops.  
-No more Google sheets.
+With **SoftRes**, _only the Master Looter needs to have the addon._  
+* Everything is done so that everyone can see.  
+* It announces winners and who has **SoftRes**erved what item when it drops.  
+* No more Google sheets.
 
 ## What's bad about SoftRes?
 **SoftRes** assumes that you can link an item in chat.  
