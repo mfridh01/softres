@@ -166,7 +166,7 @@ end)
 -- Scan chat for softreserves.
 BUTTONS.scanForSoftResButton:SetScript("OnClick", function(self)
     -- If there are no players, don't start the scanner or if you're not in a group
-    if #SoftResList.players <= 1 or (not IsInGroup("Player")) then return end
+    if #SoftResList.players < 1 or (not IsInGroup("Player")) then return end
     
     -- Check to see if we already are alerting the player with anything.
     if not SoftRes.helpers:checkAlertPlayer("Scan") then return end
