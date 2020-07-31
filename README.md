@@ -74,6 +74,7 @@ Step-by-step:
 1. When the ML loot a mob and there are items with the configured itemrarity or higher in the lootlist, he will have to go through some steps.
     1. First the ML press "Prepare Item".
         1. What this does is that it will take the first item in the lootlist and prepare it for rolls.
+        1. **Big note**. This ONLY *prepares* the item for rolls, nothing else. Press "Next Item" to toggle between the items dropped, if the ML wants to roll one item before the others.
     1. Press the type of Roll that the ML want to announce. (Raid, MS, OS, FFA. -OR- **SoftRes** if there are reservers.)
     1. If there is a winner, you simply MasterLoot that item.
     1. If no one wants the item you can do three things:
@@ -84,6 +85,11 @@ Step-by-step:
         1. This can be good if someone rolls on the wrong type, and wins. Or you simply just chose to give it to the other player.
             1. You will have to manually correct the winner though if you are running with penalties.
             1. Remove the item from Player A (since he won) and add it to Player B (since he is the new winner).
+1. The other choice there is to announce a roll is to:
+    1. Drag an item from the inventory onto the **SoftRes** window.
+    1. That has the same effect as preparing an item, but from your bag instead.
+    1. This can be useful if you want to speed through the dungeon and roll after the raid.
+        1. Or if you forget to switch between "Master Loot" and "Group Loot" and there are drops that should be rolled on.
 
 ## Someone joined late, can we add that player?
 YES! The user of **SoftRes** can manually Add/Edit/Remove players from the list.  
@@ -161,5 +167,8 @@ One bag per won item.
 Green ReadyCheck means that the player has won the **SoftRes**erved item.
 
 ## TODO
-- [ ] Add compatibility with Atlasloot (for linking items manually.)
+- [ ] Add compatibility with other addons. I.E. Atlasloot (for linking items manually.)
     * For now you can "only" use itemlinks from CHAT or your BAG when you manually enter the items.
+    * You can't use WIM chat window for linking items either.
+- [ ] Add automatic Whisper with a confirmation of the **SoftRes**erved item.
+    * Will have to figure out how to stop the pop-up of "whisper windows" or you will have 40 tabs/windows (WIM) popping up while scanning for **SoftRes**erves.
