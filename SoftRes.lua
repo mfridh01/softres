@@ -1,50 +1,5 @@
--- TODO
--- Ny lista -> Med datum, ML, Zone osv osv osv.
-
---[[ 
-nyLista  = {
-      date,
-      zone,
-      players = {
-            (name1) - {
-                  softReserve = {
-                        time,
-                        itemId,
-                        received, -- bool
-                  },
-                  receivedItems = {
-                        time,
-                        rollType, -- MS, OS osv.
-                        itemId,
-                        roll,
-                  },
-            },
-            (name2) = { -- osv osv.
-            },
-      },
-      drops = { -- Announced drops
-            (1) = {
-                  time,
-                  itemId,
-                  itemLink,
-                  rolls = {
-                        time,
-                        rollType, -- MS, OS osv.
-                        player,
-                        roll,
-                  },
-                  handled = {
-                        time,
-                        player,
-                  },
-            },
-            (2) = { -- osv osv.
-            },
-      },
-}--]]
-
---------------------------------------------------------------------
 aceTimer = LibStub("AceAddon-3.0"):NewAddon("SoftRes", "AceTimer-3.0")
+
 -- SoftRes functions and tables.
 --------------------------------
 SoftRes = {}
@@ -132,13 +87,6 @@ SoftRes = {}
             nefarian = {19002, 19003},
       }
             --SoftRes.onyxiaFix.__index = SoftRes.onyxiaFix
---------------------------------------------------------------------
-
--- SoftResDB, a table with saved values that will be kept forever.
-------------------------------------------------------------------
-SoftResDB = {
-      shitRollers = {},
-}
 --------------------------------------------------------------------
 
 -- SoftRes Debugging.

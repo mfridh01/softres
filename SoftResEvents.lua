@@ -49,6 +49,12 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                   BUTTONS.editPlayerDropDownInit()
                   SoftRes.debug:print("SoftResList, loaded. Do stuff!!")
             end
+
+            if (not SoftResDB) or type(SoftResDB) ~= "table" then -- If we don't have the DB.
+                  SoftResDB = {
+                        shitRollers = {},
+                  }
+            end
       
       -- If a new players joined the group, or the group is re-ordered.
       elseif event == "GROUP_ROSTER_UPDATE" and SoftRes.enabled then
