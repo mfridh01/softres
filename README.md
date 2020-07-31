@@ -33,11 +33,11 @@ The players can now focus on doing the killing and the ML can easily see who res
 **SoftRes** is a tool for **HELPING** the ML with keeping track of the **SoftRes**erved items.  
 It will NOT automatically distribute items. It will only Announce Roll-winners and won items, roll-penalties and such.
 The ML will still have to manually distribute items and can do whatever he wants, even if **SoftRes** shows one thing, the ML can do another.  
-**SoftRes** does not automatically switch between loot types. So if the ML wants the trash loot too be rolled for normally, that will have to be switched manually.  
-    * Don't forget to put ML back again before bosses ... *cough*
-    * There is a "Check Box" up in the top-right corner which will show checked if ML is on, and unchecked if not.
-        * If you are the Raid Leader, you can press that check-box to switch between "Master Loot" and "Group Loot".
-        * There is a 0.5 second delay on the update so it can seem a bit laggy, but that's intentional.
+**SoftRes** does not automatically switch between loot types. So if the ML wants the trash loot to be rolled for normally, that will have to be switched manually.  
+    * Don't forget to put ML back again before bosses ... *cough*  
+    * There is a "Check Box" up in the top-right corner which will show checked if ML is on, and unchecked if not.  
+        * If you are the Raid Leader, you can press that check-box to switch between "Master Loot" and "Group Loot".  
+        * There is a 0.5 second delay on the update so it can seem a bit laggy, but that's intentional.  
 
 ## What's so good about SoftRes?
 With **SoftRes**, _only the Master Looter needs to have the addon._  
