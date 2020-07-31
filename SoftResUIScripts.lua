@@ -197,6 +197,8 @@ local function handleDraggedItem()
         -- Prepare the item for announcement.
         local itemId = SoftRes.helpers:getItemInfoFromDragged()
         SoftRes.helpers:prepareItem(itemId)
+        --SoftRes.helpers:prepareItem(18423) -- Onyxia Head test.
+        --SoftRes.helpers:prepareItem(19003) -- Nef Head test.
 
         -- Show the list.
         SoftRes.list:showPrepSoftResList()

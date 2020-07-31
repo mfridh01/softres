@@ -32,6 +32,9 @@ It will NOT automatically distribute items. It will only Announce Roll-winners a
 The ML will still have to manually distribute items and can do whatever he wants, even if **SoftRes** shows one thing, the ML can do another.  
 **SoftRes** does not automatically switch between loot types. So if the ML wants the trash loot too be rolled for normally, that will have to be switched manually.  
     * Don't forget to put ML back again before bosses ... *cough*
+    * There is a "Check Box" up in the top-right corner which will show checked if ML is on, and unchecked if not.
+        * If you are the Raid Leader, you can press that check-box to switch between "Master Loot" and "Group Loot".
+        * There is a 0.5 second delay on the update so it can seem a bit laggy, but that's intentional.
 
 ## What's so good about SoftRes?
 With **SoftRes**, only the Master Looter needs to have the addon. Everything is done so that everyone can see.
@@ -68,7 +71,19 @@ Step-by-step:
     1. Yes, **SoftRes** assumes that you have an addon or something that can put item-links in chat.
 1. When everyone have made their **SoftRes**reservations, the ML will close the scanner.
 1. Now you play as normal.
-1. When an item drops, the ML makes his choice on roll-type.
+1. When the ML loot a mob and there are items with the configured itemrarity or higher in the lootlist, he will have to go through some steps.
+    1. First the ML press "Prepare Item".
+        1. What this does is that it will take the first item in the lootlist and prepare it for rolls.
+    1. Press the type of Roll that the ML want to announce. (Raid, MS, OS, FFA. -OR- **SoftRes** if there are reservers.)
+    1. If there is a winner, you simply MasterLoot that item.
+    1. If no one wants the item you can do three things:
+        1. Simply loot it to yourself, and it will be removed from the **SoftRes** window.
+        1. You can "Right Click" on the icon to "un-prepare" it.
+        1. Or press the "Next Item" button to prepare the next item.
+    1. Pressing the "Cancel all announcements" button, will announce a cancelation of the announcement and rolls for that item.
+        1. This can be good if someone rolls on the wrong type, and wins. Or you simply just chose to give it to the other player.
+            1. You will have to manually correct the winner though if you are running with penalties.
+            1. Remove the item from Player A (since he won) and add it to Player B (since he is the new winner).
 
 ## Someone joined late, can we add that player?
 YES! The user of **SoftRes** can manually Add/Edit/Remove players from the list.  
