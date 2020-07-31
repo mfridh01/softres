@@ -15,6 +15,7 @@ Extra shoutout to Vadfangördu, Velina and everyone who has whispered me while t
 
 ## What is SoftRes?
 **SoftRes** is an addon, that helps the ML keep track of what people have **SoftRes**erved and will help with:
+* **SoftRes**ervations of items and announcing elegible "rollers" on item-drops.  
 * Announcement of items and rolls.
 * Keeps track of who has the highest roll.
 * Will count roll-penalties (if configured)
@@ -105,6 +106,9 @@ If the item is **SoftRes**erved, the only choice you can make is to **SoftRes**-
     * **SoftRes**erved item wins, does **NOT** give a penalty on rolls.
 * If the ML decides that the roll has been waiting for a player, for too long (ie, that player is offline or whatever) the ML can force-announce the winner. (By pressing the "Announce" button.)
     * The winner will then be the one with the highest roll.
+* When a player wins a **SoftRes**erved item, that player is not elegible to roll on the same item again, if it drops, if there are more players who has **SoftRes**erved that item.
+    * If there are no other players **SoftRes**erving that item and it drops again, THAT player can roll on it just as everyone else can.
+    * An example for this are Idols in ZG. Two drops per raid. If only one player **SoftRes**erve an idol, that player can roll on both, but ONE is guaranteed.
 
 *##-seconds* = Configurable.
 
