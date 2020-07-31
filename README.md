@@ -19,6 +19,9 @@ Extra shoutout to Vadfangördu, Velina and everyone who has whispered me while t
 * Announcement of items and rolls.
 * Keeps track of who has the highest roll.
 * Will count roll-penalties (if configured)
+* **SoftRes** loot rules are the rules that we use in _OMEGA_ when doing our PUGs and Guild runs, with **SoftRes**ervations.
+    * Those are the most common rules used, afaik. Read below on those rules.
+    * It "only" supports the reservation of **ONE** item per player.
 
 ## No more Google sheets.
 **SoftRes** takes away the need of having sheets with reservations.  
@@ -45,7 +48,7 @@ No more Google sheets.
 **SoftRes** assumes that you can link an item in chat.  
 But really? Who doesn't have an addon that shows drops in dungeons?
 
-## Whait! It announces and writes in chat and stuff. Doesn't that get messy?
+## Wait! It announces and writes in chat and stuff. Doesn't that get messy?
 There will be some spamming in chat, yes.  
 But that would happen even without **SoftRes** AND the ML would have to do it manually.  
 **SoftRes** uses a library called "ChatThrottle" to make sure that the spams are kept in an acceptable pace.  
