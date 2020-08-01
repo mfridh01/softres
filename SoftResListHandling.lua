@@ -488,7 +488,7 @@ function SoftRes.list:showPrepSoftResList()
     for i = 1, #SoftRes.announcedItem.rolls do
         local rollUser = SoftRes.announcedItem.rolls[i][1]
         local tempRollValue = tonumber(SoftRes.announcedItem.rolls[i][2])
-        local rollValue = 0 
+        local rollValue = 0 -- Real rollvalue.
         local highRollIcon = ""
         local playerColor = ""
         local shitRollersIcon = ""
@@ -500,9 +500,9 @@ function SoftRes.list:showPrepSoftResList()
 
         -- Check if the player who rolled is the highest roller.
         -- If it's higher or same, we set the new value. If not, then we don't give then the nice icon =)
-        if rollValue > SoftRes.announcedItem.highestRoll then
+        if tempRollValue > SoftRes.announcedItem.highestRoll then
             -- Set the new value.
-            SoftRes.announcedItem.highestRoll = rollValue
+            SoftRes.announcedItem.highestRoll = tempRollValue
 
             -- Clear the tie-rolls.
             -- We don't need to know about the ties that are lower than the highest roll.
@@ -510,7 +510,7 @@ function SoftRes.list:showPrepSoftResList()
 
             -- Set the winning icon.
             highRollIcon = SoftResConfig.icons.readyCheck
-        elseif rollValue == SoftRes.announcedItem.highestRoll then
+        elseif tempRollValue == SoftRes.announcedItem.highestRoll then
             
             -- Check if the player is already in the tieRollers list.
             -- Add the player to the HighRollers table.

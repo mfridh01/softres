@@ -7,7 +7,7 @@ SoftRes = {}
       SoftRes.rollType = ""
       SoftRes.debug = {}
             SoftRes.debug.__index = SoftRes.debug
-            SoftRes.debug.enabled = false -------------------- DEBUG
+            SoftRes.debug.enabled = true -------------------- DEBUG
 
       SoftRes.helpers = {}
             SoftRes.helpers.__index = SoftRes.helpers
@@ -81,6 +81,7 @@ SoftRes = {}
       
       SoftRes.editPlayer = false
       SoftRes.addPlayer = false
+      SoftRes.cancel = {}
 
       SoftRes.onyxiaFix = {
             onyxia = {18422, 18423},
@@ -309,6 +310,7 @@ function SoftRes.announce:softResRollAnnounce()
       for i = 1, #SoftRes.preparedItem.elegible do
             table.insert(players, SoftRes.preparedItem.elegible[i])
       end
+
 
       -- Activate the timer.
       SoftRes.helpers:softResCountDown(players, nil)

@@ -666,7 +666,7 @@ end)
 BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
     -- Popup dialog for creating a new list.
     StaticPopupDialogs["SOFTRES_CANCEL_ALL"] = {
-        text = "Do you really want to cancel all announcements, rolls and such?",
+        text = "Do you really want to cancel all announcements, rolls and winner?",
         button1 = "Yes",
         button2 = "No",
         OnAccept = function()
@@ -674,6 +674,9 @@ BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
             if #SoftRes.announcedItem.rolls > 0 then
                 SoftRes.announce:sendMessageToChat("Party_Leader", "The rolls for this item are canceled.")
             end
+
+            -- We unHandle the winner. remove the wins.
+            SoftRes.helpers:unHandleWinner()
 
             -- Canceling stuff.
             SoftRes.helpers:unPrepareItem()

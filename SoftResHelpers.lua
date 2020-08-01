@@ -388,6 +388,8 @@ function SoftRes.helpers:unPrepareItem()
 
       SoftRes.state.announcedResult = false
       SoftRes.state.rollingForLoot = false
+      SoftRes.state.announcedItem = false
+      SoftRes.cancel = {}
 
       FRAMES.announcedItemFrame.fs:SetText("")
       FRAMES.rollFrame.fs:SetText("")
@@ -449,6 +451,7 @@ function SoftRes.helpers:handleWinner(name, roll, rollType, itemId)
       -- Get the winner.
       local player = SoftRes.helpers:getPlayerFromName(name)
       local penalty = SoftResConfig.state.addPenalty
+      local winTime = time()
 
       if rollType == "ffa" or rollType == "raidRoll" then penalty = false end
 
@@ -457,9 +460,49 @@ function SoftRes.helpers:handleWinner(name, roll, rollType, itemId)
             table.insert(SoftResList.waitingForItems, {name, itemId})
       else
             -- Set the values.
-            table.insert(player.receivedItems, {time(), rollType, itemId, roll, penalty})
+            table.insert(player.receivedItems, {winTime, rollType, itemId, roll, penalty})
             table.insert(SoftResList.waitingForItems, {name, itemId})
       end
+
+      -- Add to the canel-standby.
+      SoftRes.cancel = {winTime, name, roll, rollType, itemId}
+end
+
+-- UnHandle the winner.
+-- Takes the SoftRes.cancel table and takes away the won items.
+-- If you press the cancel button, this will take effekt.
+function SoftRes.helpers:unHandleWinner()
+      -- If there are items to cancel.
+      if #SoftRes.cancel > 0 then
+            
+            -- Get the player info and stuff.
+            local winTime = SoftRes.cancel[1]
+            local name = SoftRes.cancel[2]
+            local roll = SoftRes.cancel[3]
+            local rollType = SoftRes.cancel[4]
+            local itemId = SoftRes.cancel[5]
+            local player = SoftRes.helpers:getPlayerFromName(name)
+
+            -- If the player won a SoftReserved item.
+            if rollType == "softRes" then
+                  player.softReserve.received = false
+            else
+                  -- check the received items and if we find THE one, we remove it.
+                  for i = 1, #player.receivedItems, 1 do
+
+                        -- we find the time and itemId
+                        if player.receivedItems[i][1] == winTime and player.receivedItems[i][3] == itemId then
+                              
+                              -- we remove it from the table.
+                              table.remove(player.receivedItems, i)
+                              break
+                        end
+                  end
+            end
+
+            SoftRes.cancel = {}
+      end
+                  
 end
 
 -- Split the rolls and return user/value.
@@ -505,7 +548,7 @@ local function getRoll(string)
    
       -- Put all the "Shit-Rolls" in the shitlist.
       -- Rolls that aren't accepted.
-      if splitString[4] ~= acceptedRoll then
+--[[       if splitString[4] ~= acceptedRoll then
             local isIn = false
             local isInDB = false
             for i = 1, #SoftRes.announcedItem.shitRolls do
@@ -537,7 +580,7 @@ local function getRoll(string)
                   SoftRes.announce:sendMessageToChat("Party", "Wrong roll-values detected from Player: " .. user .. ".")
                   SoftRes.announce:sendMessageToChat("Party", "Roll was: " .. splitString[4] .. ". Please only roll (1-100)")
             end
-      end
+      end ]]
 
 
       -- Return the roll
@@ -545,7 +588,8 @@ local function getRoll(string)
       if listenToRaidRolls and user == GetUnitName("Player") then
             return user, value
       
-      elseif listenToRolls and splitString[4] == acceptedRoll then
+      elseif listenToRolls then -- For testing.
+      --elseif listenToRolls and splitString[4] == acceptedRoll then
             return user, value      
       end
 end
@@ -584,7 +628,7 @@ function SoftRes.helpers:rollForItem(arg1)
 
                   -- Even if the player is not elegible for rolls, we sill want to catch them.
                   for i = 1, #SoftRes.announcedItem.notElegibleRolls do
-                        if SoftRes.announcedITem.notElegibleRolls[i][1] == rollUser then
+                        if SoftRes.announcedItem.notElegibleRolls[i][1] == rollUser then
                               SoftRes.debug:print(rollUser .. " is already in the NotElegibleRolls list.")
                               break
                         end
@@ -592,6 +636,9 @@ function SoftRes.helpers:rollForItem(arg1)
 
                   SoftRes.debug:print(rollUser .. " added to the NotElegibleRolls list.")
                   table.insert(SoftRes.announcedItem.notElegibleRolls, {rollUser, rollValue})
+
+                  -- The player is not elegible, don't continue with reading the roll.
+                  return
             end
       end
 
@@ -629,7 +676,7 @@ function SoftRes.helpers:rollForItem(arg1)
       end
 
       -- If the player hasn't already rolled we push him into the rolled table.
-      if not alreadyRolled then
+      if not alreadyRolled then          
             -- Add the rollPenalty.
             -- But not to rolls for the SoftReserved item.
             local rollPenalty = SoftRes.helpers:getRollPenalty(rollUser, SoftResConfig.dropDecay.ms.value, SoftResConfig.dropDecay.os.value, SoftRes.rollType)
@@ -705,6 +752,7 @@ end
 
 function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
       if not rollType then return end
+
       -- if we FFA roll, we get the OS timer, but keep the rolltype.
       local realRollType = rollType
 
@@ -715,12 +763,16 @@ function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
 
       -- Get if we have penalty on or off.
       local penalty = SoftRes.helpers:getPenaltyStatus(realRollType)
-      local penaltyValue = SoftResConfig.dropDecay[rollType].value
+      local penaltyText = ""
+      local penaltyValue = 0
 
-      local penaltyText = "-" .. penaltyValue .. " on Win"
-      
-      if (not penalty) or realRollType == "ffa" or realRollType == "softRes" then
+      if (not penalty) or realRollType == "ffa" then  
             penaltyText = "No Penalty"
+      elseif  realRollType == "softRes" then
+            penaltyText = "SoftRes"
+      else
+            penaltyValue = SoftResConfig.dropDecay[rollType].value
+            penaltyText = "-" .. penaltyValue .. " on Win"
       end
 
       SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " " .. beginningText .. " Roll NOW! (" .. penaltyText .. ".)")
@@ -741,7 +793,12 @@ function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
                         aceTimer:ScheduleTimer(function()
 
                               SoftRes.announce:sendMessageToChat("Party", "+----------[" .. beginningText .. "-rolls end]-+")
-                              SoftRes.helpers:announceResult(tieRollers, realRollType)
+
+                              if tieRollers then
+                                    SoftRes.helpers:announceResult(true, realRollType, tieRollers)
+                              else      
+                                    SoftRes.helpers:announceResult(false, realRollType)
+                              end
                         end ,1)
                   end, 1)
             end, 1)
@@ -788,10 +845,13 @@ local function checkForAllRolls(players)
       return notRolled
 end
 
-function SoftRes.helpers:softResCountDown(players, rolls)
+function SoftRes.helpers:softResCountDown(players, rolls, tieInfo)
       local rollTime = SoftResConfig.timers.softRes.value
       local itemId = SoftRes.announcedItem.itemId
       local playerNames = ""
+      
+      -- If we don't have any info, set it to ""
+      if not tieInfo then tieInfo = "" end
 
       -- Convert players to string.
       for i = 1, #players do
@@ -805,7 +865,7 @@ function SoftRes.helpers:softResCountDown(players, rolls)
       SoftRes.rollType = "softRes"
 
       if SoftRes.state.announcedItem == false then
-            SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " SoftRes Roll NOW!")
+            SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " SoftRes " .. tieInfo .. "Roll NOW!")
             SoftRes.announce:sendMessageToChat("Party_Leader", playerNames)
             SoftRes.announce:sendMessageToChat("Party", "+-[SoftRes-rolls start]----------+")
 
@@ -829,8 +889,35 @@ function SoftRes.helpers:softResCountDown(players, rolls)
                               -- cancel all timers if we have all rolls.
                               aceTimer:CancelAllTimers()
 
-                              -- announce the winner.
-                              SoftRes.helpers:announceResult(false, "softRes")
+                              -- If we forced an announcement, but still have tie-rollers.
+                              if SoftRes.state.forced and #SoftRes.announcedItem.tieRollers > 1 then
+                                    -- clear forced state.
+                                    SoftRes.state.forced = false
+                              end
+
+                              -- If we have a TIE in soft-res?
+                              if #SoftRes.announcedItem.tieRollers > 1 then
+                                    
+                                    -- Set the announcement state to false, or it won't announce again.
+                                    SoftRes.state.announcedItem = false
+                                    
+                                    -- Reset the loop or it will trigger none-stop.
+                                    numLoop = 0
+                                    
+                                    -- Clear the rolls, or it won't trigger again.
+                                    SoftRes.announcedItem.rolls = {}
+
+                                    -- We have to clear all the other players and only have the tie-rollers left for the SoftRes roll.
+                                    -- So we set the eligble players to all players who rolled a tie.
+                                    SoftRes.preparedItem.elegible = SoftRes.announcedItem.tieRollers
+                                    SoftRes.announcedItem.tieRollers = {}
+
+                                    -- Call the SoftRes roll again.
+                                    SoftRes.helpers:softResCountDown(SoftRes.preparedItem.elegible, nil, "tie ")
+                              else
+                                    -- announce the winner.
+                                    SoftRes.helpers:announceResult(false, "softRes")
+                              end
                         end
                   end
             end, 1)
@@ -838,11 +925,11 @@ function SoftRes.helpers:softResCountDown(players, rolls)
 end
 
 -- Announce the results of the rolls.
-function SoftRes.helpers:announceResult(tieRollers, rollType)
+function SoftRes.helpers:announceResult(tieRollers, rollType, players)
       -- We don't stop the rolls-listen state for this.
       -- We check so that we have all the rolls done by the SoftRessers.
       -- or if we force it to announced.
-      if #SoftRes.preparedItem.elegible >= 2 and #SoftRes.announcedItem.rolls < #SoftRes.preparedItem.elegible and (not SoftRes.state.forced) then
+      if #SoftRes.preparedItem.elegible >= 2 and #SoftRes.announcedItem.rolls < #SoftRes.preparedItem.elegible and (not SoftRes.state.forced) and rollType == "softRes" then
             SoftRes.helpers:softResCountDown(SoftRes.preparedItem.elegible, SoftRes.preparedItem.rolls)
             return
       end
@@ -855,7 +942,7 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
 
       -- if it's a tie-roll and no one rolled. re-announce it.
       if #SoftRes.preparedItem.elegible >= 2 and #SoftRes.announcedItem.rolls == 0 then
-            local newRollType = "tie"
+            local newRollType = rollType
             local newText = "Tie"
 
             -- Call the announcement function again.
@@ -880,7 +967,7 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
                   SoftRes.preparedItem.elegible = {}
                   SoftRes.preparedItem.elegible = SoftRes.announcedItem.tieRollers
 
-                  -- Slear the rolls lists
+                  -- Clear the rolls lists
                   -- Clear the tie-rollers list. It could be populated again.
                   SoftRes.announcedItem.rolls = {}
                   SoftRes.announcedItem.tieRollers = {}
@@ -906,7 +993,7 @@ function SoftRes.helpers:announceResult(tieRollers, rollType)
                               SoftRes.announce:sendMessageToChat("Party_Leader", tieRollers)
                               
                               -- Call the announcement function again.
-                              SoftRes.helpers:countDown("Tie", "os", tieRollers)
+                              SoftRes.helpers:countDown("Tie", rollType, tieRollers)
                         end, 1)
                   end, 0.5)
 
