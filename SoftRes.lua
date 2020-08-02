@@ -7,7 +7,7 @@ SoftRes = {}
       SoftRes.rollType = ""
       SoftRes.debug = {}
             SoftRes.debug.__index = SoftRes.debug
-            SoftRes.debug.enabled = true -------------------- DEBUG
+            SoftRes.debug.enabled = false -------------------- DEBUG
 
       SoftRes.helpers = {}
             SoftRes.helpers.__index = SoftRes.helpers
