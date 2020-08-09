@@ -423,7 +423,7 @@ function SoftRes.list:showFullSoftResList()
     if numOffline == numGroupMembers then offlineColor = colorGreen end
 
     -- populate the frame with the new text.
-    local infoText = "Raid: " .. offlineColor .. numOffline .. "|r/" .. raidTextColor .. numGroupMembers .. "|r || Listentries: " .. listEntryColor .. listEntries .. "|r || SoftRes: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-----------------------------------------------------------------------\n"
+    local infoText = "Raid: " .. offlineColor .. numOffline .. "|r/" .. raidTextColor .. numGroupMembers .. "|r || List: " .. listEntryColor .. listEntries .. "|r || SoftRes: " .. entryText .. (listEntries - notSoftReserved) .. "/" .. listEntries .. "|r.\n-----------------------------------------------------------------------\n"
  
     local listHeight = ((12 * #SoftResList.players) + 24) - (#SoftResList.players * (UIParent:GetScale() - 0.711))-- (Textheight * listed players) + title
     textFrame:SetSize(500, listHeight)

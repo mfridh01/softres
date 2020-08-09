@@ -610,7 +610,7 @@ BUTTONS.addPenaltyButton = CreateFrame("CheckButton", "addPenaltyButton", FRAMES
             BUTTONS.addPenaltyButton.fs:SetFontObject("GameFontHighlight")
             BUTTONS.addPenaltyButton.fs:SetPoint("LEFT", BUTTONS.addPenaltyButton, "RIGHT", 0, 0)
             BUTTONS.addPenaltyButton.fs:SetJustifyH("LEFT")
-            BUTTONS.addPenaltyButton.fs:SetText("Add penalty (MS/OS)")
+            BUTTONS.addPenaltyButton.fs:SetText("Use penalty system (MS/OS)")
 
 -- Buttons page 2.
 BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
@@ -722,7 +722,7 @@ FRAMES.editPlayerAddPlayerPopupWindow = CreateFrame("Frame", "editPlayerAddPlaye
             BUTTONS.editPlayerPopUpAddPlayerButton:SetWidth(102)
             BUTTONS.editPlayerPopUpAddPlayerButton:SetHeight(20)
             BUTTONS.editPlayerPopUpAddPlayerButton:SetText("Add Player")
-
+      
       FRAMES.addPlayerPopupWindow = CreateFrame("Frame", "addPlayerPopupWindow", FRAMES.editPlayerAddPlayerPopupWindow)
             FRAMES.addPlayerPopupWindow:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow, "TOP", 0, -50)
             FRAMES.addPlayerPopupWindow:SetSize(300, 200)
@@ -789,11 +789,11 @@ FRAMES.editPlayerAddPlayerPopupWindow = CreateFrame("Frame", "editPlayerAddPlaye
             BUTTONS.addPlayerItemClearButton:SetHeight(20)
             BUTTONS.addPlayerItemClearButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Pass-Up:14:14:0:0|t")
 
-      -- EDIT
-      FRAMES.editPlayerEditPopupWindow = CreateFrame("Frame", "editPlayerEditPopupWindow", FRAMES.editPlayerAddPlayerPopupWindow)
-            FRAMES.editPlayerEditPopupWindow:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow, "TOP", 0, -75)
-            FRAMES.editPlayerEditPopupWindow:SetSize(300, 200)
-            FRAMES.editPlayerEditPopupWindow:Hide()
+-- EDIT
+FRAMES.editPlayerEditPopupWindow = CreateFrame("Frame", "editPlayerEditPopupWindow", FRAMES.editPlayerAddPlayerPopupWindow)
+      FRAMES.editPlayerEditPopupWindow:SetPoint("TOP", FRAMES.editPlayerAddPlayerPopupWindow, "TOP", 0, -75)
+      FRAMES.editPlayerEditPopupWindow:SetSize(300, 200)
+      FRAMES.editPlayerEditPopupWindow:Hide()
 
       BUTTONS.editPlayerEditDropDown = CreateFrame("Button", "editPlayerEditDropDown", FRAMES.editPlayerEditPopupWindow, "UIDropDownMenuTemplate")
             BUTTONS.editPlayerEditDropDown:SetPoint("TOP", FRAMES.editPlayerEditPopupWindow, "TOP", 0, 0)
@@ -928,7 +928,7 @@ FRAMES.deletePlayerPopupWindow = CreateFrame("Frame", "deletePlayerPopupWindow",
 -- Custom popup window for editing a player item.
 FRAMES.editPlayerEditItemPopupWindow = CreateFrame("Frame", "editPlayerEditItemPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
       FRAMES.editPlayerEditItemPopupWindow:SetFrameStrata("FULLSCREEN")
-      FRAMES.editPlayerEditItemPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
+      FRAMES.editPlayerEditItemPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -150)
       FRAMES.editPlayerEditItemPopupWindow:SetSize(300, 300)
       FRAMES.editPlayerEditItemPopupWindow:SetMovable(true)
       FRAMES.editPlayerEditItemPopupWindow:EnableMouse(true)
@@ -958,6 +958,12 @@ FRAMES.editPlayerEditItemPopupWindow = CreateFrame("Frame", "editPlayerEditItemP
             BUTTONS.editPlayerPopUpAddItemButton:SetWidth(102)
             BUTTONS.editPlayerPopUpAddItemButton:SetHeight(20)
             BUTTONS.editPlayerPopUpAddItemButton:SetText("Add Loot")
+      
+      BUTTONS.editPlayerPopUpResetLootButton = CreateFrame("Button", "editPlayerPopUpResetLootButton", FRAMES.editPlayerEditItemPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.editPlayerPopUpResetLootButton:SetPoint("TOP", FRAMES.editPlayerEditItemPopupWindow, "TOP", 0, -60)
+            BUTTONS.editPlayerPopUpResetLootButton:SetWidth(102)
+            BUTTONS.editPlayerPopUpResetLootButton:SetHeight(20)
+            BUTTONS.editPlayerPopUpResetLootButton:SetText("Reset Penalties")
       
       -- Edit player item.
       FRAMES.editPlayerPopupWindow = CreateFrame("Frame", "editPlayerPopupWindow", FRAMES.editPlayerEditItemPopupWindow)

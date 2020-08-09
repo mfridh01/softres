@@ -16,7 +16,8 @@ function SoftRes.player:new(playerName, groupPosition, itemId)
 --[[              time = nil, -- Time, when you received the item.
                   rollType = nil, -- MS, OS, FFA, SoftRes, RaidRoll.
                   itemId = nil, -- ingame itemId.
-                  roll = nil, -- Winning roll. ]]
+                  roll = nil, -- Winning roll.
+                  penalty = false -- If penalty should be counted or not. ]]
       }
       setmetatable(self, SoftRes.player)
 

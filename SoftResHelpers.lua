@@ -408,7 +408,7 @@ end
 
 -- local function for return an icon per item won.
 -- Takes a player, returns 1 loot icon per item won.
-function SoftRes.helpers:getRollPenalty(playerName, msPenalty, osPenalty)
+function SoftRes.helpers:getRollPenalty(playerName, msPenalty, osPenalty, rolledRollType)
       local wonMS = 0
       local wonOS = 0
       local player = SoftRes.helpers:getPlayerFromName(playerName)
@@ -421,7 +421,6 @@ function SoftRes.helpers:getRollPenalty(playerName, msPenalty, osPenalty)
                   -- get the rollType.
                   rollType = player.receivedItems[i][2]
                   local penaltyActive = player.receivedItems[i][5]
-
                   -- just add to the corresponding type
                   if rollType == "ms" and penaltyActive then
                         wonMS = wonMS + 1
@@ -434,9 +433,9 @@ function SoftRes.helpers:getRollPenalty(playerName, msPenalty, osPenalty)
       wonMS = wonMS * msPenalty
       wonOS = wonOS * osPenalty
   
-      if rollType == "ms" then
+      if rolledRollType == "ms" then
             return wonMS
-      elseif rollType == "os" then
+      elseif rolledRollType == "os" then
             return wonOS
       end
 
@@ -548,7 +547,7 @@ local function getRoll(string)
    
       -- Put all the "Shit-Rolls" in the shitlist.
       -- Rolls that aren't accepted.
---[[       if splitString[4] ~= acceptedRoll then
+      if splitString[4] ~= acceptedRoll then
             local isIn = false
             local isInDB = false
             for i = 1, #SoftRes.announcedItem.shitRolls do
@@ -580,7 +579,7 @@ local function getRoll(string)
                   SoftRes.announce:sendMessageToChat("Party", "Wrong roll-values detected from Player: " .. user .. ".")
                   SoftRes.announce:sendMessageToChat("Party", "Roll was: " .. splitString[4] .. ". Please only roll (1-100)")
             end
-      end ]]
+      end
 
 
       -- Return the roll
@@ -588,8 +587,8 @@ local function getRoll(string)
       if listenToRaidRolls and user == GetUnitName("Player") then
             return user, value
       
-      elseif listenToRolls then -- For testing.
-      --elseif listenToRolls and splitString[4] == acceptedRoll then
+      --elseif listenToRolls then -- For testing.
+      elseif listenToRolls and splitString[4] == acceptedRoll then
             return user, value      
       end
 end

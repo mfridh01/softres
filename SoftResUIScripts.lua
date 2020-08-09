@@ -1085,6 +1085,7 @@ end)
 BUTTONS.editPlayerPopUpCancelButton:SetScript("OnClick", function(self)
     BUTTONS.editPlayerPopUpDeleteButton:Hide()
     FRAMES.editPlayerPopupWindow:Hide()
+    BUTTONS.editPlayerPopUpResetLootButton:Show()
 end)
 
 FRAMES.editPlayerPopupWindow:SetScript("OnShow", function(self)
@@ -1238,6 +1239,7 @@ end)
 BUTTONS.editPlayerPopUpEditItemButton:SetScript("OnClick", function(self)
     FRAMES.editPlayerPopupWindow:Show()
     FRAMES.editPlayerAddItemPopupWindow:Hide()
+    BUTTONS.editPlayerPopUpResetLootButton:Hide()
 end)
 
 FRAMES.editPlayerEditItemPopupWindow:SetScript("OnShow", function(self)
@@ -1246,6 +1248,7 @@ FRAMES.editPlayerEditItemPopupWindow:SetScript("OnShow", function(self)
 
     FRAMES.editPlayerPopupWindow:Hide()
     FRAMES.editPlayerAddItemPopupWindow:Hide()
+    BUTTONS.editPlayerPopUpResetLootButton:Show()
 end)
 
 FRAMES.editPlayerEditItemPopupWindow:SetScript("OnHide", function(self)
@@ -1290,6 +1293,7 @@ BUTTONS.editPlayerPopUpAddItemButton:SetScript("OnClick", function(self)
     FRAMES.editPlayerAddItemPopupWindow:Show()
     FRAMES.editPlayerPopupWindow:Hide()
     BUTTONS.editPlayerAddItemDropDownInit()
+    BUTTONS.editPlayerPopUpResetLootButton:Hide()
 end)
 
 function BUTTONS.editPlayerAddItemDropDown_Initialize(self)
@@ -1370,6 +1374,7 @@ end)
 
 BUTTONS.editPlayerAddItemCancelButton:SetScript("OnClick", function(self) 
     FRAMES.editPlayerAddItemPopupWindow:Hide()
+    BUTTONS.editPlayerPopUpResetLootButton:Show()
 end)
 
 BUTTONS.editPlayerAddItemAddButton:SetScript("OnClick", function(self)
@@ -1437,4 +1442,40 @@ BUTTONS.masterLooterCheckButton:SetScript("OnClick", function(self)
             setMasterLooter(false)
         end
     end
+end)
+
+-- If we want to reset all the received loot penalties.
+BUTTONS.editPlayerPopUpResetLootButton:SetScript("OnClick", function(self)
+    -- Popup dialog for creating a new list.
+    StaticPopupDialogs["SOFTRES_RESET_ALL_PENALTIES"] = {
+        text = "Do you really want to reset all received lootpenalties?\nThis is final and can't be reverted.",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            
+            -- Switch the won item loot-type to FFA from anything.
+            for i = 1, #SoftResList.players, 1 do
+                local player = SoftResList.players[i]
+
+                -- If the player has received any items. Do your thing.
+                if #player.receivedItems > 0 then
+                    
+                    -- We go through all the loot.
+                    for j = 1, #player.receivedItems, 1 do
+
+                        -- set the penalty to false.
+                        player.receivedItems[j][5] = false
+                    end
+                end
+            end
+
+        end,
+        OnCancel = function (_,reason)
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopup_Show ("SOFTRES_RESET_ALL_PENALTIES")
 end)

@@ -3,6 +3,9 @@
 - 0002 - SoftReserved item, tie-rolls.  
 - 0003 - Tie-Rolls became SoftRes rolls.  
 - 0004 - Anyone could win on Tie-Rolls.  
+- 0005 - Fixed the penalty for MS transfered to OS.
+- 0006 - Added option for resetting loot-penalties.
+- 0007 - Added buttons for sorting SoftReservation list.
 
 ### 0001
 When a winner is announced, that player automaticly gets that item recorded as a won item.  
@@ -23,7 +26,23 @@ That is now fixed.
 
 ### 0004
 On a none-SoftReserved "Tie-Roll", anyone could roll and win.  
-**SoftRes** should now only read the rolls from the "Tie-Rollers".
+**SoftRes** should now only read the rolls from the "Tie-Rollers".  
+
+### 0005
+When you have won an item on MS, and roll on OS items, the MS penalty gets transfered over to the OS roll.
+And vise versa.
+This is now fixed.
+
+### 0006
+If you press "Edit Loot", there is now an option for resetting loot-penalties.  
+What this button does is that it toggles the penalty flag for that item to false.  
+It will still say MS or OS, but the penalty will not be counted for the items.  
+This will only trigger for the currently won items, not future items.  
+You still have to change the configuration to 0 penalty if you want future items to not give penalties.
+After this, if you want to change it back, you will have to manually do this per player / item.
+
+### 0007 - Not done yet.
+Add sorting-functionality for the SoftReservation list.
 
 ## v0.0.1-beta
 **SoftRes** went public in beta status.
