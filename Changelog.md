@@ -5,7 +5,7 @@
 - 0004 - Anyone could win on Tie-Rolls.  
 - 0005 - Fixed the penalty for MS transfered to OS.
 - 0006 - Added option for resetting loot-penalties.
-- 0007 - Added buttons for sorting SoftReservation list.
+- 0007 - Added a confirmation whisper.
 
 ### 0001
 When a winner is announced, that player automaticly gets that item recorded as a won item.  
@@ -41,8 +41,9 @@ This will only trigger for the currently won items, not future items.
 You still have to change the configuration to 0 penalty if you want future items to not give penalties.
 After this, if you want to change it back, you will have to manually do this per player / item.
 
-### 0007 - Not done yet.
-Add sorting-functionality for the SoftReservation list.
+### 0007
+When you close the scanner of SoftReservations, a popup-window will show where you can choose to send a confirmation to everyone or not.  
+If a player hasn't made a reservation, that player will get a whisper that says so. This is to give that player a chance to speak up.
 
 ## v0.0.1-beta
 **SoftRes** went public in beta status.

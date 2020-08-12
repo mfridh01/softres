@@ -1118,3 +1118,21 @@ function SoftRes.helpers:handleLoot(string, receiver)
             end
       end
 end
+
+-- Send a whisper to everyone, what item they have reserved.
+function SoftRes.helpers.whisperSoftRes()
+    
+      for i = 1, #SoftResList.players, 1 do
+          local player = SoftResList.players[i]
+          local itemId = player.softReserve.itemId
+          local name = player.name
+          local whisperText = "You have not reserved any item."
+          local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+          
+          if itemLink then
+              whisperText = "Your SoftReservation of " .. itemLink .. " is confirmed. GL HF"
+          end
+
+          ChatThrottleLib:SendChatMessage("NORMAL", "SoftResRollAnnounce", whisperText, "WHISPER", nil, name, nil, nil, nil)
+      end
+  end

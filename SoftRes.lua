@@ -169,6 +169,24 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
             if announce == true then
                   SoftRes.announce:sendMessageToChat("Party","+----------------------------+")
                   SoftRes.announce:sendMessageToChat("Party_Leader","|| No more reservations taken. GL HF.")
+
+                  -- Whisper the softresses
+                  
+                  StaticPopupDialogs["SOFTRES_WHISPER_ALL"] = {
+                        text = "Do you want to send out a confirmation to everyone about their reservations?",
+                        button1 = "Yes",
+                        button2 = "No",
+                        OnAccept = function()
+                              SoftRes.helpers.whisperSoftRes()
+                        end,
+                        OnCancel = function (_,reason)
+                        end,
+                        timeout = 0,
+                        whileDead = true,
+                        hideOnEscape = true,
+                    }
+                
+                    StaticPopup_Show ("SOFTRES_WHISPER_ALL")
             end
 
             local function myChatEventHandler(self,event,arg1,...)
