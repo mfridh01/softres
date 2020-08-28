@@ -1,3 +1,17 @@
+## v0.0.3-beta
+- 0008 - Fixed the issue with MS penalty, transfered to OS.
+- 0009 - Added a button for announcing the SoftReserved items.
+
+### 0008
+The MS penalties were activated even though they shouldn't.
+This have been fixed (again).
+Thanks to "rylix3" for all the testing.
+
+### 0009
+There has been many requests for a button to announce the soft-reserved items.
+On Tab 1, press the "SoftRes" button in the middle for announce the reservations.
+"Rules", is still the "Announce rules" button and will activate the scanner, as before.
+
 ## v0.0.2-beta
 - 0001 - Added functionality to "Cancel Everything" button.  
 - 0002 - SoftReserved item, tie-rolls.  

@@ -952,6 +952,7 @@ function SoftRes.helpers:announceResult(tieRollers, rollType, players)
       -- if no one wants the item and it's an MS roll. Start an OS-roll
       if #SoftRes.announcedItem.rolls == 0 and rollType == "ms" then
             -- Call the announcement function again.
+            SoftRes.rollType = "os"
             SoftRes.helpers:countDown("OS", "os")
             return
       end

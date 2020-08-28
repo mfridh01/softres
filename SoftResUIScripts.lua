@@ -1479,3 +1479,67 @@ BUTTONS.editPlayerPopUpResetLootButton:SetScript("OnClick", function(self)
 
     StaticPopup_Show ("SOFTRES_RESET_ALL_PENALTIES")
 end)
+
+-- Announce the SoftReservations to the raid.
+BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
+        -- Popup dialog for for accepting the announcement or not.
+        StaticPopupDialogs["SOFTRES_ANNOUNCE_SOFTRESERVERATIONS"] = {
+            text = "Do you want to announce the SoftReservations?\nThis will spam the raid chat.",
+            button1 = "Yes",
+            button2 = "No",
+            OnAccept = function()
+                
+                local softReservedItems = {}
+
+                -- get all softreserved items.
+                for i = 1, #SoftResList.players, 1 do
+                    local itemId = SoftResList.players[i].softReserve.itemId
+                    local playerName = SoftResList.players[i].name
+                    local isIn = false
+
+                    -- check the itemList.
+                    -- If item not in list, put it in there.
+                    for j = 1, #softReservedItems, 1 do
+
+                        if itemId == softReservedItems[j][1] then
+                            isIn = true
+                            table.insert(softReservedItems[j][2], playerName)
+                        end
+                    end
+
+                    -- if the item was not in the list.
+                    if not isIn then
+                        table.insert(softReservedItems, {itemId, {playerName}})
+                    end
+                end
+
+                -- send the list to the party.
+                SoftRes.announce:sendMessageToChat("Party", "[SoftRes-List]--------------+")
+
+                for i = 1, #softReservedItems, 1 do
+                    local itemId = softReservedItems[i][1]
+                    local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+                    local players = ""
+
+                    for j = 1, #softReservedItems[i][2], 1 do
+                        players = players .. softReservedItems[i][2][j] .. ". "
+                    end
+
+                    if itemLink then
+                        SoftRes.announce:sendMessageToChat("Party", itemLink .. " " .. players)
+                    end
+                end
+
+                SoftRes.announce:sendMessageToChat("Party", "+---------------------------+")
+                
+    
+            end,
+            OnCancel = function (_,reason)
+            end,
+            timeout = 0,
+            whileDead = true,
+            hideOnEscape = true,
+        }
+    
+        StaticPopup_Show ("SOFTRES_ANNOUNCE_SOFTRESERVERATIONS")
+end)

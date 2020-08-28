@@ -619,11 +619,17 @@ BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContain
       BUTTONS.newListButton:SetHeight(20)
       BUTTONS.newListButton:SetText("New List")
 
+BUTTONS.announceAllSoftresButton = CreateFrame("Button", "AnnounceAllSoftresButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.announceAllSoftresButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
+      BUTTONS.announceAllSoftresButton:SetWidth(48)
+      BUTTONS.announceAllSoftresButton:SetHeight(20)
+      BUTTONS.announceAllSoftresButton:SetText("SoftRes")
+
 BUTTONS.announceRulesButton = CreateFrame("Button", "AnnounceRulesButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.announceRulesButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
-      BUTTONS.announceRulesButton:SetWidth(102)
+      BUTTONS.announceRulesButton:SetPoint("LEFT", BUTTONS.announceAllSoftresButton, "RIGHT", 4, 0)
+      BUTTONS.announceRulesButton:SetWidth(48)
       BUTTONS.announceRulesButton:SetHeight(20)
-      BUTTONS.announceRulesButton:SetText("Announce Rules")
+      BUTTONS.announceRulesButton:SetText("Rules")
 
 BUTTONS.scanForSoftResButton = CreateFrame("Button", "ScanForSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.scanForSoftResButton:SetPoint("LEFT", BUTTONS.announceRulesButton, "RIGHT", 4, 0)
