@@ -1,5 +1,17 @@
 ## v0.0.4-beta
 - 0010 - Added List import feature.
+- 0011 - Changed text on "Scan SoftRes" when scanning.
+- 0012 - Added a confirmation window when you are posting the rules.
+
+### 0012
+Added a confirmation window for announcing the rules.
+* Yes = Will post the rules.
+* Yes & Scan = Will post the rules and start the chat-scanner.
+* No = Close the window.
+
+### 0011
+When the scanner is active, the button will say "Stop Scanning" instead of "Scanning".
+To make it more clear what the button is doing.
 
 ### 0010
 Added a feature for import of lists.

@@ -701,35 +701,67 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
     if not SoftRes.helpers:checkAlertPlayer("Rules") then return end
     if not SoftRes.helpers:checkAlertPlayer("Scan") then return end
 
-    local groupType = "/Party"
-    local raid = UnitInRaid("Player")
+    local function messageToRaid(scan)
 
-    if raid then groupType = "/Raid" end
+        local groupType = "/Party"
+        local raid = UnitInRaid("Player")
+    
+        if raid then groupType = "/Raid" end
+    
+        local colorBlue = "|cFF6EA5DC"
+        local colorGreen = "|cFF00FF00"
+        local colorYellow = "|cFFFFFF00"
+        local colorWhite = "|cFFFFFFFF"
+    
+        -- Just a welcome message.
+        SoftRes.announce:sendMessageToChat("Party_Leader", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
+        SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon]--------------+")
+        SoftRes.announce:sendMessageToChat("Party", "|| Everyone will SoftReserve one item.")
+        SoftRes.announce:sendMessageToChat("Party", "|| Drops except SoftReserved = MS>OS")
+        SoftRes.announce:sendMessageToChat("Party", "|| Timers- SoftRes: " .. SoftResConfig.timers.softRes.value .. "s. MS: "  .. SoftResConfig.timers.ms.value .. "s. OS: " .. SoftResConfig.timers.os.value .. "s.")
+        SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
+        SoftRes.announce:sendMessageToChat("Party", "|| " .. SoftResConfig.extraInformation.value)
+        SoftRes.announce:sendMessageToChat("Party", "+-------------------[By Snits]")
+          
+        if scan then
+            -- call the toggle function without a flag, to really toggle it.
+            -- First argument is wether or not we should announce the scan.
+            SoftRes.state:toggleScanForSoftRes(true, nil)
+        
+            -- Toggle alert on.
+            SoftRes.state:toggleAlertPlayer(nil, "Scan")
+        end
 
-    local colorBlue = "|cFF6EA5DC"
-    local colorGreen = "|cFF00FF00"
-    local colorYellow = "|cFFFFFF00"
-    local colorWhite = "|cFFFFFFFF"
+        -- redraw the list.
+        SoftRes.list:showFullSoftResList()
 
-    -- Just a welcome message.
-    SoftRes.announce:sendMessageToChat("Party_Leader", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
-    SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon]--------------+")
-    SoftRes.announce:sendMessageToChat("Party", "|| Everyone will SoftReserve one item.")
-    SoftRes.announce:sendMessageToChat("Party", "|| Drops except SoftReserved = MS>OS")
-    SoftRes.announce:sendMessageToChat("Party", "|| Timers- SoftRes: " .. SoftResConfig.timers.softRes.value .. "s. MS: "  .. SoftResConfig.timers.ms.value .. "s. OS: " .. SoftResConfig.timers.os.value .. "s.")
-    SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
-    SoftRes.announce:sendMessageToChat("Party", "|| " .. SoftResConfig.extraInformation.value)
-    SoftRes.announce:sendMessageToChat("Party", "+-------------------[By Snits]")
+    end
 
-    -- call the toggle function without a flag, to really toggle it.
-    -- First argument is wether or not we should announce the scan.
-    SoftRes.state:toggleScanForSoftRes(true, nil)
+    -- Popup dialog for Posting the rules.
+    StaticPopupDialogs["SOFTRES_ANNOUNCE_RULES"] = {
+        text = "Do you want to post the rules to chat?",
+        button1 = "Yes",
+        button2 = "Yes & Scan",
+        button3 = "No",
+        OnAccept = function(self, button, data2)
 
-    -- Toggle alert on.
-    SoftRes.state:toggleAlertPlayer(nil, "Scan")
+            -- send the message to raid, without scanning.
+            messageToRaid(false)
+        end,
+        OnCancel = function (_,reason)
+            
+            -- send the message to raid, with scanning.
+            messageToRaid(true)
+        end,
+        OnAlt = function ()
+            
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
 
-    -- redraw the list.
-    SoftRes.list:showFullSoftResList()
+    StaticPopup_Show ("SOFTRES_ANNOUNCE_RULES")
 end)
 
 -- Skip item.
@@ -1484,7 +1516,7 @@ end)
 BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
         -- Popup dialog for for accepting the announcement or not.
         StaticPopupDialogs["SOFTRES_ANNOUNCE_SOFTRESERVERATIONS"] = {
-            text = "Do you want to announce the SoftReservations?\nThis will spam the raid chat.",
+            text = "Do you want to announce the SoftReservations?\nThis will post all reservations in chat.",
             button1 = "Yes",
             button2 = "No",
             OnAccept = function()
