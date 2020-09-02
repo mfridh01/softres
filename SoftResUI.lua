@@ -615,12 +615,18 @@ BUTTONS.addPenaltyButton = CreateFrame("CheckButton", "addPenaltyButton", FRAMES
 -- Buttons page 2.
 BUTTONS.newListButton = CreateFrame("Button", "NewListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.newListButton:SetPoint("TOPLEFT", FRAMES.listFrameContainer, "BOTTOMLEFT", -5, -5)
-      BUTTONS.newListButton:SetWidth(102)
+      BUTTONS.newListButton:SetWidth(48)
       BUTTONS.newListButton:SetHeight(20)
-      BUTTONS.newListButton:SetText("New List")
+      BUTTONS.newListButton:SetText("New")
+
+BUTTONS.importListButton = CreateFrame("Button", "ImportListButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.importListButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
+      BUTTONS.importListButton:SetWidth(48)
+      BUTTONS.importListButton:SetHeight(20)
+      BUTTONS.importListButton:SetText("Import")
 
 BUTTONS.announceAllSoftresButton = CreateFrame("Button", "AnnounceAllSoftresButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.announceAllSoftresButton:SetPoint("LEFT", BUTTONS.newListButton, "RIGHT", 4, 0)
+      BUTTONS.announceAllSoftresButton:SetPoint("LEFT", BUTTONS.importListButton, "RIGHT", 4, 0)
       BUTTONS.announceAllSoftresButton:SetWidth(48)
       BUTTONS.announceAllSoftresButton:SetHeight(20)
       BUTTONS.announceAllSoftresButton:SetText("SoftRes")
@@ -1142,3 +1148,83 @@ FRAMES.editPlayerEditItemPopupWindow = CreateFrame("Frame", "editPlayerEditItemP
                   BUTTONS.editPlayerAddItemCancelButton:SetWidth(102)
                   BUTTONS.editPlayerAddItemCancelButton:SetHeight(20)
                   BUTTONS.editPlayerAddItemCancelButton:SetText("Cancel")
+
+-- Custom popup window for importing a new list.
+FRAMES.importListPopupWindow = CreateFrame("Frame", "importListPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")
+      FRAMES.importListPopupWindow:SetFrameStrata("DIALOG")
+      FRAMES.importListPopupWindow:SetFrameLevel(FRAMES.mainFrame:GetFrameLevel() + 5)
+      FRAMES.importListPopupWindow:SetPoint("TOP", UIParent, "TOP", 0, -100)
+      FRAMES.importListPopupWindow:SetSize(300, 400)
+      FRAMES.importListPopupWindow:SetMovable(true)
+      FRAMES.importListPopupWindow:EnableMouse(true)
+      FRAMES.importListPopupWindow:RegisterForDrag("LeftButton")
+      FRAMES.importListPopupWindow:SetScript("OnDragStart", FRAMES.importListPopupWindow.StartMoving)
+      FRAMES.importListPopupWindow:SetScript("OnDragStop", FRAMES.importListPopupWindow.StopMovingOrSizing)
+      FRAMES.importListPopupWindow:Hide()
+
+      FRAMES.importListPopupWindow.title = FRAMES.importListPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.importListPopupWindow.title:SetFontObject("GameFontHighlight")
+            FRAMES.importListPopupWindow.title:SetPoint("TOPLEFT", FRAMES.importListPopupWindow.TitleBg, "TOPLEFT", 3, -3)
+            FRAMES.importListPopupWindow.title:SetText("Ω SoftRes")
+      
+      FRAMES.importListPopupWindow.titleCenter = FRAMES.importListPopupWindow:CreateFontString(nil, "Overlay")
+            FRAMES.importListPopupWindow.titleCenter:SetFontObject("GameFontHighlight")
+            FRAMES.importListPopupWindow.titleCenter:SetPoint("TOP", FRAMES.importListPopupWindow.TitleBg, "TOP", 0, -3)
+            FRAMES.importListPopupWindow.titleCenter:SetText("Import new list.")
+    
+      BUTTONS.importListDropDown = CreateFrame("Button", "ImportListDropDown", FRAMES.importListPopupWindow, "UIDropDownMenuTemplate")
+            BUTTONS.importListDropDown:SetPoint("TOP", FRAMES.importListPopupWindow, "TOP", 0, -75)
+                  
+            UIDropDownMenu_SetWidth(BUTTONS.importListDropDown, 83)
+            UIDropDownMenu_SetButtonWidth(BUTTONS.importListDropDown, 102)
+            UIDropDownMenu_JustifyText(BUTTONS.importListDropDown, "LEFT")
+
+      BUTTONS.importListDropDown.fs = BUTTONS.importListDropDown:CreateFontString(nil, "OVERLAY")
+            BUTTONS.importListDropDown.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.importListDropDown.fs:SetPoint("TOP", FRAMES.importListPopupWindow, "TOP", 0, -40)
+            BUTTONS.importListDropDown.fs:SetText("To import a new list, choose the import source.\nThen paste the string in the box below.")
+            BUTTONS.importListDropDown.fs:SetJustifyH("Center")
+
+      FRAMES.importListScrollFrameBackground = CreateFrame("Frame", nil, FRAMES.importListPopupWindow)
+            FRAMES.importListScrollFrameBackground:SetSize(290,210)
+            FRAMES.importListScrollFrameBackground:SetPoint("TOP", FRAMES.importListPopupWindow, "TOP", 0, -105)
+            FRAMES.importListScrollFrameBackground:SetBackdrop({
+                  bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+                  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+                  tile     = true,
+                  tileSize = 32,
+                  edgeSize = 10,
+                  insets   = { left = 2, right = 2, top = 2, bottom = 2 }
+            })
+
+            FRAMES.importListScrollFrame = CreateFrame("ScrollFrame", nil, FRAMES.importListScrollFrameBackground, "UIPanelScrollFrameTemplate")
+                  FRAMES.importListScrollFrame:SetSize(250,200)
+                  FRAMES.importListScrollFrame:SetPoint("LEFT", FRAMES.importListScrollFrameBackground, "LEFT", 10, 0)
+
+            FRAMES.importListEditBox = CreateFrame("EditBox", nil, FRAMES.importListScrollFrame)
+                  FRAMES.importListEditBox:SetPoint("CENTER", FRAMES.importListScrollFrame, "CENTER", 0, 0)
+                  FRAMES.importListEditBox:SetMultiLine(true)
+                  FRAMES.importListEditBox:SetFontObject(ChatFontNormal)
+                  FRAMES.importListEditBox:SetWidth(230)
+
+            FRAMES.importListScrollFrame:SetScrollChild(FRAMES.importListEditBox)
+
+            FRAMES.importListEditBox:SetText("")
+
+      BUTTONS.importListClearButton = CreateFrame("Button", "importListClearButton", FRAMES.importListPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.importListClearButton:SetPoint("TOPRIGHT", FRAMES.importListScrollFrameBackground, "BOTTOMRIGHT", 0, -5)
+            BUTTONS.importListClearButton:SetWidth(102)
+            BUTTONS.importListClearButton:SetHeight(20)
+            BUTTONS.importListClearButton:SetText("Clear")
+
+      BUTTONS.importListPopupImportButton = CreateFrame("Button", "importListPopupImportButton", FRAMES.importListPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.importListPopupImportButton:SetPoint("BOTTOM", FRAMES.importListPopupWindow, "BOTTOM", -55, 10)
+            BUTTONS.importListPopupImportButton:SetWidth(102)
+            BUTTONS.importListPopupImportButton:SetHeight(20)
+            BUTTONS.importListPopupImportButton:SetText("Import List")
+      
+      BUTTONS.importListPopUpCancelButton = CreateFrame("Button", "importListPopUpCancelButton", FRAMES.importListPopupWindow, "UIPanelButtonGrayTemplate")
+            BUTTONS.importListPopUpCancelButton:SetPoint("BOTTOM", FRAMES.importListPopupWindow, "BOTTOM", 55, 10)
+            BUTTONS.importListPopUpCancelButton:SetWidth(102)
+            BUTTONS.importListPopUpCancelButton:SetHeight(20)
+            BUTTONS.importListPopUpCancelButton:SetText("Cancel")

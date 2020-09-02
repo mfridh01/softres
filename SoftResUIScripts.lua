@@ -1543,3 +1543,153 @@ BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
     
         StaticPopup_Show ("SOFTRES_ANNOUNCE_SOFTRESERVERATIONS")
 end)
+
+-- Import list
+BUTTONS.importListButton:SetScript("OnClick", function(self)
+    FRAMES.importListPopupWindow:Show()
+end)
+
+
+function BUTTONS.importListDropDownInit()
+    UIDropDownMenu_Initialize(BUTTONS.importListDropDown, BUTTONS.importListDropDown_Initialize)
+end
+
+function BUTTONS.importListDropDown_Initialize(self)
+    local importTypes = {
+        "softres.it",
+    }
+    
+    -- Set default to MS.
+    UIDropDownMenu_SetText(self, importTypes[1])
+
+    -- Then we check for the type
+    for i = 1, #importTypes do
+        local info = UIDropDownMenu_CreateInfo()
+        info.hasArrow = false
+        info.notCheckable = true
+        info.text = importTypes[i]
+        info.value = importTypes[i]
+        info.func = function()
+            UIDropDownMenu_SetText(self, importTypes[i])
+        end
+        UIDropDownMenu_AddButton(info)
+    end
+end
+
+-- Import popup show
+FRAMES.importListPopupWindow:SetScript("OnShow", function(self)
+
+    -- Alert the player.
+    SoftRes.state:toggleAlertPlayer(true, "Imp")
+
+    -- Set the drop-down list.
+    BUTTONS.importListDropDownInit()
+end)
+
+-- import Popup hide
+FRAMES.importListPopupWindow:SetScript("OnHide", function(self)
+    SoftRes.state:toggleAlertPlayer(false)
+end)
+
+-- Cancel import
+BUTTONS.importListPopUpCancelButton:SetScript("OnClick", function(self)
+    FRAMES.importListPopupWindow:Hide()
+end)
+
+-- Clear button
+BUTTONS.importListClearButton:SetScript("OnClick", function(self)
+
+    -- Clear the text.
+    FRAMES.importListEditBox:SetText("")
+end)
+
+-- Editbox on escape pressed.
+FRAMES.importListEditBox:SetScript("OnEscapePressed", function(self)
+
+    -- Clear focus
+    self:ClearFocus()
+end)
+
+
+-- Parselists
+-- SoftRes.it
+local function parseSoftResIt(importString)
+    if (not importString) then return false end
+
+    local rows = SoftRes.helpers:stringSplit(importString, "\n")
+    if (not rows) then return false end
+
+    -- clear the current list.
+    SoftRes.list:createNewSoftResList()
+
+    -- let's add the players!!
+    -- Start on the second row.
+    for i = 2, #rows, 1 do
+        local _, rowItemId, _, rowName = strsplit(",", rows[i])
+
+        if (not rowName) or (not rowItemId) then return false end
+
+        -- Format the playername. First char upper, rest lower.
+        local playerName = SoftRes.helpers:formatPlayerName(rowName)
+
+        -- Format the itemId.
+        local itemId = GetItemInfo(rowItemId)
+
+        -- Check the itemId
+        if itemId or itemId ~= "" then
+
+            -- Add the player
+            SoftRes.list:addSoftReservePlayer(playerName, rowItemId)
+        end
+    end
+
+    return true
+end
+
+-- import button pressed.
+BUTTONS.importListPopupImportButton:SetScript("OnClick", function(self)
+
+    -- Popup window, clear list and import yes/no
+    StaticPopupDialogs["SOFTRES_IMPORT_LIST"] = {
+        text = "Do you really want to import the new list?\nThis will clear the current list.",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            
+            -- variables
+            local importSuccess = false
+
+            -- get the text.
+            local importString = FRAMES.importListEditBox:GetText()
+
+            if importString == "" then return end
+
+            -- Check what type to parse.
+            local importType = UIDropDownMenu_GetText(BUTTONS.importListDropDown)
+           
+            if importType == "softres.it" then
+                importSuccess = parseSoftResIt(importString)
+            end
+
+            -- clear the text
+            if importSuccess then
+
+                FRAMES.importListEditBox:SetText("")
+                FRAMES.importListPopupWindow:Hide()
+            else
+                FRAMES.importListEditBox:SetText("FAILED TO IMPORT!!")
+            end
+
+            SoftRes.list:reOrderPlayerList()
+            SoftRes.list:showFullSoftResList()
+
+        end,
+        OnCancel = function (_,reason)
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopup_Show ("SOFTRES_IMPORT_LIST")
+end)

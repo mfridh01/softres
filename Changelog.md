@@ -1,3 +1,15 @@
+## v0.0.4-beta
+- 0010 - Added List import feature.
+
+### 0010
+Added a feature for import of lists.
+Supported list is http://softres.it list.
+* Usage: Use the sites list as usual and when done, you click the "Copy to WeakAura" button.
+* In this addon you click the "Import" button. Choose the softres.it in the dropdown.
+* Paste the copied string into the list and press "Import List".
+**!! WARNING !!**
+If any name is spelled wrong, that player will not work ingame. This is not SoftRes Addons fault.
+
 ## v0.0.3-beta
 - 0008 - Fixed the issue with MS penalty, transfered to OS.
 - 0009 - Added a button for announcing the SoftReserved items.
