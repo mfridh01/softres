@@ -170,6 +170,9 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
                   SoftRes.announce:sendMessageToChat("Party","+----------------------------+")
                   SoftRes.announce:sendMessageToChat("Party_Leader","|| No more reservations taken. GL HF.")
 
+                  -- Hide the announce missing softres button.
+                  BUTTONS.announceMissingSoftresButton:Hide()
+
                   -- Whisper the softresses
                   
                   StaticPopupDialogs["SOFTRES_WHISPER_ALL"] = {
@@ -206,6 +209,9 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
             SoftRes.state.scanForSoftRes.state = true
             --SoftRes.state.scanForSoftRes.text = "Scanning chat for SoftReserves.\n\n"
             BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.activeText)
+
+            -- show the announce missing softres button.
+            BUTTONS.announceMissingSoftresButton:Show()
       end
 end
 

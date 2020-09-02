@@ -646,7 +646,7 @@ BUTTONS.scanForSoftResButton = CreateFrame("Button", "ScanForSoftResButton", FRA
       BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
 
 BUTTONS.addPlayerSoftResButton = CreateFrame("Button", "AddPlayerSoftResButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.addPlayerSoftResButton:SetPoint("TOPLEFT", BUTTONS.newListButton, "BOTTOMLEFT", 0, -5)
+      BUTTONS.addPlayerSoftResButton:SetPoint("TOPLEFT", BUTTONS.newListButton, "BOTTOMLEFT", 0, -3)
       BUTTONS.addPlayerSoftResButton:SetWidth(102)
       BUTTONS.addPlayerSoftResButton:SetHeight(20)
       BUTTONS.addPlayerSoftResButton:SetText("Edit Player")
@@ -663,6 +663,13 @@ BUTTONS.deletePlayerButton = CreateFrame("Button", "DeletePlayerButton", FRAMES.
       BUTTONS.deletePlayerButton:SetWidth(102)
       BUTTONS.deletePlayerButton:SetHeight(20)
       BUTTONS.deletePlayerButton:SetText("Delete Player")
+
+BUTTONS.announceMissingSoftresButton = CreateFrame("Button", "announceMissingSoftresButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.announceMissingSoftresButton:SetPoint("TOP", BUTTONS.editPlayerButton, "BOTTOM", 0, -3)
+      BUTTONS.announceMissingSoftresButton:SetWidth(120)
+      BUTTONS.announceMissingSoftresButton:SetHeight(20)
+      BUTTONS.announceMissingSoftresButton:SetText("Missing SoftRes")
+      BUTTONS.announceMissingSoftresButton:Hide()
 
 -- Buttons Page 3
 BUTTONS.enableSoftResAddon = CreateFrame("CheckButton", "EnableSoftResAddon", FRAMES.tabContainer.page3, "UICheckButtonTemplate")

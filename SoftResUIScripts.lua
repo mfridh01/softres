@@ -1546,7 +1546,7 @@ BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
                 end
 
                 -- send the list to the party.
-                SoftRes.announce:sendMessageToChat("Party", "[SoftRes-List]--------------+")
+                SoftRes.announce:sendMessageToChat("Party", "[SoftRes-List]-------------+")
 
                 for i = 1, #softReservedItems, 1 do
                     local itemId = softReservedItems[i][1]
@@ -1562,7 +1562,7 @@ BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
                     end
                 end
 
-                SoftRes.announce:sendMessageToChat("Party", "+---------------------------+")
+                SoftRes.announce:sendMessageToChat("Party", "+----------------------------+")
                 
     
             end,
@@ -1578,6 +1578,7 @@ end)
 
 -- Import list
 BUTTONS.importListButton:SetScript("OnClick", function(self)
+    if not SoftRes.helpers:checkAlertPlayer("Imp") then return end
     FRAMES.importListPopupWindow:Show()
 end)
 
@@ -1724,4 +1725,33 @@ BUTTONS.importListPopupImportButton:SetScript("OnClick", function(self)
     }
 
     StaticPopup_Show ("SOFTRES_IMPORT_LIST")
+end)
+
+BUTTONS.announceMissingSoftresButton:SetScript("OnClick", function(self)
+
+    local players = ""
+    local numPlayers = 0
+
+    -- Search through the softres list.
+    for i = 1, #SoftResList.players, 1 do
+
+        local player = SoftResList.players[i]
+
+        if (not player.softReserve.itemId) then
+            players = players .. player.name .. ". "
+            numPlayers = numPlayers + 1
+        end
+    end
+
+    if players ~= "" then
+        local numPlayersString = "player has"
+
+        if numPlayers > 1 then
+            numPlayersString = "players have"
+        end
+
+        SoftRes.announce:sendMessageToChat("Party_Leader", "The following " .. numPlayersString .. " not made a reservation.")
+        SoftRes.announce:sendMessageToChat("Party_Leader", players)
+    end
+
 end)

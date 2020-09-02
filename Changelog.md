@@ -2,6 +2,11 @@
 - 0010 - Added List import feature.
 - 0011 - Changed text on "Scan SoftRes" when scanning.
 - 0012 - Added a confirmation window when you are posting the rules.
+- 0013 - Added a button "Missing SoftRes" to the bottom of the addon.
+
+### 0013
+Added a button "Missing SoftRes" to the bottom of the addon, while the scanner is active.
+Pressing this button will announce to the raid who has not reserved an item.
 
 ### 0012
 Added a confirmation window for announcing the rules.
