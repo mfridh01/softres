@@ -177,7 +177,7 @@ end
 function SoftRes.helpers:showPopupWindow(text)
       local alertText = SoftRes.state.alertPlayer.text
 
-      if alertText == "Scan" then alertText = "Scanning chat for SoftReserves."
+      if alertText == "Scan" then alertText = " chat for SoftReserves."
       elseif alertText == "Prep" then alertText = "An item is prepared for distribution."
       elseif alertText == "Anno" then alertText = "Announced an item and still taking rolls.\nDistribution not yet finnished."
       elseif alertText == "Loot" then alertText = "The lootwindow is still opened."
@@ -777,6 +777,8 @@ function SoftRes.helpers:countDown(beginningText, rollType, tieRollers)
       SoftRes.announce:sendMessageToChat("Party_Leader", SoftRes.helpers:getItemLinkFromId(itemId) .. " " .. beginningText .. " Roll NOW! (" .. penaltyText .. ".)")
       SoftRes.announce:sendMessageToChat("Party", "+-[" .. beginningText .. "-rolls start]----------+")
 
+      aceComm:SendCommMessage(SoftRes.comm, "SAI::" .. beginningText .. ";" .. itemId, "RAID");
+
       -- Listen to rolls again.
       SoftRes.state:toggleListenToRolls(true)
 
@@ -1136,4 +1138,206 @@ function SoftRes.helpers.whisperSoftRes()
 
           ChatThrottleLib:SendChatMessage("NORMAL", "SoftResRollAnnounce", whisperText, "WHISPER", nil, name, nil, nil, nil)
       end
-  end
+end
+
+-- Checks the raid so that everyone is on the list.
+-- If not, it adds them with an empty SoftRes.
+function SoftRes.helpers:addPlayersNotOnList()
+      
+      -- Iterate through all the players.
+      for i = 1, GetNumGroupMembers(), 1 do
+
+            -- Get the player.
+            local name, rank, subGroup, level, class, fileName, zone, online, isDead, role, isML = GetRaidRosterInfo(i)
+            local isIn = false
+            local formatedName = SoftRes.helpers:formatPlayerName(name)
+
+            -- Iterate through the SoftRes List and check if the player is in or not.
+            for j = 1, #SoftResList.players, 1 do
+
+                  -- Get the player.
+                  local player = SoftResList.players[j]
+
+                  -- Matche the playernames.
+                  if player.name == formatedName then
+                        isIn = true
+                        break
+                  end
+            end
+
+            -- If the player isn't in the list. Add it.
+            if (not isIn) then
+                  SoftRes.list:addSoftReservePlayer(formatedName)
+            end
+      end
+end
+
+-- Hides all the server buttons.
+function SoftRes.helpers:hideAllServerButtons(state)
+
+      if state then
+            BUTTONS.tabButtonPage[1]:Hide() --List-tab
+            BUTTONS.masterLooterCheckButton:Hide()
+            BUTTONS.broadCastModeButton:Hide()
+            BUTTONS.newListButton:Hide()
+            BUTTONS.importListButton:Hide()
+            BUTTONS.announceAllSoftresButton:Hide()
+            BUTTONS.announceRulesButton:Hide()
+            BUTTONS.scanForSoftResButton:Hide()
+            BUTTONS.addPlayerSoftResButton:Hide()
+            BUTTONS.editPlayerButton:Hide()
+            BUTTONS.deletePlayerButton:Hide()
+
+            FRAMES.softResRollTimerEditBox:Disable()
+            FRAMES.msRollTimerEditBox:Disable()
+            FRAMES.osRollTimerEditBox:Disable()
+            FRAMES.msDropDecayEditBox:Disable()
+            FRAMES.osDropDecayEditBox:Disable()
+            FRAMES.extraInfoEditBox:Disable()
+
+            FRAMES.clientModeAnnouncedItemFrame:Show()
+            FRAMES.clientModeAnnouncedItemFrame.fs:Show()
+            FRAMES.clientModeAnnouncedItemFrameRollType:Show()
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs:Show()
+            BUTTONS.clientModeAnnouncedItemRollButton:Show()
+            BUTTONS.clientModeRequestListButton:Show()
+      else
+            BUTTONS.tabButtonPage[1]:Show()
+            BUTTONS.masterLooterCheckButton:Show()
+            BUTTONS.broadCastModeButton:Show()
+            BUTTONS.newListButton:Show()
+            BUTTONS.importListButton:Show()
+            BUTTONS.announceAllSoftresButton:Show()
+            BUTTONS.announceRulesButton:Show()
+            BUTTONS.scanForSoftResButton:Show()
+            BUTTONS.addPlayerSoftResButton:Show()
+            BUTTONS.editPlayerButton:Show()
+            BUTTONS.deletePlayerButton:Show()
+
+            FRAMES.softResRollTimerEditBox:Enable()
+            FRAMES.msRollTimerEditBox:Enable()
+            FRAMES.osRollTimerEditBox:Enable()
+            FRAMES.msDropDecayEditBox:Enable()
+            FRAMES.osDropDecayEditBox:Enable()
+            FRAMES.extraInfoEditBox:Enable()
+
+            FRAMES.clientModeAnnouncedItemFrame:Hide()
+            FRAMES.clientModeAnnouncedItemFrame.fs:Hide()
+            FRAMES.clientModeAnnouncedItemFrameRollType:Hide()
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs:Hide()
+            BUTTONS.clientModeAnnouncedItemRollButton:Hide()
+            BUTTONS.clientModeRequestListButton:Hide()
+      end
+
+end
+
+-- Send the list to all clients.
+function SoftRes.helpers:sendListToClients()
+      
+      -- (S)server (A)nnounce (L)ist
+      local command = "SAL"
+      local value = ""
+
+      for i = 1, #SoftResList.players, 1 do
+
+            local player = SoftResList.players[i]
+            local name = player.name
+            local softResItemId = player.softReserve.itemId
+
+            if (not softResItemId) then softResItemId = "" end
+
+            value = value .. name .. "," .. softResItemId .. ";"
+      end
+
+      if value and value ~= "" then
+            aceComm:SendCommMessage(SoftRes.comm, command .. "::" .. value, "RAID");
+      end
+end
+
+-- Send the rules and config to all clients.
+function SoftRes.helpers:sendSoftResRules()
+
+      -- (S)erver (A)nnounce (C)onfig
+      local command = "SAC"
+      local value = ""
+
+      local CONFIG_DECAY = SoftResConfig.dropDecay
+
+      value = value .. SoftResConfig.timers.softRes.value .. ";"
+      value = value .. SoftResConfig.timers.ms.value .. ";"
+      value = value .. SoftResConfig.timers.os.value .. ";"
+
+      value = value .. SoftResConfig.dropDecay.ms.value .. ";"
+      value = value .. SoftResConfig.dropDecay.os.value .. ";"
+
+      value = value .. SoftResConfig.extraInformation.value .. ";"
+
+      if value and value ~= "" then
+            aceComm:SendCommMessage(SoftRes.comm, command .. "::" .. value, "RAID");
+      end
+end
+
+-- Format the list from the server.
+function SoftRes.helpers:formatListFromServer(list)
+
+      -- clear the current list.
+      SoftRes.list:createNewSoftResList()
+
+      local playerReservations = SoftRes.helpers:stringSplit(list, ";")
+
+      -- terate through all the reservations
+      for i = 1, #playerReservations, 1 do
+            local playerRes = SoftRes.helpers:stringSplit(playerReservations[i], ",")
+
+            local playerName = playerRes[1]
+            local itemId = playerRes[2]
+
+            SoftRes.list:addSoftReservePlayer(playerName, itemId)
+      end
+end
+
+-- Get the config from the server.
+function SoftRes.helpers:setSoftResRules(value)
+
+      -- Get the configs.
+      local configs = SoftRes.helpers:stringSplit(value, ";")
+
+      SoftResConfig.timers.softRes.value = tonumber(configs[1])
+      SoftResConfig.timers.ms.value = tonumber(configs[2])
+      SoftResConfig.timers.os.value = tonumber(configs[3])
+
+      SoftResConfig.dropDecay.ms.value = tonumber(configs[4])
+      SoftResConfig.dropDecay.os.value = tonumber(configs[5])
+
+      SoftResConfig.extraInformation.value = configs[6]
+
+      -- use the configs.
+      SoftRes.ui:useSavedConfigValues()
+end
+
+-- Get the announced item.
+function SoftRes.helpers:setAnnouncedItem(value)
+
+      -- Get the item.
+      local item = SoftRes.helpers:stringSplit(value, ";")
+
+      local rollType = item[1]
+      local itemId = item[2]
+
+      local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
+
+      SoftRes.announcedItem.itemId = itemId
+
+      local player = SoftRes.helpers:getPlayerFromName(GetUnitName("Player"))
+
+      aceTimer:ScheduleTimer(function()
+            FRAMES.clientModeAnnouncedItemFrame.fs:SetText(itemLink)
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText(rollType)
+      end , 1)
+end
+
+function SoftRes.helpers:clearAnnouncedItem()
+      FRAMES.clientModeAnnouncedItemFrame.fs:SetText("")
+      FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText("")
+      SoftRes.announcedItem.itemId = nil
+end

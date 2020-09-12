@@ -5,7 +5,25 @@ FRAMES.mainFrame.scanDots = 1
 
 FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
   self.timeSinceLastUpdate = self.timeSinceLastUpdate + elapsed;
+
+
+    -- CLIENT MODE --
+    if BUTTONS.enableClientMode:GetChecked() == true then
+        SoftRes.clientMode = true
+        SoftResConfig.state.clientMode = true
+
+        -- hide all buttons
+        SoftRes.helpers:hideAllServerButtons(true)
+    else
+        SoftRes.clientMode = false
+        SoftResConfig.state.clientMode = false
+
+        -- show all buttons
+        SoftRes.helpers.hideAllServerButtons(false)
+    end
+
   
+  -- timeupdate
   if (self.timeSinceLastUpdate > FRAMES.mainFrame.updateInterval) then
 
     -- If we're scanning for softresses.
@@ -228,6 +246,9 @@ BUTTONS.announcedItemButton:SetScript("OnClick", function(_, button)
         end
 
         SoftRes.helpers:unPrepareItem()
+        
+        -- Send to all clients.
+        aceComm:SendCommMessage(SoftRes.comm, "SAD::DONE", "RAID");
 
         -- Cancel all active timers.
         aceTimer:CancelAllTimers()
@@ -240,6 +261,23 @@ end)
 BUTTONS.enableSoftResAddon:SetScript("OnClick", function(self)
     SoftResConfig.state.softResEnabled = self:GetChecked()
 end)
+
+-- CLIENT MODE --
+BUTTONS.enableClientMode:SetScript("OnClick", function(self)
+    SoftResConfig.state.softResClient = self:GetChecked()
+    
+    if self:GetChecked() then
+        FRAMES.mainFrame.title:SetText("Ω SoftRes |cFF00FF00Client|r")
+    else
+        FRAMES.mainFrame.title:SetText("Ω SoftRes")
+    end
+        
+end)
+
+BUTTONS.broadCastModeButton:SetScript("OnClick", function(self)
+    SoftResConfig.state.broadcast = self:GetChecked()
+end)
+-- // CLIENT MODE \\ --
 
 BUTTONS.autoShowWindowCheckButton:SetScript("OnClick", function(self)
    SoftResConfig.state.autoShowOnLoot = self:GetChecked()
@@ -542,6 +580,9 @@ BUTTONS.softResRollButton:SetScript("OnClick", function(self)
 
     -- Active the timer.
     SoftRes.announce:softResRollAnnounce()
+
+    -- Send to all clients.
+    aceComm:SendCommMessage(SoftRes.comm, "SAI::SR;" .. SoftRes.announcedItem.itemId, "RAID");
 end)
 
 -- SoftRes Roll.
@@ -567,7 +608,8 @@ BUTTONS.msRollButton:SetScript("OnClick", function(self)
     -- Active the timer.
     SoftRes.helpers:countDown("MS", "ms", nil)
 
-    -- When done. deactive the rolls.
+    -- Send to all clients.
+    --aceComm:SendCommMessage(SoftRes.comm, "SAI::MS;" .. SoftRes.announcedItem.itemId, "RAID");
 end)
 
 BUTTONS.osRollButton:SetScript("OnClick", function(self)
@@ -591,6 +633,9 @@ BUTTONS.osRollButton:SetScript("OnClick", function(self)
 
     -- Active the timer.
     SoftRes.helpers:countDown("OS", "os", nil)
+
+    -- Send to all clients.
+    --aceComm:SendCommMessage(SoftRes.comm, "SAI::OS;" .. SoftRes.announcedItem.itemId, "RAID");
 end)
 
 BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
@@ -614,6 +659,9 @@ BUTTONS.ffaRollButton:SetScript("OnClick", function(self)
 
     -- Active the timer.
     SoftRes.helpers:countDown("FFA", "ffa", nil)
+
+    -- Send to all clients.
+    --aceComm:SendCommMessage(SoftRes.comm, "SAI::FFA;" .. SoftRes.announcedItem.itemId, "RAID");
 end)
 
 BUTTONS.raidRollButton:SetScript("OnClick", function(self)
@@ -650,6 +698,9 @@ BUTTONS.raidRollButton:SetScript("OnClick", function(self)
 
     -- Active the timer.
     SoftRes.announce:raidRollAnnounce()
+
+    -- Send to all clients.
+    aceComm:SendCommMessage(SoftRes.comm, "SAD::DONE", "RAID");
 end)
 
 BUTTONS.announceRollsButton:SetScript("OnClick", function(self)
@@ -685,6 +736,9 @@ BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
             aceTimer:CancelAllTimers()
             
             SoftRes.debug:print("Cancelled all announcements, rolls and such.")
+
+            -- Send to all clients.
+            aceComm:SendCommMessage(SoftRes.comm, "SAD::DONE", "RAID");
         end,
         OnCancel = function (_,reason)
         end,
@@ -714,7 +768,7 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
         local colorWhite = "|cFFFFFFFF"
     
         -- Just a welcome message.
-        SoftRes.announce:sendMessageToChat("Party_Leader", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
+        SoftRes.announce:sendMessageToChat("Party", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
         SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon]--------------+")
         SoftRes.announce:sendMessageToChat("Party", "|| Everyone will SoftReserve one item.")
         SoftRes.announce:sendMessageToChat("Party", "|| Drops except SoftReserved = MS>OS")
@@ -1563,6 +1617,11 @@ BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
                 end
 
                 SoftRes.announce:sendMessageToChat("Party", "+----------------------------+")
+
+                -- send the list to the clients.
+                if SoftResConfig.state.softResClientBroadCast then
+                    SoftRes.helpers:sendListToClients()
+                end
                 
     
             end,
@@ -1709,6 +1768,9 @@ BUTTONS.importListPopupImportButton:SetScript("OnClick", function(self)
 
                 FRAMES.importListEditBox:SetText("")
                 FRAMES.importListPopupWindow:Hide()
+
+                -- Add players who are not on the SoftRes list.
+                SoftRes.helpers:addPlayersNotOnList()
             else
                 FRAMES.importListEditBox:SetText("FAILED TO IMPORT!!")
             end
@@ -1754,4 +1816,51 @@ BUTTONS.announceMissingSoftresButton:SetScript("OnClick", function(self)
         SoftRes.announce:sendMessageToChat("Party_Leader", players)
     end
 
+end)
+
+-- CLIENT MODE --
+-----------------
+
+-- Request a new list from the master looter.
+BUTTONS.clientModeRequestListButton:SetScript("OnClick", function(self)
+
+    -- Popup window, clear list and import yes/no
+    StaticPopupDialogs["SOFTRES_CLIENT_REQUEST_LIST"] = {
+        text = "Are you sure you want to request a new list from the ML?",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            
+            -- Client request, list.
+            aceComm:SendCommMessage(SoftRes.comm, "CR::List", "RAID");
+    
+        end,
+        OnCancel = function (_,reason)
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopup_Show ("SOFTRES_CLIENT_REQUEST_LIST")
+end)
+
+FRAMES.clientModeAnnouncedItemFrame:SetScript("OnEnter",
+   function(self)
+      -- TOOLTIP
+      if SoftRes.announcedItem.itemId then
+         GameTooltip:SetOwner(self, "ANCHOR_TOPRIGHT")
+         GameTooltip:SetHyperlink(SoftRes.helpers:getItemLinkFromId(SoftRes.announcedItem.itemId))
+         GameTooltip:Show()
+      end
+end)
+
+FRAMES.clientModeAnnouncedItemFrame:SetScript("OnLeave",
+   function(self)
+      GameTooltip:Hide()
+end)
+
+-- Send /roll
+BUTTONS.clientModeAnnouncedItemRollButton:SetScript("OnClick", function(self)
+    RandomRoll(1, 100)
 end)

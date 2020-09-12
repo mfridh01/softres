@@ -1,8 +1,10 @@
 aceTimer = LibStub("AceAddon-3.0"):NewAddon("SoftRes", "AceTimer-3.0")
+aceComm = LibStub("AceComm-3.0")
 
 -- SoftRes functions and tables.
 --------------------------------
 SoftRes = {}
+      SoftRes.comm = "SoftRes" -- Communicatio prefix.
       SoftRes.enabled = false -- Is the addon enabled or not?
       SoftRes.rollType = ""
       SoftRes.debug = {}

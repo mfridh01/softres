@@ -1,5 +1,6 @@
 -- Eventscanning begins here.
 --------------------------------------------------------------------
+aceComm:Embed(FRAMES.mainFrame)
 
 local tradeCommand = ""
 local tradeUser = ""
@@ -24,6 +25,7 @@ FRAMES.mainFrame:RegisterEvent("CHAT_MSG_LOOT")
 FRAMES.mainFrame:RegisterEvent("UI_INFO_MESSAGE")
 
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_SYSTEM")
+FRAMES.mainFrame:RegisterEvent("CHAT_MSG_ADDON")
 
 FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
 
@@ -55,6 +57,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                         shitRollers = {},
                   }
             end
+
+            -- Register comms
+            self:RegisterComm("SoftRes")
       
       -- If a new players joined the group, or the group is re-ordered.
       elseif event == "GROUP_ROSTER_UPDATE" and SoftRes.enabled then
@@ -199,8 +204,79 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                         end            
                   end
             end
+
+      elseif event == "CHAT_MSG_ADDON" and SoftRes.enabled then
+
+
+
       end
 end)
+
+function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
+      local broadcast = SoftResConfig.state.softResClientBroadCast
+      local client = SoftResConfig.state.softResClient
+
+      if prefix == "SoftRes" and SoftResConfig.state.softResEnabled then
+            
+            -- command::value
+            local command, value = strmatch(message, "^(.*)::(.*)$")
+            
+            -- (C)lient (R)equest
+            if command == "CR" and broadcast and (not client) then
+                  
+                  if value == "List" then
+                        
+                        -- Send the list to clients.
+                        SoftRes.helpers:sendListToClients()
+
+                        -- Send the rules as well.
+                        SoftRes.helpers:sendSoftResRules()
+                  end
+            end
+
+            -- for the clients receiving the list.
+            if command == "SAL" and client then
+
+                  if value then
+
+                        -- format the list, and fill it.
+                        SoftRes.helpers:formatListFromServer(value)
+                  end
+            elseif command == "SAC" and client then
+
+                  if value then
+
+                        -- set the config and rules.
+                        SoftRes.helpers:setSoftResRules(value)
+                  end
+            elseif command == "SAI" and client then
+
+                  if value then
+
+                        -- get the announced item.
+                        SoftRes.helpers:setAnnouncedItem(value)
+
+                        if SoftResConfig.state.autoShowOnLoot then
+                              FRAMES.mainFrame:Show()
+                              BUTTONS.enableClientMode:SetChecked(true)
+                        end
+                  end
+            elseif command == "SAD" and client then
+
+                  if value then
+
+                        -- get the announced item.
+                        SoftRes.helpers:clearAnnouncedItem()
+
+                        if SoftResConfig.state.autoHideOnLootDone then
+                              FRAMES.mainFrame:Hide()
+                              BUTTONS.enableClientMode:SetChecked(true)
+                        end
+                  end
+            end
+	end
+end
+
 
 -- Slashcommands
 local function slashCommands(msg, editbox)
@@ -213,6 +289,13 @@ local function slashCommands(msg, editbox)
                   FRAMES.mainFrame:Hide()
             else
                   FRAMES.mainFrame:Show()
+            end
+      elseif cmd == "client" then
+            if FRAMES.mainFrame:IsShown() then
+                  FRAMES.mainFrame:Hide()
+            else
+                  FRAMES.mainFrame:Show()
+                  BUTTONS.enableClientMode:SetChecked(true)
             end
       elseif cmd == "hide" then
             FRAMES.mainFrame:Hide()

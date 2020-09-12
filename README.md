@@ -174,5 +174,3 @@ Green ReadyCheck means that the player has won the **SoftRes**erved item.
 - [ ] Add compatibility with other addons. I.E. Atlasloot (for linking items manually.)
     * For now you can "only" use itemlinks from CHAT or your BAG when you manually enter the items.
     * You can't use WIM chat window for linking items either.
-- [ ] Add automatic Whisper with a confirmation of the **SoftRes**erved item.
-    * Will have to figure out how to stop the pop-up of "whisper windows" or you will have 40 tabs/windows (WIM) popping up while scanning for **SoftRes**erves.

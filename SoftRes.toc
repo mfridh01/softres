@@ -7,8 +7,10 @@
 
 libs\LibStub.lua
 libs\ChatThrottleLib.lua
+libs\CallbackHandler-1.0.lua
 libs\AceAddon-3.0.lua
 libs\AceTimer-3.0.lua
+libs\AceComm-3.0.lua
 
 SoftRes.lua
 SoftResUI.lua

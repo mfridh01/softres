@@ -81,6 +81,8 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   autoShowOnLoot = true,
                   autoHideOnLootDone = false,
                   addPenalty = true,
+                  broadcast = false,
+                  clientMode = false,
             },
             timers = {
                   softRes = {
@@ -152,6 +154,8 @@ function SoftRes.ui:useSavedConfigValues()
       BUTTONS.enableSoftResAddon:SetChecked(CONFIG_STATE.softResEnabled)
       BUTTONS.autoShowWindowCheckButton:SetChecked(CONFIG_STATE.autoShowOnLoot)
       BUTTONS.autoHideWindowCheckButton:SetChecked(CONFIG_STATE.autoHideOnLootDone)
+      BUTTONS.broadCastModeButton:SetChecked(CONFIG_STATE.broadcast)
+      BUTTONS.enableClientMode:SetChecked(CONFIG_STATE.clientMode)
       
       -- Shoud we add the penalty or not?
       BUTTONS.addPenaltyButton:SetChecked(CONFIG_STATE.addPenalty)
@@ -337,6 +341,62 @@ FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRA
             FRAMES.listFrame:SetInsertMode("BOTTOM")
             FRAMES.listFrame:EnableMouse(true)
 
+
+-- IF CLIENT MODE
+FRAMES.clientModeAnnouncedItemFrame = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page2)            
+      FRAMES.clientModeAnnouncedItemFrame:SetPoint("TOPLEFT", FRAMES.listFrameContainer, "BOTTOMLEFT", -5, -7)
+      FRAMES.clientModeAnnouncedItemFrame:SetSize(250, 25)
+      FRAMES.clientModeAnnouncedItemFrame:SetBackdropColor(0, 0, 0, 1);
+      FRAMES.clientModeAnnouncedItemFrame:SetBackdrop({
+            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile     = true,
+            tileSize = 32,
+            edgeSize = 10,
+            insets   = { left = 2, right = 2, top = 2, bottom = 2 }
+      })
+      FRAMES.clientModeAnnouncedItemFrame:Hide()
+
+      FRAMES.clientModeAnnouncedItemFrame.fs = FRAMES.clientModeAnnouncedItemFrame:CreateFontString(nil, "OVERLAY")
+            FRAMES.clientModeAnnouncedItemFrame.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.clientModeAnnouncedItemFrame.fs:SetPoint("CENTER", FRAMES.clientModeAnnouncedItemFrame, "CENTER", 0, 0)
+            FRAMES.clientModeAnnouncedItemFrame.fs:SetText("[ Announced item ]")
+            FRAMES.clientModeAnnouncedItemFrame.fs:Hide()
+
+FRAMES.clientModeAnnouncedItemFrameRollType = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page2)            
+      FRAMES.clientModeAnnouncedItemFrameRollType:SetPoint("LEFT", FRAMES.clientModeAnnouncedItemFrame, "RIGHT", 5, 0)
+      FRAMES.clientModeAnnouncedItemFrameRollType:SetSize(25, 25)
+      FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdropColor(0, 0, 0, 1);
+      FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdrop({
+            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+            tile     = true,
+            tileSize = 32,
+            edgeSize = 10,
+            insets   = { left = 2, right = 2, top = 2, bottom = 2 }
+      })
+      FRAMES.clientModeAnnouncedItemFrameRollType:Hide()
+
+      FRAMES.clientModeAnnouncedItemFrameRollType.fs = FRAMES.clientModeAnnouncedItemFrame:CreateFontString(nil, "OVERLAY")
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetFontObject("GameFontHighlightSmall")
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetPoint("CENTER", FRAMES.clientModeAnnouncedItemFrameRollType, "CENTER", 0, 0)
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText("MS")
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs:Hide()
+
+BUTTONS.clientModeAnnouncedItemRollButton = CreateFrame("Button", "clientModeAnnouncedItemRollButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.clientModeAnnouncedItemRollButton:SetPoint("LEFT", FRAMES.clientModeAnnouncedItemFrameRollType, "RIGHT", 5, 0)
+      BUTTONS.clientModeAnnouncedItemRollButton:SetWidth(25)
+      BUTTONS.clientModeAnnouncedItemRollButton:SetHeight(25)
+      BUTTONS.clientModeAnnouncedItemRollButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:22:22:0:-2|t")
+      BUTTONS.clientModeAnnouncedItemRollButton:Hide()
+
+BUTTONS.clientModeRequestListButton = CreateFrame("Button", "announceMissingSoftresButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.clientModeRequestListButton:SetPoint("BOTTOMLEFT", FRAMES.mainFrame, "BOTTOMLEFT", 9, 14)
+      BUTTONS.clientModeRequestListButton:SetWidth(120)
+      BUTTONS.clientModeRequestListButton:SetHeight(20)
+      BUTTONS.clientModeRequestListButton:SetText("Request list")
+      BUTTONS.clientModeRequestListButton:Hide()
+
 -- Page 3
 FRAMES.tabContainer.page3 = CreateFrame("Frame", "TabPagesPage3", FRAMES.mainFrame)
       FRAMES.tabContainer.page3:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
@@ -482,21 +542,21 @@ BUTTONS.tabButtonPage = {}
 BUTTONS.tabButtonPage[2] = CreateFrame("Button", "TabButtonPage2", FRAMES.mainFrame, "TabButtonTemplate")
       BUTTONS.tabButtonPage[2].active = true
       BUTTONS.tabButtonPage[2]:SetFrameLevel(3)
-      BUTTONS.tabButtonPage[2]:SetPoint("BOTTOMLEFT", FRAMES.tabContainer, "TOPLEFT", 15, -3)
+      BUTTONS.tabButtonPage[2]:SetPoint("BOTTOMLEFT", FRAMES.tabContainer, "TOPLEFT", 12, -3)
       BUTTONS.tabButtonPage[2]:SetSize(100, 20)
       BUTTONS.tabButtonPage[2]:SetText("SoftRes List")
 
 BUTTONS.tabButtonPage[1] = CreateFrame("Button", "TabButtonPage1", FRAMES.mainFrame, "TabButtonTemplate")
       BUTTONS.tabButtonPage[1].active = false
       BUTTONS.tabButtonPage[1]:SetFrameLevel(2)
-      BUTTONS.tabButtonPage[1]:SetPoint("LEFT", BUTTONS.tabButtonPage[2], "RIGHT", 2, 0)
+      BUTTONS.tabButtonPage[1]:SetPoint("LEFT", BUTTONS.tabButtonPage[2], "RIGHT", 1, 0)
       BUTTONS.tabButtonPage[1]:SetSize(100, 20)
       BUTTONS.tabButtonPage[1]:SetText("Items / rolls")
 
 BUTTONS.tabButtonPage[3] = CreateFrame("Button", "TabButtonPage3", FRAMES.mainFrame, "TabButtonTemplate")
       BUTTONS.tabButtonPage[3].active = false
       BUTTONS.tabButtonPage[3]:SetFrameLevel(2)
-      BUTTONS.tabButtonPage[3]:SetPoint("LEFT", BUTTONS.tabButtonPage[1], "RIGHT", 2, 0)
+      BUTTONS.tabButtonPage[3]:SetPoint("LEFT", BUTTONS.tabButtonPage[1], "RIGHT", 1, 0)
       BUTTONS.tabButtonPage[3]:SetSize(100, 20)
       BUTTONS.tabButtonPage[3]:SetText("Config")
 
@@ -507,15 +567,26 @@ BUTTONS.tabButtonPage[3] = CreateFrame("Button", "TabButtonPage3", FRAMES.mainFr
 
 -- Buttons page 1.
 BUTTONS.masterLooterCheckButton = CreateFrame("CheckButton", "masterLooterCheckButton", FRAMES.mainFrame, "UICheckButtonTemplate")
-      BUTTONS.masterLooterCheckButton:SetPoint("TOPRIGHT", FRAMES.mainFrame, "TOPRIGHT", -7, -30)
+      BUTTONS.masterLooterCheckButton:SetPoint("TOPRIGHT", FRAMES.mainFrame, "TOPRIGHT", -7, -20)
       BUTTONS.masterLooterCheckButton:SetWidth(20)
       BUTTONS.masterLooterCheckButton:SetHeight(20)
       BUTTONS.masterLooterCheckButton:SetChecked(false)
 
       BUTTONS.masterLooterCheckButton.fs = BUTTONS.masterLooterCheckButton:CreateFontString(nil, "OVERLAY")
-            BUTTONS.masterLooterCheckButton.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.masterLooterCheckButton.fs:SetFontObject("GameFontHighlightSmall")
             BUTTONS.masterLooterCheckButton.fs:SetPoint("RIGHT", BUTTONS.masterLooterCheckButton, "LEFT", 0, 0)
             BUTTONS.masterLooterCheckButton.fs:SetText("ML:")
+
+BUTTONS.broadCastModeButton = CreateFrame("CheckButton", "broadCastModeButton", FRAMES.mainFrame, "UICheckButtonTemplate")
+      BUTTONS.broadCastModeButton:SetPoint("TOPRIGHT", FRAMES.mainFrame, "TOPRIGHT", -7, -35)
+      BUTTONS.broadCastModeButton:SetWidth(20)
+      BUTTONS.broadCastModeButton:SetHeight(20)
+      BUTTONS.broadCastModeButton:SetChecked(true)
+
+      BUTTONS.broadCastModeButton.fs = BUTTONS.broadCastModeButton:CreateFontString(nil, "OVERLAY")
+            BUTTONS.broadCastModeButton.fs:SetFontObject("GameFontHighlightSmall")
+            BUTTONS.broadCastModeButton.fs:SetPoint("RIGHT", BUTTONS.broadCastModeButton, "LEFT", 0, 0)
+            BUTTONS.broadCastModeButton.fs:SetText("Net:")
 
 BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAMES.tabContainer.page1)
       BUTTONS.announcedItemButton:SetSize(32, 32)
@@ -683,6 +754,18 @@ BUTTONS.enableSoftResAddon = CreateFrame("CheckButton", "EnableSoftResAddon", FR
             BUTTONS.enableSoftResAddon.fs:SetPoint("LEFT", BUTTONS.enableSoftResAddon, "RIGHT", 0, 0)
             BUTTONS.enableSoftResAddon.fs:SetJustifyH("LEFT")
             BUTTONS.enableSoftResAddon.fs:SetText("Enable SoftRes Addon.")
+
+BUTTONS.enableClientMode = CreateFrame("CheckButton", "EnableClientMode", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
+      BUTTONS.enableClientMode:SetPoint("TOPRIGHT", FRAMES.tabContainer.page3, "TOPRIGHT", 0, 5)
+      BUTTONS.enableClientMode:SetWidth(20)
+      BUTTONS.enableClientMode:SetHeight(20)
+      BUTTONS.enableClientMode:SetChecked(false)
+
+      BUTTONS.enableClientMode.fs = BUTTONS.enableSoftResAddon:CreateFontString(nil, "OVERLAY")
+            BUTTONS.enableClientMode.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.enableClientMode.fs:SetPoint("RIGHT", BUTTONS.enableClientMode, "LEFT", 0, 0)
+            BUTTONS.enableClientMode.fs:SetJustifyH("RIGHT")
+            BUTTONS.enableClientMode.fs:SetText("Client Mode:")
 
 BUTTONS.autoShowWindowCheckButton = CreateFrame("CheckButton", "AutoShowWindowCheckButton", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
       BUTTONS.autoShowWindowCheckButton:SetPoint("TOPLEFT", BUTTONS.enableSoftResAddon, "BOTTOMLEFT", 0, 5)
