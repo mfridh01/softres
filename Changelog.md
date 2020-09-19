@@ -1,7 +1,14 @@
 ## v0.0.5-beta
+- 0017 - Fixed "stuck" item when trading.
 - 0016 - Added client mode.
 - 0015 - Re-arranged the Changelog.
 - 0014 - When importing a list, people not ON THAT list, will still get added to the addon. (without softres.)
+
+### 0017
+When dragging an item from the bag and announcing it.  
+When the item is traded, it wasn't removed from the SoftRes announcement window, thus the User couldn't continue without canceling the announcement.  
+This is now fixed, so that when traded the item is removed.  
+You could, however, right-click on the Icon of the announced item, to remove it from the window.
 
 ### 0016
 Added a new mode, called Client Mode.  

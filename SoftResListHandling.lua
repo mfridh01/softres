@@ -638,7 +638,7 @@ end
 
 -- Add a player to the list.
 ----------------------------
-function SoftRes.list:addSoftReservePlayer(playerName, itemId)
+function SoftRes.list:addSoftReservePlayer(playerName, itemId, received)
     -- If we don't get a name, don't add it.
     if (not playerName) then return end
 
@@ -657,7 +657,7 @@ function SoftRes.list:addSoftReservePlayer(playerName, itemId)
 
     -- We add the new player to the last spot on the list.
     local lastIndex = #SoftResList.players + 1
-    table.insert(SoftResList.players, lastIndex, SoftRes.player:new(playerName, 0, itemId))
+    table.insert(SoftResList.players, lastIndex, SoftRes.player:new(playerName, 0, itemId, received))
 end
 
 -- Populate the list with dropped items.

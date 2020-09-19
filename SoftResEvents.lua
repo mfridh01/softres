@@ -186,6 +186,10 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                   table.remove(SoftResList.waitingForItems, waitingIndex)
                   tradeWith = nil
                   tradeItem = nil
+
+                  -- Reset everything.
+                  SoftRes.helpers:unPrepareItem()
+                  aceComm:SendCommMessage(SoftRes.comm, "SAD::DONE", "RAID");
             end
       
       elseif event == "TRADE_PLAYER_ITEM_CHANGED" and SoftRes.enabled then
@@ -226,11 +230,7 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   
                   if value == "List" then
                         
-                        -- Send the list to clients.
-                        SoftRes.helpers:sendListToClients()
-
-                        -- Send the rules as well.
-                        SoftRes.helpers:sendSoftResRules()
+                        SoftRes.helpers:sendAllInfo()
                   end
             end
 
@@ -241,6 +241,20 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
 
                         -- format the list, and fill it.
                         SoftRes.helpers:formatListFromServer(value)
+                  end
+            elseif command == "SAR" and client then
+
+                  if value then
+
+                        -- set the current items list.
+                        SoftRes.helpers:setReceivedItems(value)
+                  end
+            elseif command == "SAS" and client then
+
+                  if value then
+
+                        -- set the current items list.
+                        SoftRes.helpers:setReceivedSoftResItems(value)
                   end
             elseif command == "SAC" and client then
 
@@ -254,6 +268,7 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   if value then
 
                         -- get the announced item.
+                        SoftRes.announcedItem.itemId = value
                         SoftRes.helpers:setAnnouncedItem(value)
 
                         if SoftResConfig.state.autoShowOnLoot then

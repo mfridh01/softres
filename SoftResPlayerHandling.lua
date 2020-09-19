@@ -1,7 +1,7 @@
 -- Playerhandling.
 ------------------
 -- (create new player), When we first create a player, fill in the layout with blanks/defaults.
-function SoftRes.player:new(playerName, groupPosition, itemId)
+function SoftRes.player:new(playerName, groupPosition, itemId, receivedItem)
       -- If we get a name, use it.
       local self = {
             name = playerName,
@@ -10,7 +10,7 @@ function SoftRes.player:new(playerName, groupPosition, itemId)
             softReserve = { -- Softreserved item.
                   time = time(), -- When it was softreserved.
                   itemId = itemId, -- Ingame itemId.
-                  received = false, -- If it has been received or not. Always defaults to false.
+                  received = receivedItem, -- If it has been received or not. Always defaults to false.
             },
             receivedItems = {} -- Log every received item.
 --[[              time = nil, -- Time, when you received the item.

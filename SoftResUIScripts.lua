@@ -883,6 +883,9 @@ BUTTONS.addPlayerPopUpAddButton:SetScript("OnClick", function(self)
 
     -- close the window.
     FRAMES.addPlayerPopupWindow:Hide()
+
+    -- Send all info to clients. (Not rules)
+    SoftRes.helpers:sendAllInfo(false)
 end)
 
 -- EditBox name
@@ -994,6 +997,9 @@ BUTTONS.deletePlayerPopUpDeleteButton:SetScript("OnClick", function(self)
 
     BUTTONS.deletePlayerPopUpDeleteButton:Hide()
     FRAMES.deletePlayerPopupWindow:Hide()
+
+    -- Send all info to clients. (Not rules)
+    SoftRes.helpers:sendAllInfo(false)
 end)
 
 BUTTONS.deletePlayerPopUpCancelButton:SetScript("OnClick", function(self)
@@ -1166,6 +1172,9 @@ BUTTONS.editPlayerPopUpDeleteButton:SetScript("OnClick", function(self)
 
     BUTTONS.editPlayerPopUpDeleteButton:Hide()
     FRAMES.editPlayerPopupWindow:Hide()
+
+    -- Send all info to clients. (Not rules)
+    SoftRes.helpers:sendAllInfo(false)
 end)
 
 BUTTONS.editPlayerPopUpCancelButton:SetScript("OnClick", function(self)
@@ -1320,6 +1329,9 @@ BUTTONS.editPlayerPopUpEditButton:SetScript("OnClick", function(self)
 
     -- close the window.
     editPlayerEditPopupWindow:Hide()
+
+    -- Send all info to clients. (Not rules)
+    SoftRes.helpers:sendAllInfo(false)
 end)
 
 BUTTONS.editPlayerPopUpEditItemButton:SetScript("OnClick", function(self)
@@ -1482,6 +1494,9 @@ BUTTONS.editPlayerAddItemAddButton:SetScript("OnClick", function(self)
 
     -- close the window.
     editPlayerAddItemPopupWindow:Hide()
+
+    -- Send all info to clients. (Not rules)
+    SoftRes.helpers:sendAllInfo(false)
 end)
 
 -- Switch lootType between GroupLoot and Masterloot.
@@ -1555,6 +1570,9 @@ BUTTONS.editPlayerPopUpResetLootButton:SetScript("OnClick", function(self)
                 end
             end
 
+            -- Send all info to clients. (Not rules)
+            SoftRes.helpers:sendAllInfo(false)
+
         end,
         OnCancel = function (_,reason)
         end,
@@ -1617,6 +1635,7 @@ BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
                 end
 
                 SoftRes.announce:sendMessageToChat("Party", "+----------------------------+")
+                SoftRes.announce:sendMessageToChat("Party", ">> LIST PUSHED TO CLIENTS <<")
 
                 -- send the list to the clients.
                 if SoftResConfig.state.softResClientBroadCast then

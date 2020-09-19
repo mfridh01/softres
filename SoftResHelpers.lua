@@ -456,14 +456,22 @@ function SoftRes.helpers:handleWinner(name, roll, rollType, itemId)
 
       if rollType == "softRes" then
             player.softReserve.received = true
-            table.insert(SoftResList.waitingForItems, {name, itemId})
+            table.insert(SoftResList.waitingForItems, {name, itemId}) 
+            
+            -- broadcast to clients
+            local value = name .. ":true;"
+            aceComm:SendCommMessage(SoftRes.comm, "SAS::" .. value, "RAID")
       else
             -- Set the values.
             table.insert(player.receivedItems, {winTime, rollType, itemId, roll, penalty})
             table.insert(SoftResList.waitingForItems, {name, itemId})
+
+            -- broadcast to clients
+            local value = name .. ":" .. tostring(winTime) .. "," .. tostring(rollType) .. "," .. tostring(itemId) .. "," .. tostring(roll) .. "," .. tostring(penalty) .. ";"
+            aceComm:SendCommMessage(SoftRes.comm, "SAR::" .. value, "RAID")
       end
 
-      -- Add to the canel-standby.
+      -- Add to the cancel-standby.
       SoftRes.cancel = {winTime, name, roll, rollType, itemId}
 end
 
@@ -637,6 +645,7 @@ function SoftRes.helpers:rollForItem(arg1)
                   table.insert(SoftRes.announcedItem.notElegibleRolls, {rollUser, rollValue})
 
                   -- The player is not elegible, don't continue with reading the roll.
+                  SoftRes.announce:sendMessageToChat("Party", "Wrong roll detected. " .. rollUser .. " did not SoftRes this item.")
                   return
             end
       end
@@ -1243,10 +1252,69 @@ function SoftRes.helpers:sendListToClients()
             local player = SoftResList.players[i]
             local name = player.name
             local softResItemId = player.softReserve.itemId
+            local received = player.softReserve.received
 
             if (not softResItemId) then softResItemId = "" end
 
-            value = value .. name .. "," .. softResItemId .. ";"
+            value = value .. name .. "," .. softResItemId .. "," .. tostring(received) .. ";"
+      end
+
+      if value and value ~= "" then
+            aceComm:SendCommMessage(SoftRes.comm, command .. "::" .. value, "RAID");
+      end
+end
+
+-- Send the list to all clients.
+function SoftRes.helpers:sendItemsToClients()
+      
+      -- (S)server (A)nnounce (R)eceivedItems
+      local command = "SAR"
+      local value = ""
+
+      for i = 1, #SoftResList.players, 1 do
+
+            local player = SoftResList.players[i]
+            local name = player.name
+            local receivedItems = player.receivedItems
+
+            -- if the player has received an item or more.
+            if #receivedItems > 0 then
+                  
+                  -- loop through them.
+                  for j = 1, #receivedItems, 1 do
+
+                        -- Add to the value.
+                        value = value .. name .. ":" .. tostring(receivedItems[j][1]) .. "," .. tostring(receivedItems[j][2]) .. "," .. tostring(receivedItems[j][3]) .. "," .. tostring(receivedItems[j][4]) .. "," .. tostring(receivedItems[j][5]) .. ";"
+                  end
+            end
+
+      end
+
+      if value and value ~= "" then
+            aceComm:SendCommMessage(SoftRes.comm, command .. "::" .. value, "RAID");
+      end
+end
+
+-- Send the list to all clients.
+function SoftRes.helpers:sendReceivedSoftResItems()
+      
+      -- (S)server (A)nnounce (S)oftReserved.received
+      local command = "SAS"
+      local value = ""
+
+      for i = 1, #SoftResList.players, 1 do
+
+            local player = SoftResList.players[i]
+            local name = player.name
+            local received = player.softReserve.received
+
+            -- if the player has received an item or more.
+            if received then
+            
+                  -- Add to the value.
+                  value = value .. name .. ":" .. tostring(received) .. ";"
+            end
+
       end
 
       if value and value ~= "" then
@@ -1291,8 +1359,105 @@ function SoftRes.helpers:formatListFromServer(list)
 
             local playerName = playerRes[1]
             local itemId = playerRes[2]
+            local received = false
 
-            SoftRes.list:addSoftReservePlayer(playerName, itemId)
+            if playerRes[3] == "true" then received = true end
+
+            SoftRes.list:addSoftReservePlayer(playerName, itemId, received)
+      end
+
+      -- re-order the list
+      SoftRes.list:reOrderPlayerList()
+
+      -- show the addon-window.
+      FRAMES.mainFrame:Show()
+end
+
+-- Get the received items per player.
+function SoftRes.helpers:setReceivedItems(list)
+
+      if (not list) then return end
+
+      -- The list is sent like this:
+      -- PLAYERNAME:winTime,rollType,itemId,roll,penalty;PLAYERNAME:winTime,rollType,itemId,roll,penalty;
+
+      -- Split the values-list to handle players.
+      -- Handles each received item.
+      -- reveivedITems[1] = PLAYERNAME:winTime,rollType,itemId,roll,penalty
+      -- reveivedITems[2] = PLAYERNAME:winTime,rollType,itemId,roll,penalty
+      local receivedItems = SoftRes.helpers:stringSplit(list, ";")
+
+      for i = 1, #receivedItems, 1 do
+
+            -- Split the received item into playername and items.
+            -- playerItem[1] = PLAYERNAME
+            -- playerItem[2] = winTime,rollType,itemId,roll,penalty
+            local playerItem = SoftRes.helpers:stringSplit(receivedItems[i], ":")
+
+            local player = ""
+
+            for j = 1, #SoftResList.players do
+                  if SoftResList.players[j].name == playerItem[1] then
+                        player = SoftResList.players[j]
+                  end
+            end
+
+            -- Split the itemValue into an array for adding to the list.
+            -- itemInfo[1] = winTime
+            -- itemInfo[2] = rollType
+            -- itemInfo[3] = itemId
+            -- itemInfo[4] = roll
+            -- itemInfo[5] = penalty
+            local itemInfo = SoftRes.helpers:stringSplit(playerItem[2], ",")
+
+            local winTime = tonumber(itemInfo[1])
+            local rollType = itemInfo[2]
+            local itemId = tonumber(itemInfo[3])
+            local roll = tonumber(itemInfo[4])
+            local penalty = false
+
+            -- set the bool
+            if itemInfo[5] == "true" then penalty = true end
+
+            -- Push it to the player.
+            table.insert(player.receivedItems, {winTime,rollType,itemId,roll,penalty})
+      end
+end
+
+-- Get the received items per player.
+function SoftRes.helpers:setReceivedSoftResItems(list)
+
+      if (not list) then return end
+
+      -- The list is sent like this:
+      -- PLAYERNAME:BOOL;PLAYERNAME:BOOL
+
+      -- Split the values-list to handle players.
+      -- Handles each received item.
+      -- reveivedITems[1] = Playername
+      -- reveivedITems[2] = boolean
+      local receivedItems = SoftRes.helpers:stringSplit(list, ";")
+
+      for i = 1, #receivedItems, 1 do
+
+            -- Split the received item into playername and items.
+            -- playerItem[1] = PLAYERNAME
+            -- playerItem[2] = Bool
+            local playerItem = SoftRes.helpers:stringSplit(receivedItems[i], ":")
+            local receivedSoftRes = false
+
+            local player = ""
+
+            for j = 1, #SoftResList.players do
+                  if SoftResList.players[j].name == playerItem[1] then
+                        player = SoftResList.players[j]
+                  end
+            end
+
+            if playerItem[2] == "true" then receivedSoftRes = true end
+
+            -- Push it to the player.
+            player.softReserve.received = receivedSoftRes
       end
 end
 
@@ -1313,6 +1478,8 @@ function SoftRes.helpers:setSoftResRules(value)
 
       -- use the configs.
       SoftRes.ui:useSavedConfigValues()
+
+      print("SoftRes: Rules, updated.")
 end
 
 -- Get the announced item.
@@ -1325,19 +1492,42 @@ function SoftRes.helpers:setAnnouncedItem(value)
       local itemId = item[2]
 
       local itemLink = SoftRes.helpers:getItemLinkFromId(itemId)
-
       SoftRes.announcedItem.itemId = itemId
 
       local player = SoftRes.helpers:getPlayerFromName(GetUnitName("Player"))
 
       aceTimer:ScheduleTimer(function()
-            FRAMES.clientModeAnnouncedItemFrame.fs:SetText(itemLink)
+            FRAMES.clientModeAnnouncedItemFrame.fs:SetText(SoftRes.helpers:getItemLinkFromId(itemId))
             FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText(rollType)
       end , 1)
+
+      BUTTONS.clientModeAnnouncedItemRollButton:Enable()
+
+      if rollType == "SR" and tonumber(player.softReserve.itemId) ~= tonumber(itemId) then
+            BUTTONS.clientModeAnnouncedItemRollButton:Disable()
+      end
 end
 
 function SoftRes.helpers:clearAnnouncedItem()
       FRAMES.clientModeAnnouncedItemFrame.fs:SetText("")
       FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText("")
       SoftRes.announcedItem.itemId = nil
+end
+
+-- send all item-info
+function SoftRes.helpers:sendAllInfo(rules)
+
+      -- Send the list to clients.
+      SoftRes.helpers:sendListToClients()
+
+      -- Send the received items list.
+      SoftRes.helpers:sendItemsToClients()
+
+      -- Send the received softreserved items list.
+      SoftRes.helpers:sendReceivedSoftResItems()
+
+      if rules then
+            -- Send the rules as well.
+            SoftRes.helpers:sendSoftResRules()
+      end
 end
