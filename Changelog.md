@@ -8,7 +8,7 @@
 When dragging an item from the bag and announcing it.  
 When the item is traded, it wasn't removed from the SoftRes announcement window, thus the User couldn't continue without canceling the announcement.  
 This is now fixed, so that when traded the item is removed.  
-You could, however, right-click on the Icon of the announced item, to remove it from the window.
+You could, however, right-click on the Icon of the announced item, to remove it from the window and the result is saved.
 
 ### 0016
 Added a new mode, called Client Mode.  
