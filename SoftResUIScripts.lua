@@ -11,9 +11,16 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
     if BUTTONS.enableClientMode:GetChecked() == true then
         SoftRes.clientMode = true
         SoftResConfig.state.clientMode = true
+        
+        if SoftResList.masterLooter ~= "" then
+            FRAMES.clientModeMasterLooterFrame.fsMl:SetText(SoftResList.masterLooter)
+        else
+            FRAMES.clientModeMasterLooterFrame.fsMl:SetText("Target & click ->")
+        end
 
         -- hide all buttons
         SoftRes.helpers:hideAllServerButtons(true)
+
     else
         SoftRes.clientMode = false
         SoftResConfig.state.clientMode = false
@@ -1882,4 +1889,36 @@ end)
 -- Send /roll
 BUTTONS.clientModeAnnouncedItemRollButton:SetScript("OnClick", function(self)
     RandomRoll(1, 100)
+end)
+
+-- Who is the master-looter
+BUTTONS.clientModeMasterLooterSetButton:SetScript("OnClick", function(self)
+    local targetName = GetUnitName("Target")
+
+    if UnitIsPlayer("Target") and targetName then
+        FRAMES.clientModeMasterLooterFrame.fsMl:SetText(targetName)
+        SoftResList.masterLooter = targetName
+    end
+end)
+
+BUTTONS.clientModeMasterLooterClearButton:SetScript("OnClick", function(self)
+
+    -- Popup window, clear master looter yes/no
+    StaticPopupDialogs["SOFTRES_CLIENT_CLEAR_ML"] = {
+        text = "Are you sure you want to clear the ML?\n\nBy doing this you will not use the client features.",
+        button1 = "Yes",
+        button2 = "No",
+        OnAccept = function()
+            
+            SoftResList.masterLooter = ""
+    
+        end,
+        OnCancel = function (_,reason)
+        end,
+        timeout = 0,
+        whileDead = true,
+        hideOnEscape = true,
+    }
+
+    StaticPopup_Show ("SOFTRES_CLIENT_CLEAR_ML")
 end)

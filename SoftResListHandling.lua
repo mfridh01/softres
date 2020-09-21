@@ -12,6 +12,7 @@ function SoftRes.list:createNewSoftResList()
           shitRolls = {},
           onHold = {},
           waitingForItems = {},
+          masterLooter = "",
     }
 
     -- If we're scanning. We toggle it off.

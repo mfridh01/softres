@@ -1,36 +1,68 @@
--- TODO
+## A typical SoftRes run for the ML.
 
--- DONE [Snits] Add functionality to scan the list for soft-reserves.
--- DONE [Snits] Add Prep item functionality.
--- DONE [Snits] Add dropscanner.
--- DONE [Snits] Add Roll scanner and announce-Winner function.
-                    Tie-Rolls are working as well.
+# You are the Master Looter.
+1. You are given the role as Master Looter and Raid Assist (Very important to have Raid Assist for announcements.)
+2. Start the addon by typing: /softres show
+3. Go to the "Config" tab and set the rules.
+    3.a. "Enable SoftRes Addon" = Must be set for it to be enabled.
+    3.b. "Auto show window on loot" = When you loot, the SoftRes Addon window will automatically pop up.
+    3.c. "Auto-hide window when done looting" = When you close the loot window, the SoftRes window will close as well.
+    3.d. "Min handled itemrarity" = If you loot and there are no items with the rarity in this box, the addon will not auto-show and it will not handle those items when preparing. (see below)
+    3.e. Set the timers and penalties (if any).
+    3.f. An extra row of info.. i.e. "FFA Roll on all greens and blues."
+4. You have set all the configs. The "Net" checkbox should be checked. Then you will broadcast to everyone who has the addon in client mode.
+5. Go to the "SoftRes List" tab.
+    5.a. Press the "New" button to create a new list. (Will create a new list and add all the members in your raid.)
+        5.a.1. Instead of creating a new list, you can import one from softres.it (see separate instructions for that.)
+    5.b. Press the "Rules" button to announce the rules to /raid. And start the scanner (if you choose).
+        5.b.1. You get options here to 1. Announce the rules, 2. Announce the rules and start the scanner, 3. Cancel.
+    5.c. If you didn't start the scanner while announcing the rules, press the "Scan" button to start it.
+    5.d. Everyone will now link an item they want to SoftReserve, in /raid. (Must be an item-link).
+        5.d.1. Press the "Missing SoftRes" button to announce who hasn't reserved any item.
+    5.e. When everyone is happy with their reservations, press the "Stop" button to stop the scanner.
+        5.e.1. When you press "Stop" you get an option to send a whisper to all players with their reservations.
+    5.f. Press the "Announce" button to announce all the SoftReservations to the /raid.
+        5.f.1. This will also push the settings, list and items to all clients.
+6. When you are near a boss, don't forget to set ML. (If you're only assistant, you can't do this yourself so have the leader do it or become the leader.)
+7. Loot the boss and the addon will pop up (if you had that setting enabled).
+    7.a. Press the "Prepare item" button to chose which item to prepare for announcement.
+        7.a.1. You can press the "Next item" to cycle through the loot, if you want to start with a specific item.
+    7.b. If the item is SoftReserved you can only press the "SoftRes" button.
+        7.b.1. This will Announce to the raid who reserved the item and are elegible for rolls.
+        7.b.2. If anyone else rolls on this item (who did not reserve it) the addon will not count that roll. It will announce to the raid that the user hasn't reserved the item. (you will still see the roll).
+    7.c. MS = MS roll for the item will be announced and a timer will start (you set the seconds).
+        7.c.1. If no one rolls MS, it will automatically announce an OS roll after the timer has been reached.
+    7.d. OS = OS Roll for the item will be announced and a timer will start (you set the seconds).
+    7.e. FFA = FFA Roll for the item will be announced and a timer will start (same as OS timer).
+    7.f. Raid = Raid roll will start. The addon will roll 1-(number of players in raid) and will announce who had that spot, as the winner.
+8. When you are done with the roll, just hand the item to the winner.
+9. Then just keep repeating step 7-8.
+10. If you loot items that you want to roll out (forgot ML or you have in your bag for whatever reason) you can drag that item from your bag onto the addon window. Then follow steps 7-8.
 
--- [DONE] Add Functionality with all rolls-buttons.
--- [DONE] Add Announcements!!                    
--- [DONE] Add a cancel announcement button. Clears all states.
--- [DONE] Add an announcement after half the time, if a SoftRes player hasn't rolled in time.
--- [DONE] Add decay if you win rolls.
-        -- [DONE] Add to the config as well, to tweak how you want.
-
--- Added functions: NOT ACTIVE
-    -- Shit rolls.... People who tries to "trick" the addon by rolling something else than 1-100 .. will be added to the "ShitRolls" list and have a SKULL icon AND red text.
-    -- Many rolls.... People who rolls many times on the same item, will be added to this list. It will just show up for the announced item and will not be saved for future runs. It will show up with Yellow text and an "!" icon.
+REMEMBER THAT YOU ARE THE MASTER LOOTER AND THE ADDON WILL HELP WITH KEEPING TRACK OF EVERYTHING.  
+YOU ARE STILL DOING THE DISTRIBUTION OF ITEMS, SO YOU CAN DECIDE FOR YOURSELF WHAT'S RIGHT AND WRONG.
 
 
--- for later.
---[Snits] Config, add "sliders" for timers. Softres, MS, OS, FFA
+# You are not the Master Looter but would like to use the addon in client mode to see the SoftRes-list and client goodies.
+1. Start the addon with /softres client
+    1.a. Or start the addon with /softres show, then go to config and press the "Client Mode" check-box up to the right.
+2. Configure the addon.
+    2.a. "Enable SoftRes Addon" = Enable the addon, must be set.
+    2.b. "Auto-Show window on loot" = When the Master Looter is announcing an item, the addon will pop up.
+    2.c. "Auto-Hide when done looting" = When the announced item is handled, the window will close.
+3. Go to the "SoftRes List" tab.
+    3.a. Target the master looter and press the "Check" Button to set the Master Looter.
+        3.a.1. You will now listen to broadcasts from that player.
+    3.b. Press the "X" Button to clear the master looter and stop listening to broadcasts.
+4. After setting the Master Looter.
+    4.a. After the ML has announced the list, you will automatically get it and get all updates to the list. All loot and such.
+    4.b. If you, for some reason, didn't get the list or just want to make sure you have the correct one. You can press the "Request List" button.
+        4.b.1. Pressing this button, will force the ML to share the current list.
+        4.b.2. The ML will share it with the raid in the hidden Addon channel, and ALL CLIENTS will update. Not only your client.
+            4.b.2.a. The reason for this is so that ALL CLIENTS always gets the exact same list at all times.
+5. When an item is announced, it will show up in the text-box. You can mouse-over it to see the tooltip.
+6. If you want the item, just press the roll button to do a /roll, or you manually type /roll in chat.
+7. If the announced item is SoftReserved, you can't press the roll button on the addon. You can still write /roll in chat. The addon will never prevent anyone from doing anything.
 
--- [] Add mouse-over on icons for information about won items.
-
-
-
-
--- [DONE] ADD a FORCE announce winner, on SoftReserves, if someone doesn't roll that is.
-
-
-
-
-
-Tell ppl when the addon is public:
-    Narxs
+I CAN'T STRESS IT ENOUGH THAT IT'S ALWAYS THE MASTER LOOTER WHO IS DOING EVERYTHING WITH THE ITEM.
+THE ADDON DOESN'T DISTRIBUTE ANYTHING, IT ONLY ANNOUNCES WHAT THE ML WANTS AND KEEPS TRACK OF THE RESERVATIONS.

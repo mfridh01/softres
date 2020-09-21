@@ -66,6 +66,11 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.list:reOrderPlayerList()
             SoftRes.list:showFullSoftResList()
             SoftRes.list:showPrepSoftResList()
+
+            -- If client mode.
+            if BUTTONS.enableClientMode:GetChecked() then
+                  UIDropDownMenu_Initialize(BUTTONS.clientModeMasterLooterDropDown, BUTTONS.clientModeMasterLooterDropDown_Initialize)
+            end
       
       -- listen to softReserves in raid or party
       elseif event == "CHAT_MSG_PARTY" or event == "CHAT_MSG_PARTY_LEADER" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" and SoftRes.enabled then
@@ -76,7 +81,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                   SoftRes.list:showFullSoftResList()
             end
       
-      elseif event == "LOOT_READY" and SoftRes.enabled then
+      elseif event == "LOOT_READY" and SoftRes.enabled and (not BUTTONS.enableClientMode:GetChecked()) then
 
             SoftRes.debug:print("Loot window opened.")
 
@@ -237,6 +242,9 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
             -- for the clients receiving the list.
             if command == "SAL" and client then
 
+                  -- If not listening to an ML
+                  if sender ~= SoftResList.masterLooter then return end
+
                   if value then
 
                         -- format the list, and fill it.
@@ -244,6 +252,9 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   end
             elseif command == "SAR" and client then
 
+                  -- If not listening to an ML
+                  if sender ~= SoftResList.masterLooter then return end
+                  
                   if value then
 
                         -- set the current items list.
@@ -251,6 +262,9 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   end
             elseif command == "SAS" and client then
 
+                  -- If not listening to an ML
+                  if sender ~= SoftResList.masterLooter then return end
+                  
                   if value then
 
                         -- set the current items list.
@@ -258,6 +272,9 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   end
             elseif command == "SAC" and client then
 
+                  -- If not listening to an ML
+                  if sender ~= SoftResList.masterLooter then return end
+                  
                   if value then
 
                         -- set the config and rules.
@@ -265,6 +282,9 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   end
             elseif command == "SAI" and client then
 
+                  -- If not listening to an ML
+                  if sender ~= SoftResList.masterLooter then return end
+                  
                   if value then
 
                         -- get the announced item.
@@ -278,6 +298,9 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   end
             elseif command == "SAD" and client then
 
+                  -- If not listening to an ML
+                  if sender ~= SoftResList.masterLooter then return end
+                  
                   if value then
 
                         -- get the announced item.

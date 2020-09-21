@@ -1210,6 +1210,10 @@ function SoftRes.helpers:hideAllServerButtons(state)
             FRAMES.clientModeAnnouncedItemFrameRollType.fs:Show()
             BUTTONS.clientModeAnnouncedItemRollButton:Show()
             BUTTONS.clientModeRequestListButton:Show()
+
+            FRAMES.clientModeMasterLooterFrame:Show()
+            BUTTONS.clientModeMasterLooterSetButton:Show()
+            BUTTONS.clientModeMasterLooterClearButton:Show()
       else
             BUTTONS.tabButtonPage[1]:Show()
             BUTTONS.masterLooterCheckButton:Show()
@@ -1236,6 +1240,10 @@ function SoftRes.helpers:hideAllServerButtons(state)
             FRAMES.clientModeAnnouncedItemFrameRollType.fs:Hide()
             BUTTONS.clientModeAnnouncedItemRollButton:Hide()
             BUTTONS.clientModeRequestListButton:Hide()
+
+            FRAMES.clientModeMasterLooterFrame:Hide()
+            BUTTONS.clientModeMasterLooterSetButton:Hide()
+            BUTTONS.clientModeMasterLooterClearButton:Hide()
       end
 
 end

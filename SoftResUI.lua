@@ -397,6 +397,34 @@ BUTTONS.clientModeRequestListButton = CreateFrame("Button", "announceMissingSoft
       BUTTONS.clientModeRequestListButton:SetText("Request list")
       BUTTONS.clientModeRequestListButton:Hide()
 
+FRAMES.clientModeMasterLooterFrame = CreateFrame("Frame", "ClientModeMasterLooterFrame", FRAMES.tabContainer.page2)
+      FRAMES.clientModeMasterLooterFrame:SetPoint("BOTTOMRIGHT", FRAMES.mainFrame, "BOTTOMRIGHT", -75, 15)
+      FRAMES.clientModeMasterLooterFrame:SetWidth(100)
+      FRAMES.clientModeMasterLooterFrame:SetHeight(20)  
+
+FRAMES.clientModeMasterLooterFrame.fs = FRAMES.clientModeMasterLooterFrame:CreateFontString(nil, "OVERLAY")
+      FRAMES.clientModeMasterLooterFrame.fs:SetFontObject("GameFontHighlight")
+      FRAMES.clientModeMasterLooterFrame.fs:SetPoint("RIGHT", FRAMES.clientModeMasterLooterFrame, "LEFT", -8, 0)
+      FRAMES.clientModeMasterLooterFrame.fs:SetText("ML:")
+      FRAMES.clientModeMasterLooterFrame.fs:SetJustifyH("RIGHT")
+
+FRAMES.clientModeMasterLooterFrame.fsMl = FRAMES.clientModeMasterLooterFrame:CreateFontString(nil, "OVERLAY")
+      FRAMES.clientModeMasterLooterFrame.fsMl:SetFontObject("GameFontHighlight")
+      FRAMES.clientModeMasterLooterFrame.fsMl:SetPoint("LEFT", FRAMES.clientModeMasterLooterFrame.fs, "RIGHT", 8, 0)
+      FRAMES.clientModeMasterLooterFrame.fsMl:SetJustifyH("LEFT")
+
+BUTTONS.clientModeMasterLooterSetButton = CreateFrame("Button", "clientModeMasterLooterTargetButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.clientModeMasterLooterSetButton:SetPoint("BOTTOMRIGHT", FRAMES.mainFrame, "BOTTOMRIGHT", -48, 15)
+      BUTTONS.clientModeMasterLooterSetButton:SetWidth(23)
+      BUTTONS.clientModeMasterLooterSetButton:SetHeight(20)
+      BUTTONS.clientModeMasterLooterSetButton:SetText("|TInterface\\RaidFrame\\ReadyCheck-Ready:10:10:0:0|t")
+
+BUTTONS.clientModeMasterLooterClearButton = CreateFrame("Button", "clientModeMasterLooterClearButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
+      BUTTONS.clientModeMasterLooterClearButton:SetPoint("LEFT", BUTTONS.clientModeMasterLooterSetButton, "RIGHT", 6, 0)
+      BUTTONS.clientModeMasterLooterClearButton:SetWidth(23)
+      BUTTONS.clientModeMasterLooterClearButton:SetHeight(20)
+      BUTTONS.clientModeMasterLooterClearButton:SetText("|TInterface\\RaidFrame\\ReadyCheck-NotReady:10:10:0:0|t")
+
 -- Page 3
 FRAMES.tabContainer.page3 = CreateFrame("Frame", "TabPagesPage3", FRAMES.mainFrame)
       FRAMES.tabContainer.page3:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
