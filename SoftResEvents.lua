@@ -222,17 +222,17 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
 end)
 
 function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
-      local broadcast = SoftResConfig.state.softResClientBroadCast
-      local client = SoftResConfig.state.softResClient
+      local broadcast = SoftResConfig.state.broadcast
+      local client = SoftResConfig.state.clientMode
 
       if prefix == "SoftRes" and SoftResConfig.state.softResEnabled then
             
             -- command::value
             local command, value = strmatch(message, "^(.*)::(.*)$")
-            
+
             -- (C)lient (R)equest
             if command == "CR" and broadcast and (not client) then
-                  
+
                   if value == "List" then
                         
                         SoftRes.helpers:sendAllInfo()
@@ -241,7 +241,7 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
 
             -- for the clients receiving the list.
             if command == "SAL" and client then
-
+                  print(SoftResList.masterLooter)
                   -- If not listening to an ML
                   if sender ~= SoftResList.masterLooter then return end
 
