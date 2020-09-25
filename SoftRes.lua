@@ -7,6 +7,7 @@ SoftRes = {}
       SoftRes.comm = "SoftRes" -- Communicatio prefix.
       SoftRes.enabled = false -- Is the addon enabled or not?
       SoftRes.rollType = ""
+      SoftRes.rollString = "Rolls list.\n-----------------------------------------------------------------------\n"
       SoftRes.debug = {}
             SoftRes.debug.__index = SoftRes.debug
             SoftRes.debug.enabled = false -------------------- DEBUG

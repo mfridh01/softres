@@ -379,7 +379,11 @@ function SoftRes.list:showFullSoftResList()
         local showItem = ""
         local icon = ""
         local _, _, _, _, _, _, _, isOnline, _, _, _ = GetRaidRosterInfo(groupPosition)
-        local changeOfflineColor = ""
+
+        -- Classcolor
+        local class, ucaseClass, _ = UnitClass(name)
+        local rPerc, gPerc, bPerc, argbHex = GetClassColor(ucaseClass)
+        local changeOfflineColor = "|c" .. argbHex
 
         -- Check to se if the player has linked an item.
         if not itemId then 
@@ -401,7 +405,7 @@ function SoftRes.list:showFullSoftResList()
         if not showItem then showItem = "" end
         if not isOnline then changeOfflineColor = colorGray end
 
-        text = text .. changeOfflineColor .. icon .. groupPosition .. "-" .. name .. "|r" .. checkIfShitRoller(name) .. checkIfReceivedItems(name) .. checkIfReceveidSoftRes(name) .. " " .. showItem .. "\n"
+        text = text .. icon .. groupPosition .. "-" .. changeOfflineColor ..  name .. "|r" .. checkIfShitRoller(name) .. checkIfReceivedItems(name) .. checkIfReceveidSoftRes(name) .. " " .. showItem .. "\n"
     end
 
     -- Check for offline players
@@ -447,6 +451,9 @@ function SoftRes.list:showPrepSoftResList()
     local rollIcon = SoftResConfig.icons.dice
     local winner = false
 
+    local clientModeRolls = ""
+    local clientModeHighRollers = ""
+
     -- Set the tile accordingly.
     if SoftRes.announcedItem.softReserved then
         textTitle = "The following players are elegible for rolls:\n-----------------------------------------------------------------------\n"
@@ -455,6 +462,7 @@ function SoftRes.list:showPrepSoftResList()
         for i = 1, #SoftRes.preparedItem.elegible do
             local playerName = SoftRes.preparedItem.elegible[i]
             text = text .. checkIfPlayerIsOffline(playerName) .. checkIfHighestRoll(playerName) .. checkIfRolled(playerName) .. playerName .. checkIfManyRolls(playerName) .. checkIfShitRoller(playerName) .. checkIfReceivedItems(playerName) .. checkIfReceveidSoftRes(playerName) .."|r\n"
+            clientModeRolls = clientModeRolls .. checkIfRolled(playerName) .. playerName .. "\n"
         end
       
     elseif #SoftRes.announcedItem.rolls > 0 then
@@ -541,6 +549,7 @@ function SoftRes.list:showPrepSoftResList()
         if not SoftRes.announcedItem.softReserved then
             --text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
             text = text .. checkIfHighestRoll(rollUser) .. checkIfRolled(rollUser) .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+            clientModeRolls = clientModeRolls .. checkIfRolled(rollUser) .. rollUser .. "\n"
         end
     end
 
@@ -552,6 +561,7 @@ function SoftRes.list:showPrepSoftResList()
         -- Read through the highRollers and add them to the front.
         for i = 1, #SoftRes.announcedItem.tieRollers do
             highRollersText = highRollersText .. SoftRes.announcedItem.tieRollers[i] .. "\n"
+            clientModeHighRollers = clientModeHighRollers .. highRollersText .. SoftRes.announcedItem.tieRollers[i] .. "\n"
         end
 
         highRollersText = highRollersText .. "----------------------------------------------------------------------\n"
@@ -574,9 +584,11 @@ function SoftRes.list:showPrepSoftResList()
 
             --text = text .. "(" .. tempRollValue .. ") " .. checkIfRollPenalty(rollValue, rollPenalty) .. " " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
             text = text .. "(" .. tempRollValue .. ") " .. rollUser .. checkIfManyRolls(rollUser) .. checkIfShitRoller(rollUser) .. checkIfReceivedItems(rollUser) .. checkIfReceveidSoftRes(rollUser) .. "|r\n"
+            clientModeRolls = clientModeRolls .. "(" .. tempRollValue .. ") " .. rollUser
         end
     end
 
+    SoftRes.rollString = textTitle .. clientModeHighRollers .. clientModeRolls
     textFrame:SetText(textTitle .. highRollersText .. text)
 end
 

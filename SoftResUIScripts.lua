@@ -51,7 +51,10 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
 
     -- Update the softRes list.
     SoftRes.list:showFullSoftResList()
-    SoftRes.list.showPrepSoftResList()
+    
+    if (not SoftRes.clientMode) then
+        SoftRes.list.showPrepSoftResList()
+    end
 
     -- Show AddonEnabled indicator.
     if BUTTONS.enableSoftResAddon:GetChecked() == true then
@@ -211,6 +214,9 @@ end)
 local function handleDraggedItem()
     -- only scan if the addon is enabled.
     if BUTTONS.enableSoftResAddon:GetChecked() ~= true then return end
+
+    -- Only get items if not in client mode.
+    if SoftRes.clientMode then return end
 
     if GetCursorInfo() then
         -- Check to see if we are clear to handle the item.
@@ -775,13 +781,16 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
         local colorWhite = "|cFFFFFFFF"
     
         -- Just a welcome message.
-        SoftRes.announce:sendMessageToChat("Party", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
+        SoftRes.announce:sendMessageToChat("Party_Leader", "Welcome to " .. GetUnitName("Player") .. "'s SoftRes run.")
         SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon]--------------+")
         SoftRes.announce:sendMessageToChat("Party", "|| Everyone will SoftReserve one item.")
         SoftRes.announce:sendMessageToChat("Party", "|| Drops except SoftReserved = MS>OS")
         SoftRes.announce:sendMessageToChat("Party", "|| Timers- SoftRes: " .. SoftResConfig.timers.softRes.value .. "s. MS: "  .. SoftResConfig.timers.ms.value .. "s. OS: " .. SoftResConfig.timers.os.value .. "s.")
         SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
         SoftRes.announce:sendMessageToChat("Party", "|| " .. SoftResConfig.extraInformation.value)
+        SoftRes.announce:sendMessageToChat("Party", "|| ")
+        SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon, Client Mode]+")
+        SoftRes.announce:sendMessageToChat("Party", "|| Set \"" .. GetUnitName("Player") .. "\" as MasterLooter in Client mode")
         SoftRes.announce:sendMessageToChat("Party", "+-------------------[By Snits]")
           
         if scan then
@@ -1645,7 +1654,7 @@ BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
                 SoftRes.announce:sendMessageToChat("Party", ">> LIST PUSHED TO CLIENTS <<")
 
                 -- send the list to the clients.
-                if SoftResConfig.state.softResClientBroadCast then
+                if SoftResConfig.state.broadcast then
                     SoftRes.helpers:sendListToClients()
                 end
                 

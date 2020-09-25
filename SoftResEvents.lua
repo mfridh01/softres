@@ -66,12 +66,7 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             SoftRes.list:reOrderPlayerList()
             SoftRes.list:showFullSoftResList()
             SoftRes.list:showPrepSoftResList()
-
-            -- If client mode.
-            if BUTTONS.enableClientMode:GetChecked() then
-                  UIDropDownMenu_Initialize(BUTTONS.clientModeMasterLooterDropDown, BUTTONS.clientModeMasterLooterDropDown_Initialize)
-            end
-      
+     
       -- listen to softReserves in raid or party
       elseif event == "CHAT_MSG_PARTY" or event == "CHAT_MSG_PARTY_LEADER" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" and SoftRes.enabled then
 
@@ -159,6 +154,11 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
             -- show the prepared list.
             SoftRes.list.showPrepSoftResList()
       
+            -- send the list.
+            if (not SoftRes.clientMode) then
+                  aceComm:SendCommMessage(SoftRes.comm, "SARL::" .. SoftRes.rollString, "RAID");
+            end
+
       -- got loot.
       elseif event == "CHAT_MSG_LOOT" and SoftRes.enabled then
             arg1, _, _, _, arg5 = ...
@@ -235,13 +235,13 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
 
                   if value == "List" then
                         
-                        SoftRes.helpers:sendAllInfo()
+                        SoftRes.helpers:sendAllInfo(true)
                   end
             end
 
             -- for the clients receiving the list.
             if command == "SAL" and client then
-                  print(SoftResList.masterLooter)
+
                   -- If not listening to an ML
                   if sender ~= SoftResList.masterLooter then return end
 
@@ -267,7 +267,7 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                   
                   if value then
 
-                        -- set the current items list.
+                        --Send the latest list. set the current items list.
                         SoftRes.helpers:setReceivedSoftResItems(value)
                   end
             elseif command == "SAC" and client then
@@ -293,6 +293,7 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
 
                         if SoftResConfig.state.autoShowOnLoot then
                               FRAMES.mainFrame:Show()
+                              SoftRes.helpers:toggleTabPage(1)
                               BUTTONS.enableClientMode:SetChecked(true)
                         end
                   end
@@ -311,10 +312,46 @@ function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
                               BUTTONS.enableClientMode:SetChecked(true)
                         end
                   end
+            elseif command == "SARL" and client then -- Announce rolls
+
+                  -- If not listening to an ML
+                  if sender ~= SoftResList.masterLooter then return end
+                  
+                  if value then
+
+                        -- Send the rolls
+                        SoftRes.helpers:setRollsList(value)
+                  end
             end
 	end
 end
 
+
+-- TOOLTIP show softreservations
+local function ShowLinkIdInfo(tooltip, link)
+      local itemName, itemLink = GameTooltip:GetItem()
+      local itemId = SoftRes.helpers:getItemIdFromLink(itemLink)
+
+      -- Get softreservations from itemId
+      local players = SoftRes.helpers:getSoftReservers(itemId)
+
+      if #players == 0 and SoftRes.enabled then
+            tooltip:AddLine("|cFF6EA5DC\nNo SoftReservations|r")
+      elseif #players > 0 and SoftRes.enabled then
+            
+            tooltip:AddLine("|cFF6EA5DC\nSoftReserved by:|r")
+            for i = 1, #players, 1 do
+                  local name = players[i]
+                  local class, ucaseClass, _ = UnitClass(name)
+                  local rPerc, gPerc, bPerc, argbHex = GetClassColor(ucaseClass)
+
+                  tooltip:AddLine("|c" .. argbHex .. name .. "|r")
+            end
+            tooltip:AddLine(" ")
+      end
+end
+
+GameTooltip:HookScript("OnTooltipSetItem", ShowLinkIdInfo)
 
 -- Slashcommands
 local function slashCommands(msg, editbox)

@@ -1,8 +1,12 @@
 ## v0.0.5-beta
+- 0018 - Added SoftReservees to tooltip.
 - 0017 - Fixed "stuck" item when trading.
 - 0016 - Added client mode.
 - 0015 - Re-arranged the Changelog.
 - 0014 - When importing a list, people not ON THAT list, will still get added to the addon. (without softres.)
+
+### 0018
+If you have the SoftRes add enabled, you will see who has SoftReserved the item you are hovering on the tooltip.
 
 ### 0017
 When dragging an item from the bag and announcing it.  

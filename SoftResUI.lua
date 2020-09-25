@@ -293,6 +293,54 @@ FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.ta
             FRAMES.announcedItemFrame.fs:SetPoint("CENTER", FRAMES.announcedItemFrame, "CENTER", 0, 0)
             FRAMES.announcedItemFrame.fs:SetText("Drag an item here, or loot too start.")
 
+
+            FRAMES.clientModeAnnouncedItemFrame = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page1)            
+            FRAMES.clientModeAnnouncedItemFrame:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", -5, -7)
+            FRAMES.clientModeAnnouncedItemFrame:SetSize(250, 25)
+            FRAMES.clientModeAnnouncedItemFrame:SetBackdropColor(0, 0, 0, 1);
+            FRAMES.clientModeAnnouncedItemFrame:SetBackdrop({
+                  bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+                  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+                  tile     = true,
+                  tileSize = 32,
+                  edgeSize = 10,
+                  insets   = { left = 2, right = 2, top = 2, bottom = 2 }
+            })
+            FRAMES.clientModeAnnouncedItemFrame:Hide()
+      
+            FRAMES.clientModeAnnouncedItemFrame.fs = FRAMES.clientModeAnnouncedItemFrame:CreateFontString(nil, "OVERLAY")
+                  FRAMES.clientModeAnnouncedItemFrame.fs:SetFontObject("GameFontHighlightSmall")
+                  FRAMES.clientModeAnnouncedItemFrame.fs:SetPoint("CENTER", FRAMES.clientModeAnnouncedItemFrame, "CENTER", 0, 0)
+                  FRAMES.clientModeAnnouncedItemFrame.fs:SetText("[ Announced item ]")
+                  FRAMES.clientModeAnnouncedItemFrame.fs:Hide()
+      
+      FRAMES.clientModeAnnouncedItemFrameRollType = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page1)            
+            FRAMES.clientModeAnnouncedItemFrameRollType:SetPoint("LEFT", FRAMES.clientModeAnnouncedItemFrame, "RIGHT", 5, 0)
+            FRAMES.clientModeAnnouncedItemFrameRollType:SetSize(25, 25)
+            FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdropColor(0, 0, 0, 1);
+            FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdrop({
+                  bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+                  edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+                  tile     = true,
+                  tileSize = 32,
+                  edgeSize = 10,
+                  insets   = { left = 2, right = 2, top = 2, bottom = 2 }
+            })
+            FRAMES.clientModeAnnouncedItemFrameRollType:Hide()
+      
+            FRAMES.clientModeAnnouncedItemFrameRollType.fs = FRAMES.clientModeAnnouncedItemFrame:CreateFontString(nil, "OVERLAY")
+                  FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetFontObject("GameFontHighlightSmall")
+                  FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetPoint("CENTER", FRAMES.clientModeAnnouncedItemFrameRollType, "CENTER", 0, 0)
+                  FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText("MS")
+                  FRAMES.clientModeAnnouncedItemFrameRollType.fs:Hide()
+      
+      BUTTONS.clientModeAnnouncedItemRollButton = CreateFrame("Button", "clientModeAnnouncedItemRollButton", FRAMES.tabContainer.page1, "UIPanelButtonGrayTemplate")
+            BUTTONS.clientModeAnnouncedItemRollButton:SetPoint("LEFT", FRAMES.clientModeAnnouncedItemFrameRollType, "RIGHT", 5, 0)
+            BUTTONS.clientModeAnnouncedItemRollButton:SetWidth(25)
+            BUTTONS.clientModeAnnouncedItemRollButton:SetHeight(25)
+            BUTTONS.clientModeAnnouncedItemRollButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:22:22:0:-2|t")
+            BUTTONS.clientModeAnnouncedItemRollButton:Hide()
+
 -- PAGE 2
 FRAMES.tabContainer.page2 = CreateFrame("Frame", "TabPagesPage2", FRAMES.mainFrame)
       FRAMES.tabContainer.page2:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
@@ -343,53 +391,6 @@ FRAMES.listFrameContainer = CreateFrame("ScrollFrame", "ListFrameContainer", FRA
 
 
 -- IF CLIENT MODE
-FRAMES.clientModeAnnouncedItemFrame = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page2)            
-      FRAMES.clientModeAnnouncedItemFrame:SetPoint("TOPLEFT", FRAMES.listFrameContainer, "BOTTOMLEFT", -5, -7)
-      FRAMES.clientModeAnnouncedItemFrame:SetSize(250, 25)
-      FRAMES.clientModeAnnouncedItemFrame:SetBackdropColor(0, 0, 0, 1);
-      FRAMES.clientModeAnnouncedItemFrame:SetBackdrop({
-            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
-            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-            tile     = true,
-            tileSize = 32,
-            edgeSize = 10,
-            insets   = { left = 2, right = 2, top = 2, bottom = 2 }
-      })
-      FRAMES.clientModeAnnouncedItemFrame:Hide()
-
-      FRAMES.clientModeAnnouncedItemFrame.fs = FRAMES.clientModeAnnouncedItemFrame:CreateFontString(nil, "OVERLAY")
-            FRAMES.clientModeAnnouncedItemFrame.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.clientModeAnnouncedItemFrame.fs:SetPoint("CENTER", FRAMES.clientModeAnnouncedItemFrame, "CENTER", 0, 0)
-            FRAMES.clientModeAnnouncedItemFrame.fs:SetText("[ Announced item ]")
-            FRAMES.clientModeAnnouncedItemFrame.fs:Hide()
-
-FRAMES.clientModeAnnouncedItemFrameRollType = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page2)            
-      FRAMES.clientModeAnnouncedItemFrameRollType:SetPoint("LEFT", FRAMES.clientModeAnnouncedItemFrame, "RIGHT", 5, 0)
-      FRAMES.clientModeAnnouncedItemFrameRollType:SetSize(25, 25)
-      FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdropColor(0, 0, 0, 1);
-      FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdrop({
-            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
-            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-            tile     = true,
-            tileSize = 32,
-            edgeSize = 10,
-            insets   = { left = 2, right = 2, top = 2, bottom = 2 }
-      })
-      FRAMES.clientModeAnnouncedItemFrameRollType:Hide()
-
-      FRAMES.clientModeAnnouncedItemFrameRollType.fs = FRAMES.clientModeAnnouncedItemFrame:CreateFontString(nil, "OVERLAY")
-            FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetFontObject("GameFontHighlightSmall")
-            FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetPoint("CENTER", FRAMES.clientModeAnnouncedItemFrameRollType, "CENTER", 0, 0)
-            FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText("MS")
-            FRAMES.clientModeAnnouncedItemFrameRollType.fs:Hide()
-
-BUTTONS.clientModeAnnouncedItemRollButton = CreateFrame("Button", "clientModeAnnouncedItemRollButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
-      BUTTONS.clientModeAnnouncedItemRollButton:SetPoint("LEFT", FRAMES.clientModeAnnouncedItemFrameRollType, "RIGHT", 5, 0)
-      BUTTONS.clientModeAnnouncedItemRollButton:SetWidth(25)
-      BUTTONS.clientModeAnnouncedItemRollButton:SetHeight(25)
-      BUTTONS.clientModeAnnouncedItemRollButton:SetText("|TInterface\\Buttons\\UI-GroupLoot-Dice-Up:22:22:0:-2|t")
-      BUTTONS.clientModeAnnouncedItemRollButton:Hide()
-
 BUTTONS.clientModeRequestListButton = CreateFrame("Button", "announceMissingSoftresButton", FRAMES.tabContainer.page2, "UIPanelButtonGrayTemplate")
       BUTTONS.clientModeRequestListButton:SetPoint("BOTTOMLEFT", FRAMES.mainFrame, "BOTTOMLEFT", 9, 14)
       BUTTONS.clientModeRequestListButton:SetWidth(120)

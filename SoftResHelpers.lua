@@ -132,6 +132,14 @@ function SoftRes.helpers:findStringInTable(table, string)
       return false
 end
 
+-- Takes a player name and returns the class color of said player.
+function SoftRes.helpers:getClassColorFromName(name)
+      local class, ucaseClass, _ = UnitClass(name)
+      local rPerc, gPerc, bPerc, argbHex = GetClassColor(ucaseClass)
+
+      return argbHex
+end
+
 -- Onyxia fix (all fixes).
 -- Onyxia head have two versions. We make them both the same.
 -- Takes a dropped ItemId and a SoftReserved itemId. Returns same number of both.
@@ -404,6 +412,8 @@ function SoftRes.helpers:unPrepareItem()
 
       SoftRes.list:showFullSoftResList()
       SoftRes.list.showPrepSoftResList()
+
+      aceComm:SendCommMessage(SoftRes.comm, "SAD::DONE", "RAID");
 end
 
 -- local function for return an icon per item won.
@@ -1185,7 +1195,6 @@ end
 function SoftRes.helpers:hideAllServerButtons(state)
 
       if state then
-            BUTTONS.tabButtonPage[1]:Hide() --List-tab
             BUTTONS.masterLooterCheckButton:Hide()
             BUTTONS.broadCastModeButton:Hide()
             BUTTONS.newListButton:Hide()
@@ -1196,6 +1205,11 @@ function SoftRes.helpers:hideAllServerButtons(state)
             BUTTONS.addPlayerSoftResButton:Hide()
             BUTTONS.editPlayerButton:Hide()
             BUTTONS.deletePlayerButton:Hide()
+
+            FRAMES.announcedItemFrame:Hide()
+            FRAMES.announcedItemFrame.fs:Hide()
+            BUTTONS.announcedItemButton:Hide()
+            BUTTONS.cancelEverythingButton:Hide()
 
             FRAMES.softResRollTimerEditBox:Disable()
             FRAMES.msRollTimerEditBox:Disable()
@@ -1215,7 +1229,6 @@ function SoftRes.helpers:hideAllServerButtons(state)
             BUTTONS.clientModeMasterLooterSetButton:Show()
             BUTTONS.clientModeMasterLooterClearButton:Show()
       else
-            BUTTONS.tabButtonPage[1]:Show()
             BUTTONS.masterLooterCheckButton:Show()
             BUTTONS.broadCastModeButton:Show()
             BUTTONS.newListButton:Show()
@@ -1226,6 +1239,11 @@ function SoftRes.helpers:hideAllServerButtons(state)
             BUTTONS.addPlayerSoftResButton:Show()
             BUTTONS.editPlayerButton:Show()
             BUTTONS.deletePlayerButton:Show()
+
+            FRAMES.announcedItemFrame:Show()
+            FRAMES.announcedItemFrame.fs:Show()
+            BUTTONS.announcedItemButton:Show()
+            BUTTONS.cancelEverythingButton:Show()
 
             FRAMES.softResRollTimerEditBox:Enable()
             FRAMES.msRollTimerEditBox:Enable()
@@ -1356,6 +1374,9 @@ end
 -- Format the list from the server.
 function SoftRes.helpers:formatListFromServer(list)
 
+      -- Get the current MasterLooter.
+      local currentMasterLooter = SoftResList.masterLooter
+
       -- clear the current list.
       SoftRes.list:createNewSoftResList()
 
@@ -1373,6 +1394,9 @@ function SoftRes.helpers:formatListFromServer(list)
 
             SoftRes.list:addSoftReservePlayer(playerName, itemId, received)
       end
+
+      -- Set the masterlooter again.
+      SoftResList.masterLooter = currentMasterLooter
 
       -- re-order the list
       SoftRes.list:reOrderPlayerList()
@@ -1407,6 +1431,7 @@ function SoftRes.helpers:setReceivedItems(list)
             for j = 1, #SoftResList.players do
                   if SoftResList.players[j].name == playerItem[1] then
                         player = SoftResList.players[j]
+                        break
                   end
             end
 
@@ -1428,7 +1453,11 @@ function SoftRes.helpers:setReceivedItems(list)
             if itemInfo[5] == "true" then penalty = true end
 
             -- Push it to the player.
-            table.insert(player.receivedItems, {winTime,rollType,itemId,roll,penalty})
+            if player == "" then
+                  print("Please request the latest list from server.")
+            else
+                  table.insert(player.receivedItems, {winTime,rollType,itemId,roll,penalty})
+            end
       end
 end
 
@@ -1465,7 +1494,11 @@ function SoftRes.helpers:setReceivedSoftResItems(list)
             if playerItem[2] == "true" then receivedSoftRes = true end
 
             -- Push it to the player.
-            player.softReserve.received = receivedSoftRes
+            if player == "" then
+                  print("Please request the latest list from server.")
+            else
+                  player.softReserve.received = receivedSoftRes
+            end
       end
 end
 
@@ -1486,8 +1519,6 @@ function SoftRes.helpers:setSoftResRules(value)
 
       -- use the configs.
       SoftRes.ui:useSavedConfigValues()
-
-      print("SoftRes: Rules, updated.")
 end
 
 -- Get the announced item.
@@ -1520,6 +1551,8 @@ function SoftRes.helpers:clearAnnouncedItem()
       FRAMES.clientModeAnnouncedItemFrame.fs:SetText("")
       FRAMES.clientModeAnnouncedItemFrameRollType.fs:SetText("")
       SoftRes.announcedItem.itemId = nil
+      
+      FRAMES.rollFrame.fs:SetText(SoftRes.rollString)
 end
 
 -- send all item-info
@@ -1538,4 +1571,12 @@ function SoftRes.helpers:sendAllInfo(rules)
             -- Send the rules as well.
             SoftRes.helpers:sendSoftResRules()
       end
+end
+
+-- Get the rolls
+function SoftRes.helpers:setRollsList(list)
+      
+      local textFrame = FRAMES.rollFrame.fs
+      textFrame:SetText(list)
+
 end
