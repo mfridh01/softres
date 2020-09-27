@@ -874,7 +874,7 @@ FRAMES.editPlayerAddPlayerPopupWindow = CreateFrame("Frame", "editPlayerAddPlaye
       FRAMES.addPlayerNameEditBox.fs = FRAMES.addPlayerNameEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.addPlayerNameEditBox.fs:SetFontObject("GameFontHighlight")
             FRAMES.addPlayerNameEditBox.fs:SetPoint("BOTTOM", FRAMES.addPlayerNameEditBox, "TOP", 0, 5)
-            FRAMES.addPlayerNameEditBox.fs:SetText("To add a new player\nsimply enter the Player name \n and (or not) the linked item.\n\nPlayer Name:")
+            FRAMES.addPlayerNameEditBox.fs:SetText("To add a new player\nsimply enter the Player name \n and (or not) the linked item.\n\nPlayer Name (Case Sensitive):")
             FRAMES.addPlayerNameEditBox.fs:SetJustifyH("Center")
       
       FRAMES.addPlayerItemEditBox = CreateFrame("EditBox", "addPlayerItemEditBox", FRAMES.addPlayerPopupWindow, "InputBoxTemplate")

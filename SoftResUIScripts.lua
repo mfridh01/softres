@@ -33,6 +33,9 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
   -- timeupdate
   if (self.timeSinceLastUpdate > FRAMES.mainFrame.updateInterval) then
 
+    -- Get the name of focused FRAME.
+--    print(GetMouseFocus():GetName())
+
     -- If we're scanning for softresses.
     -- Show an indicator on the top right, so it's shown.
     if SoftRes.state.alertPlayer.state then
@@ -941,7 +944,7 @@ FRAMES.addPlayerPopupWindow:SetScript("OnShow", function(self)
     FRAMES.addPlayerNameEditBox:SetText("")
 
     -- Set the text.
-    FRAMES.addPlayerNameEditBox.fs:SetText("To add a new player\nsimply enter the Player name \n and (or not) the linked item.\n\nPlayer Name:")
+    FRAMES.addPlayerNameEditBox.fs:SetText("To add a new player\nsimply enter the Player name \n and (or not) the linked item.\n\nPlayer Name (Case Sensitive):")
 
     local origChatFrame_OnHyperlinkShow = ChatFrame_OnHyperlinkShow
     ChatFrame_OnHyperlinkShow = function(...)
@@ -966,6 +969,24 @@ FRAMES.addPlayerPopupWindow:SetScript("OnShow", function(self)
             return
         end 
     end)
+
+    -- ATLASLOOT
+    for i = 1, 30, 1 do
+
+        if _G["AtlasLoot_Button_" .. i] then
+
+            _G["AtlasLoot_Button_" .. i]:SetScript("OnClick", function(self, button)
+                if IsShiftKeyDown() and button == "LeftButton" and SoftRes.toolTipItemId then
+                    FRAMES.editPlayerEditItemEditBox:SetText("")
+
+                    local itemId = SoftRes.toolTipItemId
+                    local _, itemLink = GetItemInfo(itemId)
+
+                    FRAMES.addPlayerItemEditBox:SetText(itemLink)
+                end
+            end)
+        end
+    end
 end)
 
 FRAMES.addPlayerPopupWindow:SetScript("OnHide", function(self)
@@ -1253,8 +1274,26 @@ FRAMES.editPlayerEditPopupWindow:SetScript("OnShow", function(self)
             FRAMES.addPlayerItemEditBox:SetText("")
             FRAMES.editPlayerEditItemEditBox:SetText(itemLink)
             return
-        end 
+        end
     end)
+
+    -- ATLASLOOT
+    for i = 1, 30, 1 do
+
+        if _G["AtlasLoot_Button_" .. i] then
+
+            _G["AtlasLoot_Button_" .. i]:SetScript("OnClick", function(self, button)
+                if IsShiftKeyDown() and button == "LeftButton" and SoftRes.toolTipItemId then
+                    FRAMES.addPlayerItemEditBox:SetText("")
+
+                    local itemId = SoftRes.toolTipItemId
+                    local _, itemLink = GetItemInfo(itemId)
+
+                    FRAMES.editPlayerEditItemEditBox:SetText(itemLink)
+                end
+            end)
+        end
+    end
 end)
 
 FRAMES.editPlayerEditPopupWindow:SetScript("OnHide", function(self)
@@ -1401,6 +1440,23 @@ FRAMES.editPlayerAddItemPopupWindow:SetScript("OnShow", function(self)
             return
         end 
     end)
+
+    -- ATLASLOOT
+    for i = 1, 30, 1 do
+
+        if _G["AtlasLoot_Button_" .. i] then
+
+            _G["AtlasLoot_Button_" .. i]:SetScript("OnClick", function(self, button)
+                if IsShiftKeyDown() and button == "LeftButton" and SoftRes.toolTipItemId then
+
+                    local itemId = SoftRes.toolTipItemId
+                    local _, itemLink = GetItemInfo(itemId)
+
+                    FRAMES.editPlayerAddItemEditBox:SetText(itemLink)
+                end
+            end)
+        end
+    end
 end)
 
 BUTTONS.editPlayerPopUpAddItemButton:SetScript("OnClick", function(self)
@@ -1749,10 +1805,27 @@ local function parseSoftResIt(importString)
     -- clear the current list.
     SoftRes.list:createNewSoftResList()
 
+
+    --Item,ItemId,From,Name,Class,Spec,Note,Plus
+    --"Mish'undare, Circlet of the Mind Flayer",19375,Nefarian,Snits,Shaman,Restoration,,0
+
+
     -- let's add the players!!
     -- Start on the second row.
     for i = 2, #rows, 1 do
-        local _, rowItemId, _, rowName = strsplit(",", rows[i])
+
+        local firstChar = string.sub(rows[i], 1, 1)
+        local importantInfo = rows[i]
+        local rowItemId = ""
+        local rowName = ""
+
+
+        -- Change the , between "" to something else. or remove it
+        local foundString = string.match(importantInfo, ", ")
+        if foundString then
+            importantInfo = importantInfo:gsub(", ", "")
+        end
+        _, rowItemId, _, rowName = strsplit(",", importantInfo)
 
         if (not rowName) or (not rowItemId) then return false end
 

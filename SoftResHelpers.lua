@@ -59,10 +59,16 @@ end
 -- Takes a string, ex: Playername, and formats it to first char to upper, rest lower.
 function SoftRes.helpers:formatPlayerName(string)
 
-      if string.len(string) < 3 then return false end
+      -- if string.len(string) < 2 then return false end
 
-      local lower = string.lower(string)
-      return (lower:gsub("^%l", string.upper))
+      -- Get the character size for the first letter.
+      -- local charSize = string:byte(1)
+
+
+      --local lower = string.lower(string)
+
+      --return (lower:gsub("^%l", string.upper))
+      return string
 end
 
 -- Gets called when an item gets dropped on the button icon.

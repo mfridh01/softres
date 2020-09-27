@@ -1,12 +1,33 @@
 ## v0.0.5-beta
+- 0021 - Fixed an issue with importing Softres.it lists where items with "," in it's name is reserved.
+- 0020 - Added functionality to manually add items from AtlasLoot.
+- 0019 - Fixed problems with special characters being the first letter.
 - 0018 - Added SoftReservees to tooltip.
 - 0017 - Fixed "stuck" item when trading.
 - 0016 - Added client mode.
 - 0015 - Re-arranged the Changelog.
 - 0014 - When importing a list, people not ON THAT list, will still get added to the addon. (without softres.)
 
+### 0021
+When importing softres.it lists where an item with a "," (comma) in it's name is reserved, the import failed.
+This is now fixed.
+
+### 0020
+When manually adding/editing players/loot, you can now use AtlasLoot and shift-click to add an item.
+There are now a few number of ways to add items.
+* Shift-click an itemlink from chat.
+* Shift-click an itemlink from SoftRes list window.
+* Shift-click an item from bag.
+* Shift-click an item in AtlasLoot.
+
+### 0019
+When using special characters as first letter in your name, caused problems with the addon.
+This is now fixed.
+NOTE! When manually entering character names, it's case sensitive and "character" sensitive.  
+Meaning, you will have to write the name correctly for the addon to pick it up.
+
 ### 0018
-If you have the SoftRes add enabled, you will see who has SoftReserved the item you are hovering on the tooltip.
+If you have the SoftRes addon enabled, you will see who has SoftReserved the item you are hovering on the tooltip.
 
 ### 0017
 When dragging an item from the bag and announcing it.  

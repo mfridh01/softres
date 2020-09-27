@@ -335,11 +335,17 @@ local function ShowLinkIdInfo(tooltip, link)
       -- Get softreservations from itemId
       local players = SoftRes.helpers:getSoftReservers(itemId)
 
+      if (not players) then
+            return
+      end
+
+      SoftRes.toolTipItemId = itemId
+
       if #players == 0 and SoftRes.enabled then
-            tooltip:AddLine("|cFF6EA5DC\nNo SoftReservations|r")
+            tooltip:AddLine("|cFF6EA5DC\nNo SoftRes|r")
       elseif #players > 0 and SoftRes.enabled then
             
-            tooltip:AddLine("|cFF6EA5DC\nSoftReserved by:|r")
+            tooltip:AddLine("|cFF6EA5DC\nSoftRes by:|r")
             for i = 1, #players, 1 do
                   local name = players[i]
                   local class, ucaseClass, _ = UnitClass(name)
@@ -352,6 +358,10 @@ local function ShowLinkIdInfo(tooltip, link)
 end
 
 GameTooltip:HookScript("OnTooltipSetItem", ShowLinkIdInfo)
+GameTooltip:SetScript("OnHide", function(self) 
+      if (not SoftRes.enabled) then return end
+      SoftRes.toolTipItemId = nil
+end)
 
 -- Slashcommands
 local function slashCommands(msg, editbox)
