@@ -1,4 +1,5 @@
 ## v0.0.5-beta
+- 0022 - Added "Hidden Mode".
 - 0021 - Fixed an issue with importing Softres.it lists where items with "," in it's name is reserved.
 - 0020 - Added functionality to manually add items from AtlasLoot.
 - 0019 - Fixed problems with special characters being the first letter.
@@ -7,6 +8,13 @@
 - 0016 - Added client mode.
 - 0015 - Re-arranged the Changelog.
 - 0014 - When importing a list, people not ON THAT list, will still get added to the addon. (without softres.)
+
+### 0022
+Added a feature called "Hidden Mode".  
+You can find it in the config tab.
+What it does is that players will now whisper their SoftReservation instead of putting it in /raid.
+The ML can't announce the list and will not push list to SoftRes clients.
+This was requested to be an option for those who run with these hidden rules.
 
 ### 0021
 When importing softres.it lists where an item with a "," (comma) in it's name is reserved, the import failed.

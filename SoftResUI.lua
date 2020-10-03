@@ -83,6 +83,7 @@ function SoftRes.ui:createDefaultSoftResConfigList()
                   addPenalty = true,
                   broadcast = false,
                   clientMode = false,
+                  hiddenMode = false -- Hidden mode.
             },
             timers = {
                   softRes = {
@@ -156,6 +157,7 @@ function SoftRes.ui:useSavedConfigValues()
       BUTTONS.autoHideWindowCheckButton:SetChecked(CONFIG_STATE.autoHideOnLootDone)
       BUTTONS.broadCastModeButton:SetChecked(CONFIG_STATE.broadcast)
       BUTTONS.enableClientMode:SetChecked(CONFIG_STATE.clientMode)
+      BUTTONS.hiddenModeCheckButton:SetChecked(CONFIG_STATE.hiddenMode)
       
       -- Shoud we add the penalty or not?
       BUTTONS.addPenaltyButton:SetChecked(CONFIG_STATE.addPenalty)
@@ -560,7 +562,7 @@ FRAMES.extraInfoEditBox = CreateFrame("EditBox", "ExtraInfoEditBox", FRAMES.tabC
 
       FRAMES.extraInfoEditBox.mainTitle = FRAMES.extraInfoEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.extraInfoEditBox.mainTitle:SetFontObject("GameFontHighlightSmall")
-            FRAMES.extraInfoEditBox.mainTitle:SetPoint("TOP", FRAMES.extraInfoEditBox, "TOP", 0, 15)
+            FRAMES.extraInfoEditBox.mainTitle:SetPoint("TOP", FRAMES.extraInfoEditBox, "TOP", 0, 10)
             FRAMES.extraInfoEditBox.mainTitle:SetText("Extra row for custom information.")
             FRAMES.extraInfoEditBox.mainTitle:SetJustifyH("Center")
 
@@ -819,6 +821,18 @@ BUTTONS.autoHideWindowCheckButton = CreateFrame("CheckButton", "AautoHideWindowC
             BUTTONS.autoHideWindowCheckButton.fs:SetPoint("LEFT", BUTTONS.autoHideWindowCheckButton, "RIGHT", 0, 0)
             BUTTONS.autoHideWindowCheckButton.fs:SetJustifyH("LEFT")
             BUTTONS.autoHideWindowCheckButton.fs:SetText("Auto-hide window when done looting.")
+
+BUTTONS.hiddenModeCheckButton = CreateFrame("CheckButton", "HiddenModeCheckButton", FRAMES.tabContainer.page3, "UICheckButtonTemplate")
+      BUTTONS.hiddenModeCheckButton:SetPoint("TOPLEFT", FRAMES.osDropDecayEditBox, "BOTTOMLEFT", -5, 0)
+      BUTTONS.hiddenModeCheckButton:SetWidth(20)
+      BUTTONS.hiddenModeCheckButton:SetHeight(20)
+      BUTTONS.hiddenModeCheckButton:SetChecked(false)
+      
+      BUTTONS.hiddenModeCheckButton.fs = BUTTONS.hiddenModeCheckButton:CreateFontString(nil, "OVERLAY")
+            BUTTONS.hiddenModeCheckButton.fs:SetFontObject("GameFontHighlight")
+            BUTTONS.hiddenModeCheckButton.fs:SetPoint("LEFT", BUTTONS.hiddenModeCheckButton, "RIGHT", -2, 0)
+            BUTTONS.hiddenModeCheckButton.fs:SetJustifyH("LEFT")
+            BUTTONS.hiddenModeCheckButton.fs:SetText("Hidden Mode (List not public)")
 
 -- Custom popup window for adding player.
 FRAMES.editPlayerAddPlayerPopupWindow = CreateFrame("Frame", "editPlayerAddPlayerPopupWindow", FRAMES.mainFrame, "BasicFrameTemplate")

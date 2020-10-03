@@ -205,7 +205,12 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
             end
       else
             if announce == true then
-                  SoftRes.announce: sendMessageToChat("Party_Leader","|| Everyone! Link your SoftRes items in " .. groupType .. ".")
+
+                  if SoftResConfig.state.hiddenMode then
+                        SoftRes.announce: sendMessageToChat("Party_Leader","|| Everyone! Whisper your SoftRes items to " .. GetUnitName("Player") .. ".")
+                  else
+                        SoftRes.announce: sendMessageToChat("Party_Leader","|| Everyone! Link your SoftRes items in " .. groupType .. ".")
+                  end
                   SoftRes.announce: sendMessageToChat("Party","+----------------------------+")
             end
 

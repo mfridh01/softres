@@ -280,6 +280,12 @@ end)
 
 -- CLIENT MODE --
 BUTTONS.enableClientMode:SetScript("OnClick", function(self)
+    if SoftResConfig.state.hiddenMode then
+        message("Hidden Mode is enabled.\nDisable that first to be able to switch to client mode.")
+        self:SetChecked(false)
+        return
+    end
+
     SoftResConfig.state.softResClient = self:GetChecked()
     
     if self:GetChecked() then
@@ -291,6 +297,13 @@ BUTTONS.enableClientMode:SetScript("OnClick", function(self)
 end)
 
 BUTTONS.broadCastModeButton:SetScript("OnClick", function(self)
+
+    -- If hidden mode.
+    if SoftResConfig.state.hiddenMode then
+        message("Hidden Mode is enabled.\nDisable that first to be able to broadcast.")
+        self:SetChecked(false)
+    end
+
     SoftResConfig.state.broadcast = self:GetChecked()
 end)
 -- // CLIENT MODE \\ --
@@ -792,8 +805,15 @@ BUTTONS.announceRulesButton:SetScript("OnClick", function(self)
         SoftRes.announce:sendMessageToChat("Party", "|| Roll-penalties- MS: " .. "-" .. SoftResConfig.dropDecay.ms.value .. ", OS: " .. "-" .. SoftResConfig.dropDecay.os.value)
         SoftRes.announce:sendMessageToChat("Party", "|| " .. SoftResConfig.extraInformation.value)
         SoftRes.announce:sendMessageToChat("Party", "|| ")
-        SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon, Client Mode]+")
-        SoftRes.announce:sendMessageToChat("Party", "|| Set \"" .. GetUnitName("Player") .. "\" as MasterLooter in Client mode")
+
+        if SoftResConfig.state.hiddenMode then
+            SoftRes.announce:sendMessageToChat("Party", "||HIDDEN MODE IS ACTIVATED! LIST IS NOT SHARED!")
+            SoftRes.announce:sendMessageToChat("Party", "||CLIENTS WILL NOT BE ABLE TO SEE THE LIST!")
+        else
+            SoftRes.announce:sendMessageToChat("Party", "||SoftRes-Addon, Client Mode]+")
+            SoftRes.announce:sendMessageToChat("Party", "|| Set \"" .. GetUnitName("Player") .. "\" as MasterLooter in Client mode")
+        end
+
         SoftRes.announce:sendMessageToChat("Party", "+-------------------[By Snits]")
           
         if scan then
@@ -1658,6 +1678,12 @@ end)
 
 -- Announce the SoftReservations to the raid.
 BUTTONS.announceAllSoftresButton:SetScript("OnClick", function(self)
+
+    if SoftResConfig.state.hiddenMode then
+        message("Hidden Mode is enabled.\nDisable that first to be able to announce the list.")
+        return
+    end
+
         -- Popup dialog for for accepting the announcement or not.
         StaticPopupDialogs["SOFTRES_ANNOUNCE_SOFTRESERVERATIONS"] = {
             text = "Do you want to announce the SoftReservations?\nThis will post all reservations in chat.",
@@ -2003,4 +2029,27 @@ BUTTONS.clientModeMasterLooterClearButton:SetScript("OnClick", function(self)
     }
 
     StaticPopup_Show ("SOFTRES_CLIENT_CLEAR_ML")
+end)
+
+BUTTONS.hiddenModeCheckButton:SetScript("OnClick", function(self)
+
+
+    SoftResConfig.state.hiddenMode = self:GetChecked()
+
+    -- toggle.
+    if SoftResConfig.state.hiddenMode then
+        
+        -- Toggle off the "NET"
+        SoftResConfig.state.broadcast = false
+        BUTTONS.broadCastModeButton:SetChecked(false)
+
+        -- Toggle off the client mode
+        BUTTONS.enableClientMode:SetChecked(false)
+        SoftRes.clientMode = false
+        SoftResConfig.state.clientMode = false
+    else
+        -- We force broadcasting while not hidden.
+        SoftResConfig.state.broadcast = true
+        BUTTONS.broadCastModeButton:SetChecked(true)
+    end
 end)

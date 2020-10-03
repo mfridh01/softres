@@ -15,6 +15,7 @@ FRAMES.mainFrame:RegisterEvent("CHAT_MSG_PARTY")
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_PARTY_LEADER")
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_RAID")
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_RAID_LEADER")
+FRAMES.mainFrame:RegisterEvent("CHAT_MSG_WHISPER")
 
 FRAMES.mainFrame:RegisterEvent("LOOT_READY")
 FRAMES.mainFrame:RegisterEvent("LOOT_SLOT_CLEARED")
@@ -69,6 +70,20 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
      
       -- listen to softReserves in raid or party
       elseif event == "CHAT_MSG_PARTY" or event == "CHAT_MSG_PARTY_LEADER" or event == "CHAT_MSG_RAID" or event == "CHAT_MSG_RAID_LEADER" and SoftRes.enabled then
+
+            -- Hidden mode, we don't scan party.
+            if SoftResConfig.state.hiddenMode then return end
+
+            if SoftRes.state.scanForSoftRes.state then
+                  arg1, arg2 = ...
+                  SoftRes.list:getSoftReserves(arg1, arg2)
+                  SoftRes.list:showFullSoftResList()
+            end
+
+      elseif event == "CHAT_MSG_WHISPER" and SoftRes.enabled then
+
+            -- If we're not in hidden mode, we scan party.
+            if (not SoftResConfig.state.hiddenMode) then return end
 
             if SoftRes.state.scanForSoftRes.state then
                   arg1, arg2 = ...
@@ -358,7 +373,7 @@ local function ShowLinkIdInfo(tooltip, link)
 end
 
 GameTooltip:HookScript("OnTooltipSetItem", ShowLinkIdInfo)
-GameTooltip:SetScript("OnHide", function(self) 
+GameTooltip:HookScript("OnHide", function(self)
       if (not SoftRes.enabled) then return end
       SoftRes.toolTipItemId = nil
 end)
