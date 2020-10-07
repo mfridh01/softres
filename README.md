@@ -171,6 +171,5 @@ One bag per won item.
 Green ReadyCheck means that the player has won the **SoftRes**erved item.
 
 ## TODO
-- [ ] Add compatibility with other addons. I.E. Atlasloot (for linking items manually.)
-    * For now you can "only" use itemlinks from CHAT or your BAG when you manually enter the items.
+- [x] Add compatibility with other addons. I.E. Atlasloot (for linking items manually.)
     * You can't use WIM chat window for linking items either.

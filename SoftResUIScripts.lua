@@ -751,9 +751,7 @@ BUTTONS.cancelEverythingButton:SetScript("OnClick", function(self)
         button2 = "No",
         OnAccept = function()
             -- If rolling, then announce before canceling.
-            if #SoftRes.announcedItem.rolls > 0 then
-                SoftRes.announce:sendMessageToChat("Party_Leader", "The rolls for this item are canceled.")
-            end
+            SoftRes.announce:sendMessageToChat("Party_Leader", "Current roll canceled.")
 
             -- We unHandle the winner. remove the wins.
             SoftRes.helpers:unHandleWinner()
