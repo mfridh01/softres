@@ -28,6 +28,8 @@ FRAMES.mainFrame:RegisterEvent("UI_INFO_MESSAGE")
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_SYSTEM")
 FRAMES.mainFrame:RegisterEvent("CHAT_MSG_ADDON")
 
+FRAMES.mainFrame:RegisterEvent("ZONE_CHANGED")
+
 FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
 
       if event == "PLAYER_LOGIN" then
@@ -229,6 +231,16 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
                   end
             end
 
+      elseif event == "ZONE_CHANGED" and SoftRes.enabled then
+            -- Check if in a BG.
+            for i = 1, MAX_BATTLEFIELD_QUEUES do
+                  status, mapName, instanceID, minlevel, maxlevel, teamSize = GetBattlefieldStatus(i)
+                  if status == "Active" then
+                      BUTTONS.enableSoftResAddon:SetChecked(false)
+                      SoftRes.enabled = false
+                  end
+              end
+      
       elseif event == "CHAT_MSG_ADDON" and SoftRes.enabled then
 
 

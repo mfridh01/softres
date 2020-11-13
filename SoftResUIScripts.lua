@@ -29,7 +29,7 @@ FRAMES.mainFrame:SetScript("OnUpdate", function(self, elapsed)
         SoftRes.helpers.hideAllServerButtons(false)
     end
 
-  
+ 
   -- timeupdate
   if (self.timeSinceLastUpdate > FRAMES.mainFrame.updateInterval) then
 
@@ -1849,7 +1849,7 @@ local function parseSoftResIt(importString)
         if foundString then
             importantInfo = importantInfo:gsub(", ", "")
         end
-        _, rowItemId, _, rowName = strsplit(",", importantInfo)
+        rowItemId, rowName, _, _, _ = strsplit(",", importantInfo)
 
         if (not rowName) or (not rowItemId) then return false end
 
