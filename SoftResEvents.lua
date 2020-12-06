@@ -249,6 +249,9 @@ FRAMES.mainFrame:SetScript("OnEvent", function(self,event,...)
 end)
 
 function FRAMES.mainFrame:OnCommReceived(prefix, message, distribution, sender)
+
+      if not SoftRes.enabled then return end
+
       local broadcast = SoftResConfig.state.broadcast
       local client = SoftResConfig.state.clientMode
 

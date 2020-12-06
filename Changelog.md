@@ -1,3 +1,17 @@
+## v0.0.6-beta
+- 0024 - Disable addon when entering a battleground.
+- 0023 - Fixed SoftRes.it import link.
+
+### 0024 (Not tested, due to loooong queue times)
+When entering a battleground, the addon should now disable itself.
+Hoepfully, that will reduce the spam, as "Killwizzy" pointed out.
+NOTE! It will not re-enable when exiting the BG.
+
+### 0023
+SoftRes.it changed their weakaura export link.
+SoftRes Addon is updated accordingly
+Thanks to "The Mithellin" for pointing that out.
+
 ## v0.0.5-beta
 - 0022 - Added "Hidden Mode".
 - 0021 - Fixed an issue with importing Softres.it lists where items with "," in it's name is reserved.
