@@ -1,3 +1,15 @@
+## v0.0.7-beta
+- 0026 - PVP fix?
+- 0025 - New WOW client version.
+
+### 0026
+After a small fix, I did a test in PVP (AV) since the queue times for horde are bad.
+I did not get any message spams.
+Hopefully that fixed something.
+
+### 0025
+New WOW Client released. SoftRes is now updated accordingly.
+
 ## v0.0.6-beta
 - 0024 - Disable addon when entering a battleground.
 - 0023 - Fixed SoftRes.it import link.
