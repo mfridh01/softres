@@ -87,19 +87,19 @@ function SoftRes.ui:createDefaultSoftResConfigList()
             },
             timers = {
                   softRes = {
-                        minValue = 10,
+                        minValue = 5,
                         maxValue = 20,
                         default = 15,
                         value = 15,
                   },
                   ms = {
-                        minValue = 10,
+                        minValue = 5,
                         maxValue = 20,
                         default = 15,
                         value = 15,
                   }, 
                   os = {
-                        minValue = 10,
+                        minValue = 5,
                         maxValue = 20,
                         default = 15,
                         value = 15,
@@ -212,13 +212,13 @@ FRAMES.mainFrame = CreateFrame("Frame", "SoftResMainFrame", UIParent, "BasicFram
             FRAMES.mainFrame.fs:SetPoint("TOPLEFT", FRAMES.mainFrame, "TOPLEFT", 15, -32)
             FRAMES.mainFrame.fs:SetJustifyH("LEFT")
 
-FRAMES.tabContainer = CreateFrame("Frame", "TabContainer", FRAMES.mainFrame, "InsetFrameTemplate2")
+FRAMES.tabContainer = CreateFrame("Frame", "TabContainer", FRAMES.mainFrame, "BackdropTemplate")
       FRAMES.tabContainer:SetPoint("TOPLEFT", FRAMES.mainFrame, "TOPLEFT", 4, -51)
-      FRAMES.tabContainer:SetBackdrop({
-            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
-            tile     = true,
-            tileSize = 32,
-            insets   = { left = 4, right = 4, top = 4, bottom = 4 }
+            FRAMES.tabContainer:SetBackdrop({
+           bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+           tile     = true,
+           tileSize = 32,
+           insets   = { left = 4, right = 4, top = 4, bottom = 4 }
       })
 
 FRAMES.addonIndicator = CreateFrame("Frame", "AddonIndicatorFrame", FRAMES.mainFrame)
@@ -230,7 +230,7 @@ FRAMES.addonIndicator = CreateFrame("Frame", "AddonIndicatorFrame", FRAMES.mainF
 
 
 -- PAGE 1
-FRAMES.tabContainer.page1 = CreateFrame("Frame", "TabPagesPage1", FRAMES.mainFrame)
+FRAMES.tabContainer.page1 = CreateFrame("Frame", "TabPagesPage1", FRAMES.mainFrame, "BackdropTemplate")
             FRAMES.tabContainer.page1:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
             FRAMES.tabContainer.page1:SetSize(313, 127)
             FRAMES.tabContainer.page1:SetBackdrop({
@@ -277,10 +277,10 @@ FRAMES.rollFrame = CreateFrame("Frame", nil, FRAMES.rollFrameContainer.child)
             FRAMES.rollFrame.fs:SetJustifyH("Left")
             FRAMES.rollFrame.fs:SetNonSpaceWrap(true)
 
-FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.tabContainer.page1)            
+FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.tabContainer.page1, "BackdropTemplate")            
       FRAMES.announcedItemFrame:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", 31, -7)
       FRAMES.announcedItemFrame:SetSize(276, 34)
-      FRAMES.announcedItemFrame:SetBackdropColor(0, 0, 0, 1);
+      --FRAMES.announcedItemFrame:SetBackdropColor(0, 0, 0, 1);
       FRAMES.announcedItemFrame:SetBackdrop({
             bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
             edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -296,10 +296,10 @@ FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.ta
             FRAMES.announcedItemFrame.fs:SetText("Drag an item here, or loot too start.")
 
 
-            FRAMES.clientModeAnnouncedItemFrame = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page1)            
+            FRAMES.clientModeAnnouncedItemFrame = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page1, "BackdropTemplate")            
             FRAMES.clientModeAnnouncedItemFrame:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", -5, -7)
             FRAMES.clientModeAnnouncedItemFrame:SetSize(250, 25)
-            FRAMES.clientModeAnnouncedItemFrame:SetBackdropColor(0, 0, 0, 1);
+            --FRAMES.clientModeAnnouncedItemFrame:SetBackdropColor(0, 0, 0, 1);
             FRAMES.clientModeAnnouncedItemFrame:SetBackdrop({
                   bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
                   edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -316,10 +316,10 @@ FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.ta
                   FRAMES.clientModeAnnouncedItemFrame.fs:SetText("[ Announced item ]")
                   FRAMES.clientModeAnnouncedItemFrame.fs:Hide()
       
-      FRAMES.clientModeAnnouncedItemFrameRollType = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page1)            
+      FRAMES.clientModeAnnouncedItemFrameRollType = CreateFrame("Frame", "ClientModeAnnouncedItemFrame", FRAMES.tabContainer.page1, "BackdropTemplate")            
             FRAMES.clientModeAnnouncedItemFrameRollType:SetPoint("LEFT", FRAMES.clientModeAnnouncedItemFrame, "RIGHT", 5, 0)
             FRAMES.clientModeAnnouncedItemFrameRollType:SetSize(25, 25)
-            FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdropColor(0, 0, 0, 1);
+            --FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdropColor(0, 0, 0, 1);
             FRAMES.clientModeAnnouncedItemFrameRollType:SetBackdrop({
                   bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
                   edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
@@ -344,7 +344,7 @@ FRAMES.announcedItemFrame = CreateFrame("Frame", "AnnouncedItemFrame", FRAMES.ta
             BUTTONS.clientModeAnnouncedItemRollButton:Hide()
 
 -- PAGE 2
-FRAMES.tabContainer.page2 = CreateFrame("Frame", "TabPagesPage2", FRAMES.mainFrame)
+FRAMES.tabContainer.page2 = CreateFrame("Frame", "TabPagesPage2", FRAMES.mainFrame, "BackdropTemplate")
       FRAMES.tabContainer.page2:SetPoint("TOPLEFT", FRAMES.tabContainer, "TOPLEFT", 7, -10)
       FRAMES.tabContainer.page2:SetSize(313, 157)
       FRAMES.tabContainer.page2:SetBackdrop({
@@ -471,7 +471,7 @@ FRAMES.softResRollTimerEditBox = CreateFrame("EditBox", "SoftResRollTimerEditBox
       FRAMES.softResRollTimerEditBox.title = FRAMES.softResRollTimerEditBox:CreateFontString(nil, "OVERLAY")
             FRAMES.softResRollTimerEditBox.title:SetFontObject("GameFontHighlightSmall")
             FRAMES.softResRollTimerEditBox.title:SetPoint("BOTTOMLEFT", FRAMES.softResRollTimerEditBox, "TOPLEFT", 8, 0)
-            FRAMES.softResRollTimerEditBox.title:SetText("Roll timers. (Min: 10, Max: 20)")
+            FRAMES.softResRollTimerEditBox.title:SetText("Roll timers. (Min: 5, Max: 20)")
             FRAMES.softResRollTimerEditBox.title:SetJustifyH("Right")
 
       FRAMES.softResRollTimerEditBox.mainTitle = FRAMES.softResRollTimerEditBox:CreateFontString(nil, "OVERLAY")
@@ -619,7 +619,7 @@ BUTTONS.broadCastModeButton = CreateFrame("CheckButton", "broadCastModeButton", 
             BUTTONS.broadCastModeButton.fs:SetPoint("RIGHT", BUTTONS.broadCastModeButton, "LEFT", 0, 0)
             BUTTONS.broadCastModeButton.fs:SetText("Net:")
 
-BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAMES.tabContainer.page1)
+BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAMES.tabContainer.page1, "BackdropTemplate")
       BUTTONS.announcedItemButton:SetSize(32, 32)
       BUTTONS.announcedItemButton:SetPoint("TOPLEFT", FRAMES.rollFrameContainer, "BOTTOMLEFT", -3, -8)
 
@@ -628,12 +628,12 @@ BUTTONS.announcedItemButton = CreateFrame("Button", "announcedItemButton", FRAME
       BUTTONS.announcedItemButton:SetScript("OnDragStart", BUTTONS.announcedItemButton.StartMoving)
       BUTTONS.announcedItemButton:SetScript("OnDragStop", BUTTONS.announcedItemButton.StopMovingOrSizing)
       BUTTONS.announcedItemButton:SetBackdrop({
-            bgFile   = "interface\\buttons\\ui-emptyslot-white",
-            edgeFile = nil,
+            bgFile   = "Interface\\DialogFrame\\UI-DialogBox-Background",
+            edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
             tile     = true,
-            tileSize = 0,
-            edgeSize = 0,
-            insets   = { left = -8, right = -8, top = -8, bottom = -8 }
+            tileSize = 32,
+            edgeSize = 10,
+            insets   = { left = 2, right = 2, top = 2, bottom = 2 }
       })
       BUTTONS.announcedItemButton.texture = BUTTONS.announcedItemButton:CreateTexture("announcedItemButtonTexture", "OVERLAY")
       BUTTONS.announcedItemButton.texture:SetAllPoints(true)
@@ -1318,7 +1318,7 @@ FRAMES.importListPopupWindow = CreateFrame("Frame", "importListPopupWindow", FRA
             BUTTONS.importListDropDown.fs:SetText("To import a new list, choose the import source.\nThen paste the string in the box below.")
             BUTTONS.importListDropDown.fs:SetJustifyH("Center")
 
-      FRAMES.importListScrollFrameBackground = CreateFrame("Frame", nil, FRAMES.importListPopupWindow)
+      FRAMES.importListScrollFrameBackground = CreateFrame("Frame", nil, FRAMES.importListPopupWindow, "BackdropTemplate")
             FRAMES.importListScrollFrameBackground:SetSize(290,210)
             FRAMES.importListScrollFrameBackground:SetPoint("TOP", FRAMES.importListPopupWindow, "TOP", 0, -105)
             FRAMES.importListScrollFrameBackground:SetBackdrop({

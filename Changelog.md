@@ -1,3 +1,6 @@
+## v0.0.8-beta
+- 0027 - TBC Classic fix.
+
 ## v0.0.7-beta
 - 0026 - PVP fix?
 - 0025 - New WOW client version.

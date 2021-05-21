@@ -166,7 +166,7 @@ function SoftRes.state:toggleScanForSoftRes(announce, flag)
       if SoftRes.state.scanForSoftRes.state then
             SoftRes.state.scanForSoftRes.state = false
             SoftRes.state.scanForSoftRes.text = ""
-            BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
+            --BUTTONS.scanForSoftResButton:SetText(BUTTONS.scanForSoftResButton.normalText)
             FRAMES.mainFrame.titleRight:SetText("")
 
             if announce == true then
